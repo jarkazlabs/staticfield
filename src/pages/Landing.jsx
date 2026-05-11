@@ -69,7 +69,7 @@ export default function Landing({ setPage, setActiveBoardId }) {
         <div className="flex items-center justify-center gap-2 mb-8 animate-fade-in opacity-0"
           style={{ animationFillMode: 'forwards' }}>
           <div className="w-2 h-2 rounded-full bg-ss-accent" />
-          <span className="font-mono text-2xs text-ss-ghost tracking-widest uppercase">
+          <span className="font-sans text-2xs text-ss-ghost tracking-widest uppercase">
             A visual workspace for
           </span>
         </div>
@@ -118,7 +118,7 @@ export default function Landing({ setPage, setActiveBoardId }) {
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-2 mb-8">
             <div className="w-2 h-2 rounded-full bg-ss-accent" />
-            <span className="font-mono text-2xs text-ss-ghost tracking-widest uppercase">Curated Signals</span>
+            <span className="font-sans text-2xs text-ss-ghost tracking-widest uppercase">Curated Signals</span>
           </div>
           <div className="scroll-strip flex gap-3 pb-2">
             {curatedStrips.map((item, i) => (
@@ -144,7 +144,7 @@ export default function Landing({ setPage, setActiveBoardId }) {
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-2 mb-8">
             <div className="w-2 h-2 rounded-full bg-ss-accent" />
-            <span className="font-mono text-2xs text-ss-ghost tracking-widest uppercase">Featured Boards</span>
+            <span className="font-sans text-2xs text-ss-ghost tracking-widest uppercase">Featured Boards</span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
             {boards.map((board, i) => (
