@@ -1,6 +1,6 @@
 // Landing.jsx — exakt nach Mockup
 
-import { curatedStrips, boards } from '../data/signals.js'
+import { curatedStrips, DEMO_BOARDS as boards } from '../data/signals.js'
 
 function AvatarCluster({ count }) {
   const colors = ['#d4d4ce','#c8c8c2','#bfbfb8','#b5b5ae']

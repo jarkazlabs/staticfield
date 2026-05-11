@@ -1,0 +1,118 @@
+// useStore.js — Zentraler State mit localStorage-Persistenz
+// Kein Redux, kein Zustand — nur React useState + localStorage
+
+import { useState, useEffect, useCallback } from 'react'
+import { DEMO_BOARDS, DEMO_CARDS, DEMO_CONNECTIONS } from '../data/signals.js'
+
+const LS_BOARDS      = 'ss_boards'
+const LS_CARDS       = 'ss_cards'
+const LS_CONNECTIONS = 'ss_connections'
+
+function load(key, fallback) {
+  try {
+    const v = localStorage.getItem(key)
+    return v ? JSON.parse(v) : fallback
+  } catch { return fallback }
+}
+
+function save(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)) } catch {}
+}
+
+function uid() {
+  return Math.random().toString(36).slice(2, 10)
+}
+
+export function useStore() {
+  const [boards,      setBoards]      = useState(() => load(LS_BOARDS,      DEMO_BOARDS))
+  const [cards,       setCards]       = useState(() => load(LS_CARDS,       DEMO_CARDS))
+  const [connections, setConnections] = useState(() => load(LS_CONNECTIONS, DEMO_CONNECTIONS))
+
+  // Persistieren bei jeder Änderung
+  useEffect(() => save(LS_BOARDS,      boards),      [boards])
+  useEffect(() => save(LS_CARDS,       cards),       [cards])
+  useEffect(() => save(LS_CONNECTIONS, connections), [connections])
+
+  // ─── Boards ───────────────────────────────────────────
+  const addBoard = useCallback((title, description = '') => {
+    const board = {
+      id: 'b' + uid(),
+      title,
+      description,
+      tags: [],
+      author: 'you',
+      imageUrl: '',
+      followers: 0,
+      isDemo: false,
+    }
+    setBoards(bs => [...bs, board])
+    return board.id
+  }, [])
+
+  const deleteBoard = useCallback((boardId) => {
+    setBoards(bs => bs.filter(b => b.id !== boardId))
+    setCards(cs => cs.filter(c => c.boardId !== boardId))
+    setConnections(cn => {
+      const boardCardIds = cards.filter(c => c.boardId === boardId).map(c => c.id)
+      return cn.filter(c => !boardCardIds.includes(c.from) && !boardCardIds.includes(c.to))
+    })
+  }, [cards])
+
+  // ─── Cards ────────────────────────────────────────────
+  const addCard = useCallback((boardId, type, data) => {
+    const card = {
+      id: 'c' + uid(),
+      type,
+      boardId,
+      position: { x: 80 + Math.random() * 200, y: 80 + Math.random() * 100 },
+      tags: [],
+      ...data,
+    }
+    setCards(cs => [...cs, card])
+    return card.id
+  }, [])
+
+  const updateCard = useCallback((cardId, updates) => {
+    setCards(cs => cs.map(c => c.id === cardId ? { ...c, ...updates } : c))
+  }, [])
+
+  const moveCard = useCallback((cardId, x, y) => {
+    setCards(cs => cs.map(c => c.id === cardId ? { ...c, position: { x, y } } : c))
+  }, [])
+
+  const deleteCard = useCallback((cardId) => {
+    setCards(cs => cs.filter(c => c.id !== cardId))
+    setConnections(cn => cn.filter(c => c.from !== cardId && c.to !== cardId))
+  }, [])
+
+  // ─── Connections ──────────────────────────────────────
+  const addConnection = useCallback((fromId, toId) => {
+    // Keine Duplikate
+    setConnections(cn => {
+      const exists = cn.some(c => (c.from === fromId && c.to === toId) || (c.from === toId && c.to === fromId))
+      if (exists || fromId === toId) return cn
+      return [...cn, { id: 'cn' + uid(), from: fromId, to: toId }]
+    })
+  }, [])
+
+  const deleteConnection = useCallback((connId) => {
+    setConnections(cn => cn.filter(c => c.id !== connId))
+  }, [])
+
+  // ─── Hilfsfunktionen ──────────────────────────────────
+  const getBoardCards = useCallback((boardId) =>
+    cards.filter(c => c.boardId === boardId), [cards])
+
+  const getBoardConnections = useCallback((boardId) => {
+    const ids = new Set(cards.filter(c => c.boardId === boardId).map(c => c.id))
+    return connections.filter(cn => ids.has(cn.from) && ids.has(cn.to))
+  }, [cards, connections])
+
+  return {
+    boards, cards, connections,
+    addBoard, deleteBoard,
+    addCard, updateCard, moveCard, deleteCard,
+    addConnection, deleteConnection,
+    getBoardCards, getBoardConnections,
+  }
+}

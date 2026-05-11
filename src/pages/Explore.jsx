@@ -1,6 +1,6 @@
 // Explore.jsx — Discovery Feed, helles Theme
 import { useState, useMemo } from 'react'
-import { allCards } from '../data/signals.js'
+import { DEMO_CARDS as allCards } from '../data/signals.js'
 import Card from '../components/Cards.jsx'
 
 export default function Explore() {

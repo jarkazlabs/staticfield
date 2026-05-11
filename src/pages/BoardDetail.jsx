@@ -1,88 +1,49 @@
-// BoardDetail.jsx — Canvas-Ansicht, helles Theme
-import { useMemo, useRef, useState, useEffect } from 'react'
-import { boards, getCardsByBoard, getConnectionsByBoard } from '../data/signals.js'
-import Card from '../components/Cards.jsx'
+// BoardDetail.jsx — Board-Ansicht mit interaktivem Canvas
+import { useMemo } from 'react'
+import BoardCanvas from '../components/BoardCanvas.jsx'
 
-const CARD_W = 260
-
-export default function BoardDetail({ boardId, setPage }) {
+export default function BoardDetail({ boardId, boards, store, setPage }) {
   const board = boards.find(b => b.id === boardId)
-  const cards = useMemo(() => getCardsByBoard(boardId), [boardId])
-  const conns  = useMemo(() => getConnectionsByBoard(boardId), [boardId])
-
-  const canvasW = Math.max(1200, ...cards.map(c => c.position.x + CARD_W + 120))
-  const canvasH = Math.max(900,  ...cards.map(c => c.position.y + 420))
+  const cards       = useMemo(() => store.getBoardCards(boardId),       [store, boardId])
+  const connections = useMemo(() => store.getBoardConnections(boardId), [store, boardId])
 
   if (!board) return (
-    <div className="min-h-screen flex items-center justify-center text-ss-dim text-sm">
-      Board not found.
-    </div>
+    <div className="min-h-screen flex items-center justify-center text-ss-dim text-sm">Board nicht gefunden.</div>
   )
-
-  function center(card) {
-    return { x: card.position.x + CARD_W / 2, y: card.position.y + 80 }
-  }
 
   return (
     <div className="min-h-screen bg-ss-bg pt-11 flex flex-col">
-
-      {/* Header */}
-      <div className="px-6 py-8 border-b border-ss-border bg-ss-bg">
-        <button onClick={() => setPage('boards')}
-          className="text-xs text-ss-ghost hover:text-ss-dim transition-colors mb-4 flex items-center gap-1.5 font-mono">
-          ← Boards
-        </button>
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-1.5 h-1.5 rounded-full bg-ss-accent" />
-          <span className="font-mono text-2xs text-ss-ghost tracking-widest uppercase">Board</span>
+      <div className="px-6 py-6 border-b border-ss-border bg-white flex items-start justify-between">
+        <div>
+          <button onClick={() => setPage('boards')}
+            className="text-xs text-ss-ghost hover:text-ss-dim transition-colors mb-3 flex items-center gap-1.5">
+            ← Boards
+          </button>
+          <h1 className="font-sans font-bold text-2xl text-ss-ink">{board.title}</h1>
+          {board.description && (
+            <p className="text-sm text-ss-dim mt-1 max-w-lg">{board.description}</p>
+          )}
+          {board.isDemo && (
+            <span className="inline-block mt-2 font-mono text-2xs text-ss-ghost border border-ss-border px-1.5 py-0.5 rounded">Demo Board</span>
+          )}
         </div>
-        <h1 className="font-sans text-3xl text-ss-ink" style={{ fontWeight: 600 }}>{board.title}</h1>
-        <p className="text-sm text-ss-dim mt-1 max-w-md">{board.description}</p>
-        <div className="flex gap-2 mt-2">
-          {board.tags.map(t => (
-            <span key={t} className="font-mono text-2xs text-ss-ghost">#{t}</span>
-          ))}
-        </div>
-      </div>
-
-      {/* Canvas */}
-      <div className="flex-1 overflow-auto bg-ss-surface/40">
-        <div className="relative" style={{ width: canvasW, height: canvasH }}>
-
-          {/* SVG Verbindungslinien */}
-          <svg className="absolute inset-0 pointer-events-none" width={canvasW} height={canvasH} style={{ zIndex: 0 }}>
-            {conns.map((cn, i) => {
-              const from = cards.find(c => c.id === cn.from)
-              const to   = cards.find(c => c.id === cn.to)
-              if (!from || !to) return null
-              const f = center(from), t2 = center(to)
-              const mx = (f.x + t2.x) / 2
-              return (
-                <path key={i}
-                  d={`M${f.x},${f.y} C${mx},${f.y} ${mx},${t2.y} ${t2.x},${t2.y}`}
-                  className="conn-line"
-                />
-              )
-            })}
-          </svg>
-
-          {/* Cards */}
-          {cards.map((card, i) => (
-            <div key={card.id} className="absolute animate-fade-in opacity-0"
-              style={{
-                left: card.position.x, top: card.position.y,
-                width: CARD_W, zIndex: 1,
-                animationFillMode: 'forwards',
-                animationDelay: `${i * 0.08}s`,
-              }}
-            >
-              <Card card={card} />
-            </div>
-          ))}
-
+        <div className="text-right text-xs text-ss-ghost leading-relaxed">
+          <p>Punkt an Card = verbinden</p>
+          <p>Klick auf Linie = trennen</p>
+          <p>Card ziehen = verschieben</p>
         </div>
       </div>
 
+      <BoardCanvas
+        boardId={boardId}
+        cards={cards}
+        connections={connections}
+        addCard={store.addCard}
+        moveCard={store.moveCard}
+        deleteCard={store.deleteCard}
+        addConnection={store.addConnection}
+        deleteConnection={store.deleteConnection}
+      />
     </div>
   )
 }
