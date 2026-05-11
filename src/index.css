@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Base ─── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: #f5f2ed;
+  color: #1a1814;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: #f5f2ed; }
+::-webkit-scrollbar-thumb { background: #d4cfc7; border-radius: 2px; }
+
+/* ─── Typography helpers ─── */
+.font-serif { font-family: 'EB Garamond', Georgia, serif; }
+.font-mono  { font-family: 'JetBrains Mono', monospace; }
+
+/* ─── Card hover ─── */
+.card-hover {
+  transition: box-shadow 0.25s ease, transform 0.2s ease, border-color 0.25s ease;
+}
+.card-hover:hover {
+  box-shadow: 0 4px 24px rgba(26,24,20,0.1);
+  transform: translateY(-2px);
+  border-color: #c8c3bb;
+}
+
+/* ─── Horizontal scroll strip ─── */
+.scroll-strip {
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scroll-strip::-webkit-scrollbar { display: none; }
+
+/* ─── Stagger helpers ─── */
+.s1 { animation-delay: 0.05s; }
+.s2 { animation-delay: 0.10s; }
+.s3 { animation-delay: 0.15s; }
+.s4 { animation-delay: 0.20s; }
+.s5 { animation-delay: 0.25s; }
+.s6 { animation-delay: 0.30s; }
+
+/* ─── Board canvas ─── */
+.board-canvas {
+  position: relative;
+  overflow: auto;
+}
+
+/* ─── SVG connection lines ─── */
+.conn-line {
+  stroke: #c8c3bb;
+  stroke-width: 1;
+  fill: none;
+  stroke-dasharray: 4 6;
+}
+
+/* ─── Waveform bars ─── */
+.wbar {
+  display: inline-block;
+  width: 3px;
+  background: #7a8c3c;
+  border-radius: 1px;
+  margin: 0 1px;
+}
+@keyframes wavePulse {
+  0%,100% { transform: scaleY(0.3); opacity: 0.4; }
+  50%      { transform: scaleY(1);   opacity: 0.85; }
+}
