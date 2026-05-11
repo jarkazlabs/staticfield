@@ -1,6 +1,7 @@
-// Landing.jsx — exakt nach Mockup
+// Landing.jsx
 
 import { curatedStrips, DEMO_BOARDS as boards } from '../data/signals.js'
+import BoardCollage from '../components/BoardCollage.jsx'
 
 function AvatarCluster({ count }) {
   const colors = ['#d4d4ce','#c8c8c2','#bfbfb8','#b5b5ae']
@@ -36,24 +37,6 @@ function StripCard({ item, onClick }) {
   )
 }
 
-function FeaturedBoardCard({ board, onClick }) {
-  return (
-    <button onClick={onClick} className="text-left group">
-      <div className="w-full aspect-square rounded-lg overflow-hidden bg-ss-surface mb-3">
-        <img src={board.imageUrl} alt={board.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-      </div>
-      <h3 className="font-sans text-sm font-semibold text-ss-ink group-hover:text-ss-accent transition-colors leading-tight">
-        {board.title}
-      </h3>
-      <p className="text-xs text-ss-ghost mt-0.5">by {board.author}</p>
-      <div className="mt-2">
-        <AvatarCluster count={board.followers} />
-      </div>
-    </button>
-  )
-}
-
 export default function Landing({ setPage, setActiveBoardId }) {
   function openBoard(id) {
     setActiveBoardId(id)
@@ -65,7 +48,6 @@ export default function Landing({ setPage, setActiveBoardId }) {
 
       {/* ─── Hero ─── */}
       <section className="pt-28 pb-20 px-6 max-w-4xl mx-auto text-center">
-
         <div className="flex items-center justify-center gap-2 mb-8 animate-fade-in opacity-0"
           style={{ animationFillMode: 'forwards' }}>
           <div className="w-2 h-2 rounded-full bg-ss-accent" />
@@ -74,7 +56,6 @@ export default function Landing({ setPage, setActiveBoardId }) {
           </span>
         </div>
 
-        {/* Fette Headline wie im Mockup */}
         <h1 className="font-sans text-6xl sm:text-7xl md:text-8xl text-ss-ink leading-none mb-8 animate-slide-up opacity-0"
           style={{ animationFillMode: 'forwards', animationDelay: '0.05s', fontWeight: 800 }}>
           Sound, texture<br />
@@ -88,7 +69,6 @@ export default function Landing({ setPage, setActiveBoardId }) {
           Build your universe.
         </p>
 
-        {/* Buttons — exakt wie Mockup */}
         <div className="flex items-center justify-center gap-3 mb-12 animate-slide-up opacity-0"
           style={{ animationFillMode: 'forwards', animationDelay: '0.15s' }}>
           <button onClick={() => setPage('explore')}
@@ -96,12 +76,11 @@ export default function Landing({ setPage, setActiveBoardId }) {
             Explore signals <span>→</span>
           </button>
           <button onClick={() => setPage('boards')}
-            className="px-6 py-3 border border-ss-border text-ss-ink text-sm font-semibold rounded-lg hover:border-ss-muted hover:bg-ss-surface transition-all duration-200">
+            className="px-6 py-3 border-2 border-ss-ink text-ss-ink text-sm font-semibold rounded-lg hover:bg-ss-ink hover:text-white transition-all duration-200">
             Open demo board
           </button>
         </div>
 
-        {/* Social proof */}
         <div className="flex items-center justify-center gap-3 animate-fade-in opacity-0"
           style={{ animationFillMode: 'forwards', animationDelay: '0.2s' }}>
           <AvatarCluster />
@@ -113,7 +92,7 @@ export default function Landing({ setPage, setActiveBoardId }) {
 
       <div className="border-t border-ss-border" />
 
-      {/* ─── Curated Signals ─── */}
+      {/* ─── Curated Signals Strip ─── */}
       <section className="py-14 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-2 mb-8">
@@ -139,22 +118,36 @@ export default function Landing({ setPage, setActiveBoardId }) {
 
       <div className="border-t border-ss-border" />
 
-      {/* ─── Featured Boards ─── */}
-      <section className="py-14 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center gap-2 mb-8">
-            <div className="w-2 h-2 rounded-full bg-ss-accent" />
-            <span className="font-sans text-2xs text-ss-ghost tracking-widest uppercase">Featured Boards</span>
+      {/* ─── Featured Boards — Collage-Ansicht, zentriert ─── */}
+      <section className="py-16 px-6">
+        <div className="max-w-5xl mx-auto">
+
+          {/* Zentrierter Header */}
+          <div className="flex flex-col items-center text-center mb-10">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-2 h-2 rounded-full bg-ss-accent" />
+              <span className="font-sans text-2xs text-ss-ghost tracking-widest uppercase">Featured Boards</span>
+            </div>
+            <p className="text-sm text-ss-dim max-w-sm">
+              Focused spaces for sound, texture and signal culture.
+            </p>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+
+          {/* Collage Grid — 3 Spalten, max-w-5xl = ruhigere Breite */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {boards.map((board, i) => (
-              <div key={board.id} className="animate-slide-up opacity-0"
-                style={{ animationFillMode: 'forwards', animationDelay: `${i * 0.06}s` }}>
-                <FeaturedBoardCard board={board} onClick={() => openBoard(board.id)} />
+              <div key={board.id}
+                className="animate-slide-up opacity-0"
+                style={{ animationFillMode: 'forwards', animationDelay: `${i * 0.07}s` }}>
+                <BoardCollage
+                  board={board}
+                  onClick={() => openBoard(board.id)}
+                />
               </div>
             ))}
           </div>
-          <div className="mt-10 flex justify-center">
+
+          <div className="mt-12 flex justify-center">
             <button onClick={() => setPage('boards')}
               className="flex items-center gap-2 px-6 py-3 bg-ss-ink text-white text-sm font-semibold rounded-lg hover:bg-ss-dim transition-colors duration-200">
               Explore all boards <span>→</span>
