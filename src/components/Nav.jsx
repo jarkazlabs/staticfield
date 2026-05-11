@@ -1,17 +1,17 @@
-// Nav.jsx — Navigation mit echtem Logo
+// Nav.jsx — Logo nur als Wortmarke, mehr vertikaler Raum
 import Logo from './Logo.jsx'
 
 export default function Nav({ page, setPage }) {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-ss-border">
-      <div className="max-w-7xl mx-auto px-6 h-12 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
 
-        {/* Logo */}
+        {/* Logo — nur Wortmarke */}
         <button
           onClick={() => setPage('landing')}
           className="hover:opacity-70 transition-opacity duration-200 flex items-center"
         >
-          <Logo size="sm" variant="full" />
+          <Logo size="sm" variant="wordmark" />
         </button>
 
         {/* Nav Links */}

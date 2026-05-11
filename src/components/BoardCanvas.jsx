@@ -8,9 +8,9 @@ import EditCardModal from './EditCardModal.jsx'
 import { CARD_TINTS } from '../data/tints.js'
 
 function getTintStyle(card) {
-  if (!card.tint || card.tint === 'none') return {}
   const t = CARD_TINTS.find(t => t.id === card.tint)
-  if (!t) return {}
+  // Immer explizit weiß wenn kein Tint — verhindert Transparenz
+  if (!t || t.id === 'none') return { backgroundColor: '#ffffff', borderColor: '#e8e8e4' }
   return { backgroundColor: t.bg, borderColor: t.border }
 }
 

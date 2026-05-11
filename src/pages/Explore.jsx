@@ -3,7 +3,7 @@ import DiscoveryFeed from '../components/DiscoveryFeed.jsx'
 
 export default function Explore() {
   return (
-    <div className="min-h-screen pt-11 bg-ss-bg">
+    <div className="min-h-screen pt-14 bg-ss-bg">
       <div className="max-w-7xl mx-auto px-6">
         <div className="pt-14 pb-10 border-b border-ss-border">
           <div className="flex items-center gap-2 mb-3">

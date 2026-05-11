@@ -11,7 +11,7 @@ export default function BoardDetail({ boardId, boards, store, setPage }) {
   )
 
   return (
-    <div className="h-screen bg-ss-bg pt-11 flex flex-col overflow-hidden">
+    <div className="h-screen bg-ss-bg pt-14 flex flex-col overflow-hidden">
       <div className="px-6 py-4 border-b border-ss-border bg-white flex items-start justify-between flex-shrink-0">
         <div>
           <button onClick={() => setPage('boards')}
