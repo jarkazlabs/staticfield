@@ -58,3 +58,12 @@ body {
   from { transform: scaleY(0.35); opacity: 0.5; }
   to   { transform: scaleY(1);    opacity: 1; }
 }
+
+/* ─── Card Tints (Note + Chain Cards) ─── */
+.card-tint-none    { background-color: #ffffff; }
+.card-tint-paper   { background-color: #faf7f2; }
+.card-tint-sage    { background-color: #f2f5ee; }
+.card-tint-slate   { background-color: #eef1f5; }
+.card-tint-amber   { background-color: #faf4ea; }
+.card-tint-rose    { background-color: #f7f0f0; }
+.card-tint-charcoal { background-color: #f0f0ee; }

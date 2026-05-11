@@ -5,6 +5,14 @@
 import { useRef, useState, useCallback, useEffect } from 'react'
 import AddCardModal from './AddCardModal.jsx'
 import EditCardModal from './EditCardModal.jsx'
+import { CARD_TINTS } from '../data/tints.js'
+
+function getTintStyle(card) {
+  if (!card.tint || card.tint === 'none') return {}
+  const t = CARD_TINTS.find(t => t.id === card.tint)
+  if (!t) return {}
+  return { backgroundColor: t.bg, borderColor: t.border }
+}
 
 const CARD_W = 250
 
@@ -118,14 +126,17 @@ function CanvasCard({ card, connectingFrom, onDragStart, onConnectDotDown, onEdi
       }}
     >
       {/* Card */}
-      <div className={`
-        bg-white border rounded-lg p-3 flex flex-col gap-1
-        transition-all duration-200
-        ${connectingFrom && connectingFrom !== card.id
-          ? 'border-ss-accent shadow-md cursor-crosshair ring-2 ring-ss-accent/20'
-          : hovered ? 'shadow-lg border-ss-muted cursor-grab' : 'shadow-sm border-ss-border cursor-grab'
-        }
-      `}>
+      <div
+        className={`
+          border rounded-lg p-3 flex flex-col gap-1
+          transition-all duration-200
+          ${connectingFrom && connectingFrom !== card.id
+            ? 'border-ss-accent shadow-md cursor-crosshair ring-2 ring-ss-accent/20'
+            : hovered ? 'shadow-lg cursor-grab' : 'shadow-sm cursor-grab'
+          }
+        `}
+        style={getTintStyle(card)}
+      >
         {/* Card Header */}
         <div className="flex justify-between items-start mb-1">
           <TypeBadge type={card.type} />
