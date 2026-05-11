@@ -6,29 +6,25 @@
 html { scroll-behavior: smooth; }
 
 body {
-  background-color: #f5f2ed;
-  color: #1a1814;
-  /* Body-Text benutzt DM Sans, Headings Syne via font-sans */
-  font-family: 'DM Sans', system-ui, sans-serif;
+  background-color: #ffffff;
+  color: #111110;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Syne für alle font-sans Klassen (Tailwind überschreibt das automatisch) */
-.font-sans { font-family: 'Syne', 'DM Sans', system-ui, sans-serif; }
-.font-body  { font-family: 'DM Sans', system-ui, sans-serif; }
-.font-mono  { font-family: 'JetBrains Mono', monospace; }
+.font-mono { font-family: 'JetBrains Mono', monospace; }
 
 ::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-track { background: #f5f2ed; }
-::-webkit-scrollbar-thumb { background: #d4cfc7; border-radius: 2px; }
+::-webkit-scrollbar-track { background: #ffffff; }
+::-webkit-scrollbar-thumb { background: #d4d4ce; border-radius: 2px; }
 
 .card-hover {
   transition: box-shadow 0.25s ease, transform 0.2s ease, border-color 0.25s ease;
 }
 .card-hover:hover {
-  box-shadow: 0 4px 24px rgba(26,24,20,0.1);
+  box-shadow: 0 4px 24px rgba(17,17,16,0.1);
   transform: translateY(-2px);
-  border-color: #c8c3bb;
+  border-color: #c8c8c2;
 }
 
 .scroll-strip {
@@ -38,15 +34,8 @@ body {
 }
 .scroll-strip::-webkit-scrollbar { display: none; }
 
-.s1 { animation-delay: 0.05s; }
-.s2 { animation-delay: 0.10s; }
-.s3 { animation-delay: 0.15s; }
-.s4 { animation-delay: 0.20s; }
-.s5 { animation-delay: 0.25s; }
-.s6 { animation-delay: 0.30s; }
-
 .conn-line {
-  stroke: #c8c3bb;
+  stroke: #d4d4ce;
   stroke-width: 1;
   fill: none;
   stroke-dasharray: 4 6;

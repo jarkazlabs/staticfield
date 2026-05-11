@@ -5,22 +5,19 @@ export default {
     extend: {
       colors: {
         ss: {
-          bg:       '#f5f2ed',
-          surface:  '#efece6',
-          border:   '#e0dcd4',
-          muted:    '#d4cfc7',
-          ink:      '#1a1814',
-          dim:      '#6b6660',
-          ghost:    '#9e9890',
+          bg:       '#ffffff',
+          surface:  '#f7f7f5',
+          border:   '#e8e8e4',
+          muted:    '#d4d4ce',
+          ink:      '#111110',
+          dim:      '#6b6b68',
+          ghost:    '#9e9e9a',
           accent:   '#7a8c3c',
           accentBg: '#eef1e0',
         }
       },
       fontFamily: {
-        // Syne: geometrisch, modern, stark — für alle Headings
-        sans:  ['"Syne"', '"DM Sans"', 'system-ui', 'sans-serif'],
-        // DM Sans: neutral, lesbar — für Body-Text
-        body:  ['"DM Sans"', 'system-ui', 'sans-serif'],
+        sans:  ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
         mono:  ['"JetBrains Mono"', 'monospace'],
       },
       fontSize: {
