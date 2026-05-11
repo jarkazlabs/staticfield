@@ -36,7 +36,7 @@ export default function BoardDetail({ boardId, setPage }) {
           <div className="w-1.5 h-1.5 rounded-full bg-ss-accent" />
           <span className="font-mono text-2xs text-ss-ghost tracking-widest uppercase">Board</span>
         </div>
-        <h1 className="font-serif text-3xl text-ss-ink" style={{ fontWeight: 600 }}>{board.title}</h1>
+        <h1 className="font-sans text-3xl text-ss-ink" style={{ fontWeight: 600 }}>{board.title}</h1>
         <p className="text-sm text-ss-dim mt-1 max-w-md">{board.description}</p>
         <div className="flex gap-2 mt-2">
           {board.tags.map(t => (

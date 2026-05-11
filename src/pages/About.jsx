@@ -8,11 +8,11 @@ export default function About() {
           <div className="w-1.5 h-1.5 rounded-full bg-ss-accent" />
           <span className="font-mono text-2xs text-ss-ghost tracking-widest uppercase">About</span>
         </div>
-        <h1 className="font-serif text-5xl text-ss-ink mb-12 pb-10 border-b border-ss-border" style={{ fontWeight: 600 }}>
+        <h1 className="font-sans text-5xl text-ss-ink mb-12 pb-10 border-b border-ss-border" style={{ fontWeight: 600 }}>
           What is Signal Space?
         </h1>
 
-        <blockquote className="font-serif text-2xl text-ss-ink italic leading-snug mb-12 pl-5 border-l-2 border-ss-muted">
+        <blockquote className="font-sans text-2xl text-ss-ink italic leading-snug mb-12 pl-5 border-l-2 border-ss-muted">
           A calm visual workspace for sound, texture and signal culture.
         </blockquote>
 
@@ -45,7 +45,7 @@ export default function About() {
             <h2 className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-4">Aesthetic influences</h2>
             <div className="flex flex-wrap gap-x-5 gap-y-2">
               {['Boards of Canada','Tycho','Are.na','Cosmos','Milanote','Make Noise','Mutable Instruments','Telefunken'].map(r => (
-                <span key={r} className="font-serif text-base text-ss-dim italic">{r}</span>
+                <span key={r} className="font-sans text-base text-ss-dim italic">{r}</span>
               ))}
             </div>
           </div>

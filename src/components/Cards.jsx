@@ -60,7 +60,7 @@ export function ImageCard({ card }) {
       </div>
       <div className="p-3 flex flex-col gap-1.5">
         <div className="flex justify-between items-start gap-2">
-          <h3 className="font-serif text-base text-ss-ink leading-tight">{card.title}</h3>
+          <h3 className="font-sans text-base text-ss-ink leading-tight">{card.title}</h3>
           <TypeLabel type="image" />
         </div>
         {card.description && <p className="text-xs text-ss-dim leading-relaxed">{card.description}</p>}
@@ -96,7 +96,7 @@ export function AudioCard({ card }) {
       </div>
       <div className="p-3 flex flex-col gap-1.5">
         <div className="flex justify-between items-start gap-2">
-          <h3 className="font-serif text-base text-ss-ink leading-tight">{card.title}</h3>
+          <h3 className="font-sans text-base text-ss-ink leading-tight">{card.title}</h3>
           <TypeLabel type="audio" />
         </div>
         <span className="font-mono text-2xs text-ss-accent">{playing ? '▶ playing' : '▷ tap to play'}</span>
@@ -127,7 +127,7 @@ export function VideoCard({ card }) {
       </div>
       <div className="p-3 flex flex-col gap-1.5">
         <div className="flex justify-between items-start gap-2">
-          <h3 className="font-serif text-base text-ss-ink leading-tight">{card.title}</h3>
+          <h3 className="font-sans text-base text-ss-ink leading-tight">{card.title}</h3>
           <TypeLabel type="video" />
         </div>
         {card.description && <p className="text-xs text-ss-dim leading-relaxed">{card.description}</p>}
@@ -144,7 +144,7 @@ export function LinkCard({ card }) {
     <CardShell>
       <div className="p-3 flex flex-col gap-1.5">
         <div className="flex justify-between items-start gap-2">
-          <h3 className="font-serif text-base text-ss-ink leading-tight">{card.title}</h3>
+          <h3 className="font-sans text-base text-ss-ink leading-tight">{card.title}</h3>
           <TypeLabel type="link" />
         </div>
         {card.description && <p className="text-xs text-ss-dim leading-relaxed">{card.description}</p>}
@@ -167,7 +167,7 @@ export function NoteCard({ card }) {
     <CardShell className="border-l-2 border-l-ss-muted">
       <div className="p-4 flex flex-col gap-2">
         <TypeLabel type="note" />
-        <h3 className="font-serif text-xl text-ss-ink leading-snug italic mt-1">
+        <h3 className="font-sans text-xl text-ss-ink leading-snug mt-1">
           &ldquo;{card.title}&rdquo;
         </h3>
         {card.description && <p className="text-xs text-ss-dim leading-relaxed">{card.description}</p>}
@@ -185,7 +185,7 @@ export function GearCard({ card }) {
         <div className="flex justify-between items-start gap-2">
           <div>
             <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">{card.manufacturer || 'Hardware'}</p>
-            <h3 className="font-serif text-base text-ss-ink leading-tight">{card.title}</h3>
+            <h3 className="font-sans text-base text-ss-ink leading-tight">{card.title}</h3>
           </div>
           <TypeLabel type="gear" />
         </div>
@@ -209,7 +209,7 @@ export function SignalChainCard({ card }) {
     <CardShell>
       <div className="p-3 flex flex-col gap-2">
         <div className="flex justify-between items-start gap-2">
-          <h3 className="font-serif text-base text-ss-ink leading-tight">{card.title}</h3>
+          <h3 className="font-sans text-base text-ss-ink leading-tight">{card.title}</h3>
           <TypeLabel type="chain" />
         </div>
         {card.chain && (

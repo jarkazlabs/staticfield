@@ -27,7 +27,7 @@ export default function Explore() {
             <div className="w-1.5 h-1.5 rounded-full bg-ss-accent" />
             <span className="font-mono text-2xs text-ss-ghost tracking-widest uppercase">Discovery</span>
           </div>
-          <h1 className="font-serif text-5xl text-ss-ink" style={{ fontWeight: 600 }}>
+          <h1 className="font-sans text-5xl text-ss-ink" style={{ fontWeight: 600 }}>
             Explore Signals
           </h1>
           <p className="text-sm text-ss-dim mt-2 max-w-md">

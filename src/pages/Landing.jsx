@@ -88,7 +88,7 @@ export default function Landing({ setPage, setActiveBoardId }) {
 
         {/* Haupt-Headline — groß, Garamond, wie im Mockup */}
         <h1
-          className="font-serif text-6xl sm:text-7xl md:text-8xl text-ss-ink leading-none mb-8 animate-slide-up opacity-0"
+          className="font-sans text-6xl sm:text-7xl md:text-8xl text-ss-ink leading-none mb-8 animate-slide-up opacity-0"
           style={{ animationFillMode: 'forwards', animationDelay: '0.05s', fontWeight: 700 }}
         >
           Sound, texture<br />
@@ -112,13 +112,13 @@ export default function Landing({ setPage, setActiveBoardId }) {
         >
           <button
             onClick={() => setPage('explore')}
-            className="flex items-center gap-2 px-5 py-2.5 bg-ss-ink text-white text-sm font-medium rounded hover:bg-ss-dim transition-colors duration-200"
+            className="flex items-center gap-2 px-5 py-2.5 bg-ss-accent text-white text-sm font-semibold rounded hover:bg-[#667a30] transition-colors duration-200"
           >
             Explore signals <span>→</span>
           </button>
           <button
             onClick={() => setPage('boards')}
-            className="px-5 py-2.5 border border-ss-border text-ss-ink text-sm font-medium rounded hover:border-ss-muted hover:bg-ss-surface transition-all duration-200"
+            className="px-5 py-2.5 border-2 border-ss-ink text-ss-ink text-sm font-semibold rounded hover:bg-ss-ink hover:text-white transition-all duration-200"
           >
             Open demo board
           </button>
@@ -203,7 +203,7 @@ export default function Landing({ setPage, setActiveBoardId }) {
           <div className="mt-10 flex justify-center">
             <button
               onClick={() => setPage('boards')}
-              className="flex items-center gap-2 px-5 py-2.5 bg-ss-ink text-white text-sm font-medium rounded hover:bg-ss-dim transition-colors duration-200"
+              className="flex items-center gap-2 px-5 py-2.5 bg-ss-accent text-white text-sm font-semibold rounded hover:bg-[#667a30] transition-colors duration-200"
             >
               Explore all boards <span>→</span>
             </button>

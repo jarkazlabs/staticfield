@@ -17,8 +17,10 @@ export default {
         }
       },
       fontFamily: {
-        serif: ['"EB Garamond"', 'Georgia', 'serif'],
-        sans:  ['"DM Sans"', 'system-ui', 'sans-serif'],
+        // Syne: geometrisch, modern, stark — für alle Headings
+        sans:  ['"Syne"', '"DM Sans"', 'system-ui', 'sans-serif'],
+        // DM Sans: neutral, lesbar — für Body-Text
+        body:  ['"DM Sans"', 'system-ui', 'sans-serif'],
         mono:  ['"JetBrains Mono"', 'monospace'],
       },
       fontSize: {
