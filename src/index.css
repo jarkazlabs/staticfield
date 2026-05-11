@@ -52,3 +52,9 @@ body {
   0%,100% { transform: scaleY(0.3); opacity: 0.4; }
   50%      { transform: scaleY(1);   opacity: 0.85; }
 }
+
+/* ─── Waveform Pulse Animation (AudioPreview) ─── */
+@keyframes wavePulse {
+  from { transform: scaleY(0.35); opacity: 0.5; }
+  to   { transform: scaleY(1);    opacity: 1; }
+}
