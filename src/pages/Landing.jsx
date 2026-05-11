@@ -1,7 +1,8 @@
 // Landing.jsx
 
 import { curatedStrips, DEMO_BOARDS as boards } from '../data/signals.js'
-import BoardCollage from '../components/BoardCollage.jsx'
+import BoardCollage      from '../components/BoardCollage.jsx'
+import StripCollageCard  from '../components/StripCollageCard.jsx'
 
 function AvatarCluster({ count }) {
   const colors = ['#d4d4ce','#c8c8c2','#bfbfb8','#b5b5ae']
@@ -18,22 +19,6 @@ function AvatarCluster({ count }) {
       </div>
       {count && <span className="text-xs text-ss-dim">+{count}</span>}
     </div>
-  )
-}
-
-function StripCard({ item, onClick }) {
-  return (
-    <button onClick={onClick} className="flex-shrink-0 w-36 sm:w-44 group">
-      <div className="aspect-[3/4] rounded-lg overflow-hidden bg-ss-surface relative">
-        <img src={item.imageUrl} alt={item.label}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-3">
-          <p className="font-sans text-white text-xs font-semibold leading-tight">{item.label}</p>
-          <p className="font-mono text-white/60 text-2xs mt-0.5">{item.count} items</p>
-        </div>
-      </div>
-    </button>
   )
 }
 
@@ -92,22 +77,33 @@ export default function Landing({ setPage, setActiveBoardId }) {
 
       <div className="border-t border-ss-border" />
 
-      {/* ─── Curated Signals Strip ─── */}
-      <section className="py-14 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center gap-2 mb-8">
-            <div className="w-2 h-2 rounded-full bg-ss-accent" />
-            <span className="font-sans text-2xs text-ss-ghost tracking-widest uppercase">Curated Signals</span>
+      {/* ─── Curated Signals — zentriert, Collage-Strip ─── */}
+      <section className="py-16 px-6">
+        <div className="max-w-5xl mx-auto">
+
+          {/* Zentrierter Header */}
+          <div className="flex flex-col items-center text-center mb-10">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-2 h-2 rounded-full bg-ss-accent" />
+              <span className="font-sans text-2xs text-ss-ghost tracking-widest uppercase">Curated Signals</span>
+            </div>
+            <p className="text-xs text-ss-dim">A selection from the community.</p>
           </div>
-          <div className="scroll-strip flex gap-3 pb-2">
-            {curatedStrips.map((item, i) => (
-              <div key={item.id} className="animate-fade-in opacity-0"
-                style={{ animationFillMode: 'forwards', animationDelay: `${i * 0.07}s` }}>
-                <StripCard item={item} onClick={() => openBoard(item.id)} />
-              </div>
-            ))}
+
+          {/* Collage-Strip — horizontal scrollend, zentriert */}
+          <div className="flex justify-center">
+            <div className="scroll-strip flex gap-4 pb-2 max-w-full">
+              {curatedStrips.map((item, i) => (
+                <div key={item.id}
+                  className="animate-fade-in opacity-0"
+                  style={{ animationFillMode: 'forwards', animationDelay: `${i * 0.08}s` }}>
+                  <StripCollageCard item={item} onClick={() => openBoard(item.id)} />
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="mt-8 flex justify-center">
+
+          <div className="mt-10 flex justify-center">
             <button onClick={() => setPage('explore')}
               className="px-5 py-2.5 border border-ss-border text-sm text-ss-dim rounded-lg hover:border-ss-muted hover:text-ss-ink transition-all duration-200">
               View all signals
@@ -118,31 +114,24 @@ export default function Landing({ setPage, setActiveBoardId }) {
 
       <div className="border-t border-ss-border" />
 
-      {/* ─── Featured Boards — Collage-Ansicht, zentriert ─── */}
+      {/* ─── Featured Boards — Collage-Grid, zentriert ─── */}
       <section className="py-16 px-6">
         <div className="max-w-5xl mx-auto">
 
-          {/* Zentrierter Header */}
           <div className="flex flex-col items-center text-center mb-10">
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 mb-2">
               <div className="w-2 h-2 rounded-full bg-ss-accent" />
               <span className="font-sans text-2xs text-ss-ghost tracking-widest uppercase">Featured Boards</span>
             </div>
-            <p className="text-sm text-ss-dim max-w-sm">
-              Focused spaces for sound, texture and signal culture.
-            </p>
+            <p className="text-xs text-ss-dim">Focused spaces for sound, texture and signal culture.</p>
           </div>
 
-          {/* Collage Grid — 3 Spalten, max-w-5xl = ruhigere Breite */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {boards.map((board, i) => (
               <div key={board.id}
                 className="animate-slide-up opacity-0"
                 style={{ animationFillMode: 'forwards', animationDelay: `${i * 0.07}s` }}>
-                <BoardCollage
-                  board={board}
-                  onClick={() => openBoard(board.id)}
-                />
+                <BoardCollage board={board} onClick={() => openBoard(board.id)} />
               </div>
             ))}
           </div>
