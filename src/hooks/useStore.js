@@ -1,7 +1,7 @@
 // useStore.js — Zentraler State mit localStorage-Persistenz
 // Kein Redux, kein Zustand — nur React useState + localStorage
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { DEMO_BOARDS, DEMO_CARDS, DEMO_CONNECTIONS } from '../data/signals.js'
 
 const LS_BOARDS      = 'ss_boards'
@@ -163,29 +163,31 @@ export function useStore() {
     })
   }, [cards])
 
+  // Ref für aktuellen sections-State — vermeidet stale closure in moveSection
+  const sectionsRef = useRef(sections)
+  useEffect(() => { sectionsRef.current = sections }, [sections])
+
   // Section verschieben — lockedCards mitbewegen
   const moveSection = useCallback((id, x, y) => {
-    // Aktuelle Section direkt aus State lesen
-    setSections(allSections => {
-      const sec = allSections.find(s => s.id === id)
-      if (!sec) return allSections
+    const sec = sectionsRef.current.find(s => s.id === id)
+    if (!sec) return
 
-      const dx = x - sec.position.x
-      const dy = y - sec.position.y
+    const dx = x - sec.position.x
+    const dy = y - sec.position.y
 
-      // Wenn gesperrt und Cards vorhanden: Cards mitbewegen (außerhalb von setSections)
-      if (sec.locked && sec.lockedCardIds?.length > 0 && (dx !== 0 || dy !== 0)) {
-        setCards(prev => prev.map(card =>
-          sec.lockedCardIds.includes(card.id)
-            ? { ...card, position: { x: card.position.x + dx, y: card.position.y + dy } }
-            : card
-        ))
-      }
+    // 1. Section verschieben
+    setSections(prev => prev.map(s =>
+      s.id === id ? { ...s, position: { x, y } } : s
+    ))
 
-      return allSections.map(s =>
-        s.id === id ? { ...s, position: { x, y } } : s
-      )
-    })
+    // 2. Gruppierte Cards mitbewegen
+    if (sec.locked && sec.lockedCardIds?.length > 0 && (dx !== 0 || dy !== 0)) {
+      setCards(prev => prev.map(card =>
+        sec.lockedCardIds.includes(card.id)
+          ? { ...card, position: { x: card.position.x + dx, y: card.position.y + dy } }
+          : card
+      ))
+    }
   }, [setCards])
 
   return {

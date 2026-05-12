@@ -4,7 +4,6 @@ import { curatedStrips, DEMO_BOARDS as boards } from '../data/signals.js'
 import BoardCollage          from '../components/BoardCollage.jsx'
 import StripCollageCard      from '../components/StripCollageCard.jsx'
 import HeroPreview           from '../components/HeroPreview.jsx'
-import AtmosphericFragments  from '../components/AtmosphericFragments.jsx'
 
 function AvatarCluster() {
   const colors = ['#d4d4ce','#c8c8c2','#bfbfb8','#b5b5ae']
@@ -27,9 +26,6 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
       {/* ─── Hero ─── */}
       <section className="relative min-h-screen flex flex-col items-center justify-center px-6 pt-20 pb-32 overflow-hidden">
 
-        {/* Atmosphärische Fragmente */}
-        <AtmosphericFragments />
-
         <div className="relative z-10 max-w-4xl mx-auto text-center w-full">
 
           {/* Kleines Label */}
@@ -47,7 +43,13 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
             style={{ animationFillMode: 'forwards', animationDelay: '0.06s', fontWeight: 800 }}
           >
             Collect texture.<br />
-            <span className="text-ss-dim" style={{ fontWeight: 700 }}>Build worlds.</span><br />
+            <span style={{
+              fontWeight: 700,
+              background: 'linear-gradient(135deg, #b5737a 0%, #8a9fb5 50%, #4a8a8a 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}>Build worlds.</span><br />
             Archive atmosphere.
           </h1>
 
