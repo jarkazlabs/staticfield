@@ -17,7 +17,7 @@ const SECTION_TINTS = [
 const MIN_W = 180
 const MIN_H = 120
 
-export default function CanvasSection({ section, isActive, onActivate, onDragStart, onTouchStart, onUpdate, onDelete }) {
+export default function CanvasSection({ section, isActive, onActivate, onDragStart, onTouchStart, onUpdate, onDelete, onLockToggle }) {
   const [editingLabel, setEditingLabel] = useState(false)
   const [label,        setLabel]        = useState(section.label || 'Section')
   const [showTints,    setShowTints]    = useState(false)
@@ -32,7 +32,7 @@ export default function CanvasSection({ section, isActive, onActivate, onDragSta
 
   function handleTintPick(tintId) { onUpdate(section.id, { tint: tintId }); setShowTints(false) }
 
-  function handleLockToggle(e) { e.stopPropagation(); onUpdate(section.id, { locked: !locked }) }
+  function handleLockToggle(e) { e.stopPropagation(); onLockToggle(section.id) }
 
   // Resize mouse
   function handleResizeMouseDown(e) {
@@ -99,11 +99,16 @@ export default function CanvasSection({ section, isActive, onActivate, onDragSta
           </div>
         )}
 
-        {/* Größe-Anzeige */}
+        {/* Größe-Anzeige / Grouped-Anzeige */}
         <div className="absolute bottom-2 left-3 opacity-0 group-hover/section:opacity-100 transition-opacity pointer-events-none">
-          <span className="font-mono text-2xs text-ss-ghost/40">
-            {Math.round(section.width||340)} × {Math.round(section.height||220)}
-          </span>
+          {locked && section.lockedCardIds?.length > 0
+            ? <span className="font-mono text-2xs text-ss-accent/60">
+                {section.lockedCardIds.length} signal{section.lockedCardIds.length !== 1 ? 's' : ''} grouped
+              </span>
+            : <span className="font-mono text-2xs text-ss-ghost/40">
+                {Math.round(section.width||340)} × {Math.round(section.height||220)}
+              </span>
+          }
         </div>
       </div>
 

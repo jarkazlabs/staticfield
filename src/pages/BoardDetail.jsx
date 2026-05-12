@@ -44,6 +44,7 @@ export default function BoardDetail({ boardId, boards, store, setPage }) {
         updateSection={store.updateSection}
         moveSection={store.moveSection}
         deleteSection={store.deleteSection}
+        lockSection={store.lockSection}
       />
     </div>
   )

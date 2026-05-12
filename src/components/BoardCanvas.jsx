@@ -84,7 +84,19 @@ function CardContent({ card }) {
     case 'note':
       return <div className="flex flex-col gap-1.5">
         <p className="font-sans font-semibold text-sm text-ss-ink leading-snug">{card.title}</p>
-        {card.description && <p className="text-xs text-ss-dim leading-relaxed whitespace-pre-wrap">{card.description}</p>}
+        {card.description && (
+          <div className="relative">
+            <div
+              className="text-xs text-ss-dim leading-relaxed overflow-y-auto pr-0.5"
+              style={{ maxHeight: 120, scrollbarWidth: 'thin' }}
+            >
+              {card.description}
+            </div>
+            {/* Fade unten — zeigt an dass mehr Text da ist */}
+            <div className="absolute bottom-0 left-0 right-0 h-5 pointer-events-none rounded-b"
+              style={{ background: 'linear-gradient(to bottom, transparent, var(--card-bg, white))' }} />
+          </div>
+        )}
       </div>
 
     case 'link':
@@ -320,7 +332,7 @@ function CanvasCard({ card, connectingFrom, onDragStart, onTouchStart, onConnect
 
 // ─── Hauptkomponente ──────────────────────────────────────
 
-export default function BoardCanvas({ boardId, cards, connections, sections, addCard, updateCard, moveCard, deleteCard, addConnection, deleteConnection, addSection, updateSection, moveSection, deleteSection }) {
+export default function BoardCanvas({ boardId, cards, connections, sections, addCard, updateCard, moveCard, deleteCard, addConnection, deleteConnection, addSection, updateSection, moveSection, deleteSection, lockSection }) {
   const canvasRef        = useRef(null)
   const [dragging,       setDragging]       = useState(null)
   const [connectingFrom, setConnectingFrom] = useState(null)
@@ -502,6 +514,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
               onTouchStart={handleSectionTouchStart}
               onUpdate={updateSection}
               onDelete={deleteSection}
+              onLockToggle={lockSection}
             />
           ))}
 

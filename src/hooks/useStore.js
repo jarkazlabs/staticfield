@@ -121,18 +121,76 @@ export function useStore() {
       height: 220,
       tint: 'none',
       locked: false,
+      lockedCardIds: [], // Cards die beim Sperren eingefroren wurden
     }
     setSections(s => [...s, section])
   }
+
   const updateSection = (id, updates) => setSections(s => s.map(sec => sec.id === id ? { ...sec, ...updates } : sec))
-  const moveSection   = (id, x, y)    => setSections(s => s.map(sec => sec.id === id ? { ...sec, position: { x, y } } : sec))
   const deleteSection = (id)          => setSections(s => s.filter(sec => sec.id !== id))
   const getBoardSections = (boardId)  => sections.filter(s => s.boardId === boardId)
+
+  // Beim Sperren: Cards die sich innerhalb der Section befinden einsammeln
+  const lockSection = useCallback((sectionId) => {
+    setSections(allSections => {
+      const sec = allSections.find(s => s.id === sectionId)
+      if (!sec) return allSections
+      const newLocked = !sec.locked
+
+      let lockedCardIds = sec.lockedCardIds || []
+
+      if (newLocked) {
+        // Cards finden die sich innerhalb oder überschneidend mit der Section befinden
+        const boardCards = cards.filter(c => c.boardId === sec.boardId)
+        lockedCardIds = boardCards
+          .filter(card => {
+            const cw = card.width  || 250
+            const ch = card.height || 120
+            // Überschneidet sich die Card mit der Section?
+            return (
+              card.position.x < sec.position.x + sec.width  &&
+              card.position.x + cw > sec.position.x &&
+              card.position.y < sec.position.y + sec.height &&
+              card.position.y + ch > sec.position.y
+            )
+          })
+          .map(c => c.id)
+      }
+
+      return allSections.map(s =>
+        s.id === sectionId ? { ...s, locked: newLocked, lockedCardIds } : s
+      )
+    })
+  }, [cards])
+
+  // Section verschieben — lockedCards mitbewegen
+  const moveSection = useCallback((id, x, y) => {
+    setSections(allSections => {
+      const sec = allSections.find(s => s.id === id)
+      if (!sec) return allSections
+
+      const dx = x - sec.position.x
+      const dy = y - sec.position.y
+
+      // Wenn gesperrt: Cards mitbewegen
+      if (sec.locked && sec.lockedCardIds?.length > 0) {
+        setCards(allCards => allCards.map(card =>
+          sec.lockedCardIds.includes(card.id)
+            ? { ...card, position: { x: card.position.x + dx, y: card.position.y + dy } }
+            : card
+        ))
+      }
+
+      return allSections.map(s =>
+        s.id === id ? { ...s, position: { x, y } } : s
+      )
+    })
+  }, [])
 
   return {
     boards, cards, connections, sections,
     addBoard, deleteBoard,
-    addSection, updateSection, moveSection, deleteSection,
+    addSection, updateSection, moveSection, deleteSection, lockSection,
     addCard, updateCard, moveCard, deleteCard,
     addConnection, deleteConnection,
     getBoardCards, getBoardConnections, getBoardSections,
