@@ -193,24 +193,30 @@ function CanvasCard({ card, connectingFrom, onDragStart, onTouchStart, onConnect
         <CardContent card={card} />
       </div>
 
-      {/* 4 Verbindungspunkte */}
+      {/* 4 Verbindungspunkte — weich, mit + */}
       {(hovered || connectingFrom) && dots.map(dot => (
         <div
           key={dot.key}
           data-action="connect"
           className={`
-            absolute w-4 h-4 rounded-full border-2 border-white
+            absolute w-3.5 h-3.5 rounded-full border border-white
             flex items-center justify-center cursor-crosshair z-20
             transition-all duration-150
             ${connectingFrom === card.id
               ? 'bg-ss-accent scale-125 opacity-100'
-              : hovered ? 'bg-ss-ink opacity-100' : 'opacity-0 bg-ss-ink'
+              : hovered ? 'opacity-100 scale-100' : 'opacity-0'
             }
           `}
-          style={{ ...dot.style, boxShadow: '0 0 0 1px #e8e8e4' }}
+          style={{
+            ...dot.style,
+            backgroundColor: connectingFrom === card.id ? '#7a8c3c' : '#b0b0a8',
+            boxShadow: '0 0 0 1.5px white, 0 1px 3px rgba(0,0,0,0.15)',
+          }}
           onMouseDown={e => { e.stopPropagation(); e.preventDefault(); onConnectDotDown(card.id, dot.key) }}
           title="Verbindung ziehen"
-        />
+        >
+          <span style={{ fontSize: 8, color: 'white', lineHeight: 1, fontWeight: 700, marginTop: -0.5 }}>+</span>
+        </div>
       ))}
     </div>
   )
