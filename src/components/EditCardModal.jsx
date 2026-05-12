@@ -51,27 +51,6 @@ export default function EditCardModal({ card, onSave, onClose }) {
 
         <div className="p-5 flex flex-col gap-4">
 
-          {/* ─── Farb-Picker (nur Note + Chain) ─── */}
-          {canTint && (
-            <div>
-              <label className="text-xs font-semibold text-ss-dim uppercase tracking-wide block mb-2">Farbe</label>
-              <div className="flex items-center gap-2">
-                {CARD_TINTS.map(t => (
-                  <button
-                    key={t.id}
-                    onClick={() => setTint(t.id)}
-                    title={t.label}
-                    className={`
-                      w-6 h-6 rounded-full border-2 transition-all duration-150
-                      ${tint === t.id ? 'scale-125 border-ss-ink' : 'border-ss-border hover:border-ss-muted hover:scale-110'}
-                    `}
-                    style={{ backgroundColor: t.bg }}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Titel */}
           {card.type !== 'chain' && (
             <div>
@@ -88,8 +67,8 @@ export default function EditCardModal({ card, onSave, onClose }) {
                 {card.type === 'note' ? 'Text' : 'Notiz'}
               </label>
               <textarea value={description} onChange={e => setDesc(e.target.value)}
-                rows={card.type === 'note' ? 5 : 2}
-                className="w-full border border-ss-border rounded-lg px-3 py-2 text-sm text-ss-ink focus:outline-none focus:border-ss-ink transition-colors resize-none bg-white/60" />
+                rows={card.type === 'note' ? 8 : 2}
+                className="w-full border border-ss-border rounded-lg px-4 py-3 text-sm text-ss-ink focus:outline-none focus:border-ss-ink transition-colors resize-none leading-relaxed bg-white/60" />
             </div>
           )}
 
@@ -150,6 +129,21 @@ export default function EditCardModal({ card, onSave, onClose }) {
             className="w-full py-2.5 bg-ss-ink text-white text-sm font-semibold rounded-lg hover:bg-ss-dim transition-colors mt-1">
             Speichern
           </button>
+
+          {/* Farbe ganz unten */}
+          {canTint && (
+            <div className="pt-2 border-t border-ss-border/50">
+              <label className="text-xs font-semibold text-ss-dim uppercase tracking-wide block mb-2">Farbe</label>
+              <div className="flex items-center gap-2">
+                {CARD_TINTS.map(t => (
+                  <button key={t.id} onClick={() => setTint(t.id)} title={t.label}
+                    className={`w-6 h-6 rounded-full border-2 transition-all duration-150
+                      ${tint === t.id ? 'scale-125 border-ss-ink' : 'border-ss-border hover:border-ss-muted hover:scale-110'}`}
+                    style={{ backgroundColor: t.bg }} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

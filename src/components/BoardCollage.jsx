@@ -1,37 +1,58 @@
 // BoardCollage.jsx — Collage-artige Board-Vorschau
-// Mehrere überlagerte Bilder + Textfragmente + optionales Audio
+// Demo-Boards: Collage aus boardCollages-Daten
+// Eigene Boards: Collage aus den tatsächlich gespeicherten Image-Cards
 
 import { useState } from 'react'
 import AudioPreview from './AudioPreview.jsx'
 import { boardCollages } from '../data/discovery.js'
 
-// Zufällige aber deterministische Rotation/Position aus Board-ID
 function pseudoRandom(seed, i) {
   const x = Math.sin(seed * 9301 + i * 49297 + 233) * 10000
   return x - Math.floor(x)
 }
-
 function getBoardSeed(id) {
   return id.split('').reduce((a, c) => a + c.charCodeAt(0), 0)
 }
 
-export default function BoardCollage({ board, onClick, onDelete }) {
-  const [hovered, setHovered] = useState(false)
-  const collage = boardCollages[board.id]
-  const seed = getBoardSeed(board.id)
-
-  // Positions und Rotationen für die Bilder
-  const placements = [
+// Platzierungen für bis zu 3 Bilder
+function getPlacements(seed) {
+  return [
     { top: '8%',  left: '6%',  w: '55%', rot: pseudoRandom(seed, 0) * 4 - 2 },
     { top: '18%', left: '44%', w: '48%', rot: pseudoRandom(seed, 1) * 6 - 3 },
     { top: '54%', left: '12%', w: '38%', rot: pseudoRandom(seed, 2) * 5 - 2.5 },
   ]
-
-  // Note-Fragment Positionen
-  const notePlacements = [
-    { bottom: '14%', right: '8%', rot: pseudoRandom(seed, 3) * 6 - 3 },
-    { top: '8%',    left: '42%', rot: pseudoRandom(seed, 4) * 4 - 2 },
+}
+function getNotePlacements(seed) {
+  return [
+    { bottom: '14%', right: '8%',  rot: pseudoRandom(seed, 3) * 6 - 3 },
+    { top:    '8%',  left:  '42%', rot: pseudoRandom(seed, 4) * 4 - 2 },
   ]
+}
+
+export default function BoardCollage({ board, boardCards = [], onClick, onDelete }) {
+  const [hovered, setHovered] = useState(false)
+  const collage = boardCollages[board.id]
+  const seed = getBoardSeed(board.id)
+  const placements = getPlacements(seed)
+  const notePlacements = getNotePlacements(seed)
+
+  // Für eigene Boards: Bilder aus tatsächlichen Cards bauen
+  const userImages = boardCards
+    .filter(c => c.type === 'image' && c.imageUrl)
+    .slice(0, 3)
+    .map(c => c.imageUrl)
+
+  const userNotes = boardCards
+    .filter(c => c.type === 'note' && c.title)
+    .slice(0, 2)
+    .map(c => c.title.slice(0, 20))
+
+  // Entscheiden: Demo-Collage oder User-Collage
+  const images = collage ? collage.images : userImages
+  const notes  = collage ? collage.notes  : userNotes
+  const hasAudio  = collage?.hasAudio || false
+  const audioType = collage?.audioType || 'ambient'
+  const hasContent = images.length > 0
 
   return (
     <div
@@ -60,58 +81,42 @@ export default function BoardCollage({ board, onClick, onDelete }) {
           }}
         />
 
-        {collage ? (
+        {hasContent ? (
           <>
             {/* Overlappende Bilder */}
-            {collage.images.map((url, i) => (
-              <div
-                key={i}
-                className="absolute overflow-hidden rounded shadow-md"
+            {images.map((url, i) => (
+              <div key={i} className="absolute overflow-hidden rounded shadow-md"
                 style={{
-                  top: placements[i]?.top,
-                  left: placements[i]?.left,
-                  width: placements[i]?.w,
+                  top: placements[i]?.top, left: placements[i]?.left, width: placements[i]?.w,
                   aspectRatio: i === 0 ? '4/3' : '3/2',
-                  transform: `rotate(${placements[i]?.rot}deg)`,
+                  transform: hovered
+                    ? `rotate(${placements[i]?.rot * 0.4}deg) scale(1.02)`
+                    : `rotate(${placements[i]?.rot}deg)`,
                   zIndex: i + 1,
                   transition: 'transform 0.4s ease',
-                  ...(hovered ? { transform: `rotate(${placements[i]?.rot * 0.4}deg) scale(1.02)` } : {}),
-                }}
-              >
+                }}>
                 <img src={url} alt="" className="w-full h-full object-cover" />
               </div>
             ))}
-
-            {/* Text-Fragmente / Notes */}
-            {collage.notes?.map((note, i) => (
-              <div
-                key={i}
-                className="absolute bg-white/90 rounded px-2 py-1 shadow-sm"
-                style={{
-                  ...notePlacements[i],
-                  transform: `rotate(${notePlacements[i]?.rot}deg)`,
-                  zIndex: 10,
-                  maxWidth: 90,
-                }}
-              >
+            {/* Text-Fragmente */}
+            {notes?.map((note, i) => (
+              <div key={i} className="absolute bg-white/90 rounded px-2 py-1 shadow-sm"
+                style={{ ...notePlacements[i], transform: `rotate(${notePlacements[i]?.rot}deg)`, zIndex: 10, maxWidth: 90 }}>
                 <p className="font-mono text-2xs text-ss-dim leading-tight">{note}</p>
               </div>
             ))}
-
-            {/* Audio-Preview oben links */}
-            {collage.hasAudio && (
+            {/* Audio */}
+            {hasAudio && (
               <div className="absolute top-2.5 left-2.5 z-20" onClick={e => e.stopPropagation()}>
-                <AudioPreview audioType={collage.audioType} compact />
+                <AudioPreview audioType={audioType} compact />
               </div>
             )}
           </>
         ) : (
-          /* Fallback für Boards ohne Collage-Daten */
-          <div className="absolute inset-0 flex items-center justify-center">
-            {board.imageUrl
-              ? <img src={board.imageUrl} alt="" className="w-full h-full object-cover opacity-70" />
-              : <span className="text-ss-ghost text-3xl">◻</span>
-            }
+          /* Fallback: leeres Board — Schachbrett-Muster + Hinweis */
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+            <span className="text-ss-ghost/40 text-4xl">◻</span>
+            <span className="font-mono text-2xs text-ss-ghost/40">empty board</span>
           </div>
         )}
 

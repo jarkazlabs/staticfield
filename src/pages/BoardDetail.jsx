@@ -5,6 +5,7 @@ export default function BoardDetail({ boardId, boards, store, setPage }) {
   const board       = boards.find(b => b.id === boardId)
   const cards       = useMemo(() => store.getBoardCards(boardId),       [store, boardId])
   const connections = useMemo(() => store.getBoardConnections(boardId), [store, boardId])
+  const sections    = useMemo(() => store.getBoardSections(boardId),    [store, boardId])
 
   if (!board) return (
     <div className="min-h-screen flex items-center justify-center text-ss-dim text-sm">Board nicht gefunden.</div>
@@ -21,10 +22,10 @@ export default function BoardDetail({ boardId, boards, store, setPage }) {
           <h1 className="font-sans font-bold text-xl text-ss-ink">{board.title}</h1>
           {board.description && <p className="text-xs text-ss-dim mt-0.5 max-w-lg">{board.description}</p>}
         </div>
-        <div className="text-right text-2xs text-ss-ghost leading-relaxed font-mono mt-1">
+        <div className="text-right text-2xs text-ss-ghost leading-relaxed font-mono mt-1 hidden sm:block">
           <p>● Punkt an Card = verbinden</p>
           <p>● Linie anklicken = trennen</p>
-          <p>● ✏️ = bearbeiten</p>
+          <p>● ✏️ = bearbeiten · Doppelklick Section-Label = umbenennen</p>
         </div>
       </div>
 
@@ -32,12 +33,17 @@ export default function BoardDetail({ boardId, boards, store, setPage }) {
         boardId={boardId}
         cards={cards}
         connections={connections}
+        sections={sections}
         addCard={store.addCard}
         updateCard={store.updateCard}
         moveCard={store.moveCard}
         deleteCard={store.deleteCard}
         addConnection={store.addConnection}
         deleteConnection={store.deleteConnection}
+        addSection={store.addSection}
+        updateSection={store.updateSection}
+        moveSection={store.moveSection}
+        deleteSection={store.deleteSection}
       />
     </div>
   )

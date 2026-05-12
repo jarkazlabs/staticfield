@@ -2,7 +2,7 @@
 // variant: 'wordmark' (default) | 'full' (mit Dot-Akzent)
 
 export default function Logo({ size = 'md', variant = 'wordmark' }) {
-  const fontSizes = { sm: 17, md: 22, lg: 32 }
+  const fontSizes = { sm: 19, md: 24, lg: 35 }
   const fontSize = fontSizes[size] || fontSizes.md
 
   return (

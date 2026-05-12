@@ -38,6 +38,7 @@ export default function Boards({ boards, store, setPage, setActiveBoardId }) {
               style={{ animationFillMode: 'forwards', animationDelay: `${i * 0.06}s` }}>
               <BoardCollage
                 board={board}
+                boardCards={store.getBoardCards(board.id)}
                 onClick={() => openBoard(board.id)}
                 onDelete={store.deleteBoard}
               />

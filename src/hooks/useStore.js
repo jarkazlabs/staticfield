@@ -27,11 +27,13 @@ export function useStore() {
   const [boards,      setBoards]      = useState(() => load(LS_BOARDS,      DEMO_BOARDS))
   const [cards,       setCards]       = useState(() => load(LS_CARDS,       DEMO_CARDS))
   const [connections, setConnections] = useState(() => load(LS_CONNECTIONS, DEMO_CONNECTIONS))
+  const [sections,    setSections]    = useState(() => load('ss_sections', []))
 
   // Persistieren bei jeder Änderung
   useEffect(() => save(LS_BOARDS,      boards),      [boards])
   useEffect(() => save(LS_CARDS,       cards),       [cards])
   useEffect(() => save(LS_CONNECTIONS, connections), [connections])
+  useEffect(() => save('ss_sections',    sections),    [sections])
 
   // ─── Boards ───────────────────────────────────────────
   const addBoard = useCallback((title, description = '') => {
@@ -108,11 +110,33 @@ export function useStore() {
     return connections.filter(cn => ids.has(cn.from) && ids.has(cn.to))
   }, [cards, connections])
 
+  // ─── Sections ────────────────────────────────────────
+  const addSection = (boardId) => {
+    const section = {
+      id: 's' + Math.random().toString(36).slice(2,8),
+      boardId,
+      label: 'Section',
+      position: { x: 100 + Math.random() * 200, y: 100 + Math.random() * 100 },
+      width: 340,
+      height: 220,
+      tint: 'none',
+    }
+    setSections(s => [...s, section])
+  }
+  const updateSection = (id, updates) => setSections(s => s.map(sec => sec.id === id ? { ...sec, ...updates } : sec))
+  const moveSection   = (id, x, y)    => setSections(s => s.map(sec => sec.id === id ? { ...sec, position: { x, y } } : sec))
+  const deleteSection = (id)          => setSections(s => s.filter(sec => sec.id !== id))
+  const getBoardSections = (boardId)  => sections.filter(s => s.boardId === boardId)
+
   return {
-    boards, cards, connections,
+    boards, cards, connections, sections,
     addBoard, deleteBoard,
+    addSection, updateSection, moveSection, deleteSection,
     addCard, updateCard, moveCard, deleteCard,
     addConnection, deleteConnection,
-    getBoardCards, getBoardConnections,
+    getBoardCards, getBoardConnections, getBoardSections,
   }
 }
+
+// ─── Sections werden separat im localStorage gespeichert ───
+// Wird direkt in useStore integriert — siehe unten in BoardCanvas

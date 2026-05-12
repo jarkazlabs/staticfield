@@ -3,6 +3,7 @@
 import { curatedStrips, DEMO_BOARDS as boards } from '../data/signals.js'
 import BoardCollage      from '../components/BoardCollage.jsx'
 import StripCollageCard  from '../components/StripCollageCard.jsx'
+import HeroPreview       from '../components/HeroPreview.jsx'
 
 function AvatarCluster({ count }) {
   const colors = ['#d4d4ce','#c8c8c2','#bfbfb8','#b5b5ae']
@@ -22,7 +23,7 @@ function AvatarCluster({ count }) {
   )
 }
 
-export default function Landing({ setPage, setActiveBoardId }) {
+export default function Landing({ setPage, setActiveBoardId, store }) {
   function openBoard(id) {
     setActiveBoardId(id)
     setPage('board-detail')
@@ -53,6 +54,12 @@ export default function Landing({ setPage, setActiveBoardId }) {
           From field recordings to modular systems. From tape loops to digital dreams.<br />
           Build your universe.
         </p>
+
+        {/* Hero Board Preview */}
+        <div className="animate-fade-in opacity-0 mb-10"
+          style={{ animationFillMode: 'forwards', animationDelay: '0.18s' }}>
+          <HeroPreview />
+        </div>
 
         <div className="flex items-center justify-center gap-3 mb-12 animate-slide-up opacity-0"
           style={{ animationFillMode: 'forwards', animationDelay: '0.15s' }}>
@@ -131,7 +138,11 @@ export default function Landing({ setPage, setActiveBoardId }) {
               <div key={board.id}
                 className="animate-slide-up opacity-0"
                 style={{ animationFillMode: 'forwards', animationDelay: `${i * 0.07}s` }}>
-                <BoardCollage board={board} onClick={() => openBoard(board.id)} />
+                <BoardCollage
+                  board={board}
+                  boardCards={store ? store.getBoardCards(board.id) : []}
+                  onClick={() => openBoard(board.id)}
+                />
               </div>
             ))}
           </div>

@@ -16,7 +16,7 @@ export default function App() {
   function renderPage() {
     switch (page) {
       case 'landing':
-        return <Landing setPage={setPage} setActiveBoardId={setActiveBoardId} />
+        return <Landing setPage={setPage} setActiveBoardId={setActiveBoardId} store={store} />
       case 'explore':
         return <Explore />
       case 'boards':
@@ -26,7 +26,7 @@ export default function App() {
       case 'about':
         return <About />
       default:
-        return <Landing setPage={setPage} setActiveBoardId={setActiveBoardId} />
+        return <Landing setPage={setPage} setActiveBoardId={setActiveBoardId} store={store} />
     }
   }
 
