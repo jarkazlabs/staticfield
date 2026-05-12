@@ -368,8 +368,6 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
     const pos = canvasPos(e.clientX, e.clientY)
     if (dragging) {
       if (dragging.sectionId) {
-        const sec = sections.find(s => s.id === dragging.sectionId)
-        if (sec?.locked) return
         moveSection(dragging.sectionId, Math.max(0, pos.x - dragging.offX), Math.max(0, pos.y - dragging.offY))
       } else {
         moveCard(dragging.cardId, Math.max(0, pos.x - dragging.offX), Math.max(0, pos.y - dragging.offY))
