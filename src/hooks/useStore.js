@@ -165,6 +165,7 @@ export function useStore() {
 
   // Section verschieben — lockedCards mitbewegen
   const moveSection = useCallback((id, x, y) => {
+    // Aktuelle Section direkt aus State lesen
     setSections(allSections => {
       const sec = allSections.find(s => s.id === id)
       if (!sec) return allSections
@@ -172,9 +173,9 @@ export function useStore() {
       const dx = x - sec.position.x
       const dy = y - sec.position.y
 
-      // Wenn gesperrt: Cards mitbewegen
-      if (sec.locked && sec.lockedCardIds?.length > 0) {
-        setCards(allCards => allCards.map(card =>
+      // Wenn gesperrt und Cards vorhanden: Cards mitbewegen (außerhalb von setSections)
+      if (sec.locked && sec.lockedCardIds?.length > 0 && (dx !== 0 || dy !== 0)) {
+        setCards(prev => prev.map(card =>
           sec.lockedCardIds.includes(card.id)
             ? { ...card, position: { x: card.position.x + dx, y: card.position.y + dy } }
             : card
@@ -185,7 +186,7 @@ export function useStore() {
         s.id === id ? { ...s, position: { x, y } } : s
       )
     })
-  }, [])
+  }, [setCards])
 
   return {
     boards, cards, connections, sections,

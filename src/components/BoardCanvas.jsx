@@ -407,7 +407,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
   function handleSectionDragStart(e, sectionId) {
     e.preventDefault()
     const sec = sections.find(s => s.id === sectionId)
-    if (!sec || sec.locked) return
+    if (!sec) return
     const pos = canvasPos(e.clientX, e.clientY)
     setDragging({ sectionId, offX: pos.x - sec.position.x, offY: pos.y - sec.position.y })
   }
@@ -415,7 +415,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
   function handleSectionTouchStart(e, sectionId) {
     if (e.touches.length !== 1) return
     const sec = sections.find(s => s.id === sectionId)
-    if (!sec || sec.locked) return
+    if (!sec) return
     const pos = canvasPos(e.touches[0].clientX, e.touches[0].clientY)
     setDragging({ sectionId, offX: pos.x - sec.position.x, offY: pos.y - sec.position.y })
   }
