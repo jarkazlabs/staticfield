@@ -1,6 +1,6 @@
 // Logo.jsx — "graain" in Google Font "Prompt"
 export default function Logo({ size = 'md' }) {
-  const fontSizes = { sm: 20, md: 26, lg: 38 }
+  const fontSizes = { sm: 30, md: 26, lg: 38 }
   const fontSize = fontSizes[size] || fontSizes.md
 
   return (
