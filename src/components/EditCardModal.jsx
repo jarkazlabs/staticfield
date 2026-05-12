@@ -1,26 +1,37 @@
 // EditCardModal.jsx — Card bearbeiten + Farbe wählen (Note & Chain)
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { CARD_TINTS } from '../data/tints.js'
 
-const TINTABLE = ['note', 'chain'] // Nur diese Typen können eingefärbt werden
+const TINTABLE = ['note', 'chain']
 
 export default function EditCardModal({ card, onSave, onClose }) {
-  const [title,      setTitle]  = useState(card.title || '')
-  const [description, setDesc]  = useState(card.description || '')
-  const [url,        setUrl]    = useState(card.url || '')
-  const [tint,       setTint]   = useState(card.tint || 'none')
-  const [chainItems, setChain]  = useState(
+  const [title,       setTitle]  = useState(card.title || '')
+  const [description, setDesc]   = useState(card.description || '')
+  const [url,         setUrl]    = useState(card.url || '')
+  const [imageData,   setImage]  = useState(card.imageUrl || null)
+  const [tint,        setTint]   = useState(card.tint || 'none')
+  const [dragOver,    setDragOver] = useState(false)
+  const [chainItems,  setChain]  = useState(
     card.chain ? card.chain.filter(i => i !== '→') : ['', '']
   )
+  const fileRef = useRef()
+
+  function processFile(file) {
+    if (!file || !file.type.startsWith('image/')) return
+    const reader = new FileReader()
+    reader.onload = ev => setImage(ev.target.result)
+    reader.readAsDataURL(file)
+  }
 
   function addChainItem()       { setChain(c => [...c, '']) }
-  function removeChainItem(i)   { setChain(c => c.filter((_, idx) => idx !== i)) }
+  function removeChainItem(i)   { setChain(c => c.filter((_,idx) => idx !== i)) }
   function updateChainItem(i,v) { setChain(c => { const n=[...c]; n[i]=v; return n }) }
 
   function handleSave() {
     const updates = { title, description }
     if (TINTABLE.includes(card.type)) updates.tint = tint
     if (card.type === 'link' || card.type === 'instagram') updates.url = url
+    if (card.type === 'link' || card.type === 'image') updates.imageUrl = imageData
     if (card.type === 'chain') {
       const filled = chainItems.filter(Boolean)
       updates.chain = filled.reduce((acc, item, i) => {
@@ -78,6 +89,33 @@ export default function EditCardModal({ card, onSave, onClose }) {
               <label className="text-xs font-semibold text-ss-dim uppercase tracking-wide block mb-1.5">URL</label>
               <input value={url} onChange={e => setUrl(e.target.value)}
                 className="w-full border border-ss-border rounded-lg px-3 py-2 text-sm text-ss-ink font-mono focus:outline-none focus:border-ss-ink transition-colors bg-white/60" />
+            </div>
+          )}
+
+          {/* Bild für Link-Cards */}
+          {card.type === 'link' && (
+            <div>
+              <label className="text-xs font-semibold text-ss-dim uppercase tracking-wide block mb-1.5">
+                Vorschaubild <span className="font-normal text-ss-ghost normal-case">(optional)</span>
+              </label>
+              <input ref={fileRef} type="file" accept="image/*" onChange={e => processFile(e.target.files[0])} className="hidden" />
+              {imageData ? (
+                <div className="relative">
+                  <img src={imageData} alt="" className="w-full h-32 object-cover rounded-lg border border-ss-border" />
+                  <button onClick={() => setImage(null)}
+                    className="absolute top-2 right-2 bg-white rounded-full w-7 h-7 text-xs flex items-center justify-center border border-ss-border hover:bg-ss-surface shadow-sm">×</button>
+                </div>
+              ) : (
+                <div
+                  onDragOver={e=>{e.preventDefault();setDragOver(true)}}
+                  onDragLeave={e=>{e.preventDefault();setDragOver(false)}}
+                  onDrop={e=>{e.preventDefault();setDragOver(false);processFile(e.dataTransfer.files[0])}}
+                  onClick={() => fileRef.current.click()}
+                  className={`w-full h-20 border-2 border-dashed rounded-lg flex items-center justify-center gap-2 cursor-pointer transition-all ${dragOver ? 'border-ss-accent bg-ss-accentBg' : 'border-ss-border hover:border-ss-muted hover:bg-ss-surface'}`}>
+                  <span className="text-ss-ghost text-sm">🖼️</span>
+                  <span className="text-xs text-ss-ghost">Bild droppen oder klicken</span>
+                </div>
+              )}
             </div>
           )}
 

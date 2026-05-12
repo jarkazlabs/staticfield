@@ -111,15 +111,16 @@ export function useStore() {
   }, [cards, connections])
 
   // ─── Sections ────────────────────────────────────────
-  const addSection = (boardId) => {
+  const addSection = (boardId, position) => {
     const section = {
       id: 's' + Math.random().toString(36).slice(2,8),
       boardId,
       label: 'Section',
-      position: { x: 100 + Math.random() * 200, y: 100 + Math.random() * 100 },
+      position: position || { x: 100 + Math.random() * 200, y: 100 + Math.random() * 100 },
       width: 340,
       height: 220,
       tint: 'none',
+      locked: false,
     }
     setSections(s => [...s, section])
   }

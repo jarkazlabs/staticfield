@@ -52,7 +52,7 @@ export default function AddCardModal({ onAdd, onClose }) {
     const data = { title: title.trim(), description }
     if (type === 'note' || type === 'chain') data.tint = tint
     if (type === 'link' || type === 'instagram') data.url = url
-    if (type === 'image')  data.imageUrl = imageData
+    if (type === 'image' || type === 'link') data.imageUrl = imageData
     if (type === 'chain') {
       const filled = chain.filter(Boolean)
       data.chain = filled.reduce((acc, item, i) => {
@@ -161,9 +161,28 @@ export default function AddCardModal({ onAdd, onClose }) {
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-ss-dim uppercase tracking-wide block mb-1.5">Beschreibung</label>
-                  <textarea value={description} onChange={e => setDesc(e.target.value)} rows={3}
+                  <textarea value={description} onChange={e => setDesc(e.target.value)} rows={2}
                     placeholder="Optional..."
                     className="w-full border border-ss-border rounded-lg px-3 py-2 text-sm text-ss-ink focus:outline-none focus:border-ss-ink resize-none" />
+                </div>
+                {/* Optionales Vorschaubild */}
+                <div>
+                  <label className="text-xs font-semibold text-ss-dim uppercase tracking-wide block mb-1.5">Vorschaubild <span className="font-normal text-ss-ghost normal-case">(optional)</span></label>
+                  <input ref={fileRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                  {imageData ? (
+                    <div className="relative">
+                      <img src={imageData} alt="" className="w-full h-32 object-cover rounded-lg border border-ss-border" />
+                      <button onClick={() => setImage(null)}
+                        className="absolute top-2 right-2 bg-white rounded-full w-7 h-7 text-xs flex items-center justify-center border border-ss-border hover:bg-ss-surface shadow-sm">×</button>
+                    </div>
+                  ) : (
+                    <div onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}
+                      onClick={() => fileRef.current.click()}
+                      className={`w-full h-20 border-2 border-dashed rounded-lg flex items-center justify-center gap-2 cursor-pointer transition-all duration-200 ${dragOver ? 'border-ss-accent bg-ss-accentBg' : 'border-ss-border hover:border-ss-muted hover:bg-ss-surface'}`}>
+                      <span className="text-ss-ghost text-sm">🖼️</span>
+                      <span className="text-xs text-ss-ghost">Bild droppen oder klicken</span>
+                    </div>
+                  )}
                 </div>
               </>
             )}
