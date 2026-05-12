@@ -1,16 +1,18 @@
-// Landing.jsx — Emotionalisierter Hero + kuratierte Sprache
+// Landing.jsx — Mockup-style Hero: linksbündige Headline, Cards links+rechts
 
 import { curatedStrips, DEMO_BOARDS as boards } from '../data/signals.js'
-import BoardCollage          from '../components/BoardCollage.jsx'
-import StripCollageCard      from '../components/StripCollageCard.jsx'
-import HeroPreview           from '../components/HeroPreview.jsx'
+import BoardCollage      from '../components/BoardCollage.jsx'
+import StripCollageCard  from '../components/StripCollageCard.jsx'
+import HeroPreview       from '../components/HeroPreview.jsx'
+
+const BRANDS = ['SUPERBOOTH', 'Mutable Instruments', 'TPTOP audio', 'intellijel designs', 'FREQUENCIES']
 
 function AvatarCluster() {
-  const colors = ['#d4d4ce','#c8c8c2','#bfbfb8','#b5b5ae']
+  const colors = ['#c8b89a','#b8a88a','#d4c4b0','#bfaf9c']
   return (
-    <div className="flex -space-x-1.5">
+    <div className="flex -space-x-2">
       {colors.map((c, i) => (
-        <div key={i} className="w-5 h-5 rounded-full border-2 border-white"
+        <div key={i} className="w-7 h-7 rounded-full border-2 border-ss-bg"
           style={{ backgroundColor: c }} />
       ))}
     </div>
@@ -21,93 +23,106 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
   function openBoard(id) { setActiveBoardId(id); setPage('board-detail') }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen" style={{ backgroundColor: '#f5f2ed' }}>
 
-      {/* ─── Hero ─── */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center px-6 pt-20 pb-32 overflow-hidden">
+      {/* ─── HERO ─────────────────────────────────────────── */}
+      <section className="relative pt-14 overflow-hidden" style={{ minHeight: '100vh', backgroundColor: '#f5f2ed' }}>
 
-        <div className="relative z-10 max-w-4xl mx-auto text-center w-full">
+        {/* Hero Content + Cards — full width, cards bleed left/right */}
+        <div className="relative max-w-7xl mx-auto px-6 pt-16 pb-8">
+          <div className="relative" style={{ minHeight: 640 }}>
 
-          {/* Kleines Label */}
-          <div className="flex items-center justify-center gap-2 mb-10 animate-fade-in opacity-0"
-            style={{ animationFillMode: 'forwards' }}>
-            <div className="w-1.5 h-1.5 rounded-full bg-ss-accent" />
-            <span className="font-sans text-2xs text-ss-ghost tracking-widest uppercase">
-              signal culture archive
-            </span>
-          </div>
+            {/* Cards — absolute positioned, behind and around headline */}
+            <div className="absolute inset-0 pointer-events-none">
+              <HeroPreview />
+            </div>
 
-          {/* Haupt-Headline — mehr Raum, drei Zeilen */}
-          <h1
-            className="font-sans text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-ss-ink leading-[1.05] mb-10 animate-slide-up opacity-0"
-            style={{ animationFillMode: 'forwards', animationDelay: '0.06s', fontWeight: 800 }}
-          >
-            Collect texture.<br />
-            <span style={{
-              fontWeight: 700,
-              background: 'linear-gradient(135deg, #b5737a 0%, #8a9fb5 50%, #4a8a8a 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}>Build worlds.</span><br />
-            Archive atmosphere.
-          </h1>
+            {/* Headline — centered with margin to avoid cards */}
+            <div className="relative z-10 flex flex-col items-center justify-center text-center"
+              style={{ paddingTop: 80, paddingBottom: 60 }}>
 
-          {/* Subtext — ruhiger, editorischer */}
-          <p
-            className="text-sm sm:text-base text-ss-dim max-w-sm mx-auto leading-relaxed mb-14 animate-slide-up opacity-0"
-            style={{ animationFillMode: 'forwards', animationDelay: '0.12s' }}
-          >
-            A calm visual space for sound, texture<br className="hidden sm:block" /> and creative drift.
-          </p>
+              {/* Label */}
+              <div className="flex items-center gap-2 mb-8">
+                <div className="w-1.5 h-1.5 rounded-full bg-ss-accent" />
+                <span className="font-sans text-2xs text-ss-ghost tracking-widest uppercase">Signal Culture Archive</span>
+              </div>
 
-          {/* CTAs */}
-          <div
-            className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-16 animate-slide-up opacity-0"
-            style={{ animationFillMode: 'forwards', animationDelay: '0.18s' }}
-          >
-            <button onClick={() => setPage('boards')}
-              className="flex items-center gap-2 px-7 py-3 bg-ss-ink text-white text-sm font-medium rounded-lg hover:bg-ss-dim transition-colors duration-200 hover-lift">
-              Explore boards
-            </button>
-            <button onClick={() => setPage('explore')}
-              className="flex items-center gap-2 px-7 py-3 border border-ss-border text-ss-dim text-sm font-medium rounded-lg hover:border-ss-ink hover:text-ss-ink transition-all duration-200 hover-lift">
-              Open archive
-            </button>
-          </div>
+              {/* Big headline */}
+              <h1 className="font-sans leading-[1.0] mb-6 animate-slide-up opacity-0"
+                style={{ fontWeight: 800, fontSize: 'clamp(3rem, 7vw, 6.5rem)',
+                  animationFillMode: 'forwards', animationDelay: '0.05s' }}>
+                A visual space<br/>
+                for sound,<br/>
+                <span style={{
+                  background: 'linear-gradient(135deg, #b5737a 0%, #8a9fb5 50%, #4a8a8a 100%)',
+                  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+                }}>signals</span> and<br/>
+                creative drift.
+              </h1>
 
-          {/* Social proof — kleiner, dezenter */}
-          <div
-            className="flex items-center justify-center gap-2.5 animate-fade-in opacity-0"
-            style={{ animationFillMode: 'forwards', animationDelay: '0.24s' }}
-          >
-            <AvatarCluster />
-            <span className="text-xs text-ss-ghost/70">
-              2,847 creators collecting
-            </span>
+              {/* Subtext */}
+              <p className="text-base text-ss-dim max-w-sm leading-relaxed mb-8 animate-slide-up opacity-0"
+                style={{ animationFillMode: 'forwards', animationDelay: '0.12s' }}>
+                Build evolving archives for sound and ideas.
+              </p>
+
+              {/* CTAs */}
+              <div className="flex items-center gap-3 mb-8 animate-slide-up opacity-0"
+                style={{ animationFillMode: 'forwards', animationDelay: '0.18s' }}>
+                <button onClick={() => setPage('boards')}
+                  className="flex items-center gap-2 px-6 py-3 bg-ss-ink text-white text-sm font-semibold rounded-lg hover:bg-ss-dim transition-colors hover-lift">
+                  Start collecting
+                </button>
+                <button onClick={() => setPage('explore')}
+                  className="px-6 py-3 border border-ss-border text-ss-ink text-sm font-semibold rounded-lg hover:border-ss-muted hover:bg-white transition-all hover-lift">
+                  Explore boards
+                </button>
+              </div>
+
+              {/* Social proof */}
+              <div className="flex items-center gap-3 animate-fade-in opacity-0"
+                style={{ animationFillMode: 'forwards', animationDelay: '0.24s' }}>
+                <AvatarCluster />
+                <div className="text-xs text-ss-dim leading-tight">
+                  <span className="font-medium text-ss-ink">2,341 boards</span> · <span className="font-medium text-ss-ink">8,657 members</span><br/>
+                  <span className="text-ss-ghost/70">Join creatives building signal worlds.</span>
+                </div>
+              </div>
+
+            </div>
           </div>
         </div>
 
-        {/* Board Preview — unter dem Text, leicht nach unten versetzt */}
-        <div
-          className="relative z-10 w-full max-w-5xl mx-auto mt-20 animate-fade-in opacity-0"
-          style={{ animationFillMode: 'forwards', animationDelay: '0.3s' }}
-        >
-          <HeroPreview />
+        {/* Scroll to explore */}
+        <div className="flex flex-col items-center gap-2 pb-10 animate-fade-in opacity-0"
+          style={{ animationFillMode: 'forwards', animationDelay: '0.5s' }}>
+          <span className="font-sans text-xs text-ss-ghost/60 tracking-widest uppercase">Scroll to explore</span>
+          <div className="w-px h-5 bg-ss-border animate-pulse"/>
+          <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+            <path d="M1 1L6 6L11 1" stroke="#9e9890" strokeWidth="1.5" strokeLinecap="round"/>
+          </svg>
         </div>
 
-        {/* Soft Gradient nach unten */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
-          style={{ background: 'linear-gradient(to bottom, transparent, white)' }} />
+        {/* Brand leiste */}
+        <div className="border-t border-ss-border/50 py-6">
+          <div className="max-w-7xl mx-auto px-6">
+            <p className="text-2xs text-ss-ghost/40 uppercase tracking-widest text-center mb-5 font-sans">
+              Trusted by creatives and studios
+            </p>
+            <div className="flex items-center justify-center gap-10 flex-wrap">
+              {BRANDS.map(b => (
+                <span key={b} className="font-sans text-sm font-semibold text-ss-dim/40 tracking-tight">{b}</span>
+              ))}
+            </div>
+          </div>
+        </div>
       </section>
 
-      {/* Trennlinie */}
       <div className="border-t border-ss-border" />
 
       {/* ─── Curated Signals ─── */}
-      <section className="py-20 px-6">
+      <section className="py-20 px-6" style={{ backgroundColor: '#f5f2ed' }}>
         <div className="max-w-5xl mx-auto">
-
           <div className="flex flex-col items-center text-center mb-12">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-1.5 h-1.5 rounded-full bg-ss-accent" />
@@ -115,7 +130,6 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
             </div>
             <p className="text-xs text-ss-ghost/70 max-w-xs">Fragments from the archive. Updated continuously.</p>
           </div>
-
           <div className="flex justify-center">
             <div className="scroll-strip flex gap-4 pb-2 max-w-full">
               {curatedStrips.map((item, i) => (
@@ -126,10 +140,9 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
               ))}
             </div>
           </div>
-
           <div className="mt-10 flex justify-center">
             <button onClick={() => setPage('explore')}
-              className="text-xs text-ss-ghost hover:text-ss-dim font-mono tracking-wide transition-colors duration-200 flex items-center gap-1.5">
+              className="text-xs text-ss-ghost hover:text-ss-dim font-mono tracking-wide transition-colors flex items-center gap-1.5">
               continue drifting →
             </button>
           </div>
@@ -139,9 +152,8 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
       <div className="border-t border-ss-border" />
 
       {/* ─── Featured Boards ─── */}
-      <section className="py-20 px-6">
+      <section className="py-20 px-6" style={{ backgroundColor: '#f5f2ed' }}>
         <div className="max-w-5xl mx-auto">
-
           <div className="flex flex-col items-center text-center mb-12">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-1.5 h-1.5 rounded-full bg-ss-accent" />
@@ -149,23 +161,19 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
             </div>
             <p className="text-xs text-ss-ghost/70 max-w-xs">Focused spaces for sonic territories and signal studies.</p>
           </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {boards.map((board, i) => (
               <div key={board.id} className="animate-slide-up opacity-0"
                 style={{ animationFillMode: 'forwards', animationDelay: `${i * 0.07}s` }}>
-                <BoardCollage
-                  board={board}
+                <BoardCollage board={board}
                   boardCards={store ? store.getBoardCards(board.id) : []}
-                  onClick={() => openBoard(board.id)}
-                />
+                  onClick={() => openBoard(board.id)} />
               </div>
             ))}
           </div>
-
           <div className="mt-14 flex justify-center">
             <button onClick={() => setPage('boards')}
-              className="flex items-center gap-2 px-7 py-3 bg-ss-ink text-white text-sm font-medium rounded-lg hover:bg-ss-dim transition-colors duration-200 hover-lift">
+              className="flex items-center gap-2 px-7 py-3 bg-ss-ink text-white text-sm font-medium rounded-lg hover:bg-ss-dim transition-colors hover-lift">
               Enter all archives
             </button>
           </div>
@@ -173,7 +181,7 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
       </section>
 
       {/* ─── Footer ─── */}
-      <footer className="border-t border-ss-border px-6 py-8">
+      <footer className="border-t border-ss-border px-6 py-8" style={{ backgroundColor: '#f5f2ed' }}>
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div>
             <p className="text-xs text-ss-ghost/60">© graain 2024</p>

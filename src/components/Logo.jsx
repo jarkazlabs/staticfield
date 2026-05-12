@@ -1,13 +1,13 @@
 // Logo.jsx — "graain" in Google Font "Prompt"
 export default function Logo({ size = 'md' }) {
-  const fontSizes = { sm: 25, md: 25, lg: 38 }
+  const fontSizes = { sm: 30, md: 26, lg: 38 }
   const fontSize = fontSizes[size] || fontSizes.md
 
   return (
     <span style={{
       fontFamily: '"Prompt", system-ui, sans-serif',
       fontSize,
-      fontWeight: 400,
+      fontWeight: 500,
       fontStyle: 'italic',
       letterSpacing: '-0.02em',
       color: '#111110',
