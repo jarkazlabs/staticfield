@@ -1,108 +1,123 @@
-// Landing.jsx
+// Landing.jsx — Emotionalisierter Hero + kuratierte Sprache
 
 import { curatedStrips, DEMO_BOARDS as boards } from '../data/signals.js'
-import BoardCollage      from '../components/BoardCollage.jsx'
-import StripCollageCard  from '../components/StripCollageCard.jsx'
-import HeroPreview       from '../components/HeroPreview.jsx'
+import BoardCollage          from '../components/BoardCollage.jsx'
+import StripCollageCard      from '../components/StripCollageCard.jsx'
+import HeroPreview           from '../components/HeroPreview.jsx'
+import AtmosphericFragments  from '../components/AtmosphericFragments.jsx'
 
-function AvatarCluster({ count }) {
+function AvatarCluster() {
   const colors = ['#d4d4ce','#c8c8c2','#bfbfb8','#b5b5ae']
-  const initials = ['A','B','C','D']
   return (
-    <div className="flex items-center gap-2">
-      <div className="flex -space-x-1.5">
-        {initials.map((l, i) => (
-          <div key={i} className="w-6 h-6 rounded-full border-2 border-white flex items-center justify-center"
-            style={{ backgroundColor: colors[i] }}>
-            <span className="text-ss-ink text-2xs font-medium">{l}</span>
-          </div>
-        ))}
-      </div>
-      {count && <span className="text-xs text-ss-dim">+{count}</span>}
+    <div className="flex -space-x-1.5">
+      {colors.map((c, i) => (
+        <div key={i} className="w-5 h-5 rounded-full border-2 border-white"
+          style={{ backgroundColor: c }} />
+      ))}
     </div>
   )
 }
 
 export default function Landing({ setPage, setActiveBoardId, store }) {
-  function openBoard(id) {
-    setActiveBoardId(id)
-    setPage('board-detail')
-  }
+  function openBoard(id) { setActiveBoardId(id); setPage('board-detail') }
 
   return (
     <div className="min-h-screen bg-white">
 
       {/* ─── Hero ─── */}
-      <section className="pt-28 pb-20 px-6 max-w-4xl mx-auto text-center">
-        <div className="flex items-center justify-center gap-2 mb-8 animate-fade-in opacity-0"
-          style={{ animationFillMode: 'forwards' }}>
-          <div className="w-2 h-2 rounded-full bg-ss-accent" />
-          <span className="font-sans text-2xs text-ss-ghost tracking-widest uppercase">
-            A visual workspace for
-          </span>
+      <section className="relative min-h-screen flex flex-col items-center justify-center px-6 pt-20 pb-32 overflow-hidden">
+
+        {/* Atmosphärische Fragmente */}
+        <AtmosphericFragments />
+
+        <div className="relative z-10 max-w-4xl mx-auto text-center w-full">
+
+          {/* Kleines Label */}
+          <div className="flex items-center justify-center gap-2 mb-10 animate-fade-in opacity-0"
+            style={{ animationFillMode: 'forwards' }}>
+            <div className="w-1.5 h-1.5 rounded-full bg-ss-accent" />
+            <span className="font-sans text-2xs text-ss-ghost tracking-widest uppercase">
+              signal culture archive
+            </span>
+          </div>
+
+          {/* Haupt-Headline — mehr Raum, drei Zeilen */}
+          <h1
+            className="font-sans text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-ss-ink leading-[1.05] mb-10 animate-slide-up opacity-0"
+            style={{ animationFillMode: 'forwards', animationDelay: '0.06s', fontWeight: 800 }}
+          >
+            Collect texture.<br />
+            <span className="text-ss-dim" style={{ fontWeight: 700 }}>Build worlds.</span><br />
+            Archive atmosphere.
+          </h1>
+
+          {/* Subtext — ruhiger, editorischer */}
+          <p
+            className="text-sm sm:text-base text-ss-dim max-w-sm mx-auto leading-relaxed mb-14 animate-slide-up opacity-0"
+            style={{ animationFillMode: 'forwards', animationDelay: '0.12s' }}
+          >
+            A calm visual space for sound, texture<br className="hidden sm:block" /> and creative drift.
+          </p>
+
+          {/* CTAs */}
+          <div
+            className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-16 animate-slide-up opacity-0"
+            style={{ animationFillMode: 'forwards', animationDelay: '0.18s' }}
+          >
+            <button onClick={() => setPage('boards')}
+              className="flex items-center gap-2 px-7 py-3 bg-ss-ink text-white text-sm font-medium rounded-lg hover:bg-ss-dim transition-colors duration-200 hover-lift">
+              Explore boards
+            </button>
+            <button onClick={() => setPage('explore')}
+              className="flex items-center gap-2 px-7 py-3 border border-ss-border text-ss-dim text-sm font-medium rounded-lg hover:border-ss-ink hover:text-ss-ink transition-all duration-200 hover-lift">
+              Open archive
+            </button>
+          </div>
+
+          {/* Social proof — kleiner, dezenter */}
+          <div
+            className="flex items-center justify-center gap-2.5 animate-fade-in opacity-0"
+            style={{ animationFillMode: 'forwards', animationDelay: '0.24s' }}
+          >
+            <AvatarCluster />
+            <span className="text-xs text-ss-ghost/70">
+              2,847 creators collecting
+            </span>
+          </div>
         </div>
 
-        <h1 className="font-sans text-6xl sm:text-7xl md:text-8xl text-ss-ink leading-none mb-8 animate-slide-up opacity-0"
-          style={{ animationFillMode: 'forwards', animationDelay: '0.05s', fontWeight: 800 }}>
-          Sound, texture<br />
-          and signal culture.
-        </h1>
-
-        <p className="text-sm sm:text-base text-ss-dim max-w-md mx-auto leading-relaxed mb-10 animate-slide-up opacity-0"
-          style={{ animationFillMode: 'forwards', animationDelay: '0.1s' }}>
-          Collect, connect and explore the things that inspire your sound.<br />
-          From field recordings to modular systems. From tape loops to digital dreams.<br />
-          Build your universe.
-        </p>
-
-        {/* Hero Board Preview */}
-        <div className="animate-fade-in opacity-0 mb-10"
-          style={{ animationFillMode: 'forwards', animationDelay: '0.18s' }}>
+        {/* Board Preview — unter dem Text, leicht nach unten versetzt */}
+        <div
+          className="relative z-10 w-full max-w-5xl mx-auto mt-20 animate-fade-in opacity-0"
+          style={{ animationFillMode: 'forwards', animationDelay: '0.3s' }}
+        >
           <HeroPreview />
         </div>
 
-        <div className="flex items-center justify-center gap-3 mb-12 animate-slide-up opacity-0"
-          style={{ animationFillMode: 'forwards', animationDelay: '0.15s' }}>
-          <button onClick={() => setPage('explore')}
-            className="flex items-center gap-2 px-6 py-3 bg-ss-ink text-white text-sm font-semibold rounded-lg hover:bg-ss-dim transition-colors duration-200">
-            Explore signals <span>→</span>
-          </button>
-          <button onClick={() => setPage('boards')}
-            className="px-6 py-3 border-2 border-ss-ink text-ss-ink text-sm font-semibold rounded-lg hover:bg-ss-ink hover:text-white transition-all duration-200">
-            Open demo board
-          </button>
-        </div>
-
-        <div className="flex items-center justify-center gap-3 animate-fade-in opacity-0"
-          style={{ animationFillMode: 'forwards', animationDelay: '0.2s' }}>
-          <AvatarCluster />
-          <span className="text-xs text-ss-dim">
-            Join 2,847 creators exploring sound and signal culture.
-          </span>
-        </div>
+        {/* Soft Gradient nach unten */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
+          style={{ background: 'linear-gradient(to bottom, transparent, white)' }} />
       </section>
 
+      {/* Trennlinie */}
       <div className="border-t border-ss-border" />
 
-      {/* ─── Curated Signals — zentriert, Collage-Strip ─── */}
-      <section className="py-16 px-6">
+      {/* ─── Curated Signals ─── */}
+      <section className="py-20 px-6">
         <div className="max-w-5xl mx-auto">
 
-          {/* Zentrierter Header */}
-          <div className="flex flex-col items-center text-center mb-10">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-2 h-2 rounded-full bg-ss-accent" />
+          <div className="flex flex-col items-center text-center mb-12">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-1.5 h-1.5 rounded-full bg-ss-accent" />
               <span className="font-sans text-2xs text-ss-ghost tracking-widest uppercase">Curated Signals</span>
             </div>
-            <p className="text-xs text-ss-dim">A selection from the community.</p>
+            <p className="text-xs text-ss-ghost/70 max-w-xs">Fragments from the archive. Updated continuously.</p>
           </div>
 
-          {/* Collage-Strip — horizontal scrollend, zentriert */}
           <div className="flex justify-center">
             <div className="scroll-strip flex gap-4 pb-2 max-w-full">
               {curatedStrips.map((item, i) => (
-                <div key={item.id}
-                  className="animate-fade-in opacity-0"
+                <div key={item.id} className="animate-fade-in opacity-0"
                   style={{ animationFillMode: 'forwards', animationDelay: `${i * 0.08}s` }}>
                   <StripCollageCard item={item} onClick={() => openBoard(item.id)} />
                 </div>
@@ -112,8 +127,8 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
 
           <div className="mt-10 flex justify-center">
             <button onClick={() => setPage('explore')}
-              className="px-5 py-2.5 border border-ss-border text-sm text-ss-dim rounded-lg hover:border-ss-muted hover:text-ss-ink transition-all duration-200">
-              View all signals
+              className="text-xs text-ss-ghost hover:text-ss-dim font-mono tracking-wide transition-colors duration-200 flex items-center gap-1.5">
+              continue drifting →
             </button>
           </div>
         </div>
@@ -121,22 +136,21 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
 
       <div className="border-t border-ss-border" />
 
-      {/* ─── Featured Boards — Collage-Grid, zentriert ─── */}
-      <section className="py-16 px-6">
+      {/* ─── Featured Boards ─── */}
+      <section className="py-20 px-6">
         <div className="max-w-5xl mx-auto">
 
-          <div className="flex flex-col items-center text-center mb-10">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-2 h-2 rounded-full bg-ss-accent" />
-              <span className="font-sans text-2xs text-ss-ghost tracking-widest uppercase">Featured Boards</span>
+          <div className="flex flex-col items-center text-center mb-12">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-1.5 h-1.5 rounded-full bg-ss-accent" />
+              <span className="font-sans text-2xs text-ss-ghost tracking-widest uppercase">Open Archives</span>
             </div>
-            <p className="text-xs text-ss-dim">Focused spaces for sound, texture and signal culture.</p>
+            <p className="text-xs text-ss-ghost/70 max-w-xs">Focused spaces for sonic territories and signal studies.</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {boards.map((board, i) => (
-              <div key={board.id}
-                className="animate-slide-up opacity-0"
+              <div key={board.id} className="animate-slide-up opacity-0"
                 style={{ animationFillMode: 'forwards', animationDelay: `${i * 0.07}s` }}>
                 <BoardCollage
                   board={board}
@@ -147,25 +161,25 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
             ))}
           </div>
 
-          <div className="mt-12 flex justify-center">
+          <div className="mt-14 flex justify-center">
             <button onClick={() => setPage('boards')}
-              className="flex items-center gap-2 px-6 py-3 bg-ss-ink text-white text-sm font-semibold rounded-lg hover:bg-ss-dim transition-colors duration-200">
-              Explore all boards <span>→</span>
+              className="flex items-center gap-2 px-7 py-3 bg-ss-ink text-white text-sm font-medium rounded-lg hover:bg-ss-dim transition-colors duration-200 hover-lift">
+              Enter all archives
             </button>
           </div>
         </div>
       </section>
 
       {/* ─── Footer ─── */}
-      <footer className="border-t border-ss-border px-6 py-6">
+      <footer className="border-t border-ss-border px-6 py-8">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div>
-            <p className="text-xs text-ss-ghost">© Signal Space 2024</p>
-            <p className="text-xs text-ss-ghost/60 mt-0.5">Built for creators</p>
+            <p className="text-xs text-ss-ghost/60">© graain 2024</p>
+            <p className="text-xs text-ss-ghost/40 mt-0.5">A signal culture archive</p>
           </div>
           <div className="flex gap-5">
             {['Twitter', 'Instagram', 'Mastodon'].map(l => (
-              <span key={l} className="text-xs text-ss-ghost hover:text-ss-dim cursor-pointer transition-colors">{l}</span>
+              <span key={l} className="text-xs text-ss-ghost/50 hover:text-ss-dim cursor-pointer transition-colors">{l}</span>
             ))}
           </div>
         </div>

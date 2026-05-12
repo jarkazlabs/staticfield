@@ -46,14 +46,14 @@ export const discoverySections = [
 // Kuratierte Signal-Cards für den Feed
 export const discoveryCards = [
   // Trending
-  { id: 'd01', section: 'trending', size: 'large', type: 'image', title: 'Fog Layer, 04:17', description: 'A single long take through morning fog.', tags: ['ambient', 'texture'], imageUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=75', hasAudio: true, audioType: 'ambient' },
+  { id: 'd01', section: 'trending', size: 'large', type: 'image', title: 'Fog Layer, 04:17', description: 'A single long take through morning fog.', tags: ['ambient', 'texture'], imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=75', hasAudio: true, audioType: 'ambient' },
   { id: 'd02', section: 'trending', size: 'small', type: 'note', title: 'On silence', description: 'The most interesting space in a patch is what you remove.', tags: ['philosophy'] },
   { id: 'd03', section: 'trending', size: 'small', type: 'image', title: 'Reels in Storage', description: 'Tape oxide. 7.5 ips.', tags: ['tape'], imageUrl: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=400&q=75', hasAudio: true, audioType: 'tape' },
   { id: 'd04', section: 'trending', size: 'medium', type: 'image', title: 'Case #4, 2024', description: '9U 84hp. Buchla philosophy in Eurorack.', tags: ['eurorack'], imageUrl: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=600&q=75' },
 
   // Ambient
-  { id: 'd05', section: 'ambient', size: 'medium', type: 'image', title: 'Slow Drift, Patch 003', description: 'Rings into Clouds, sequenced by Marbles.', tags: ['generative', 'drone'], imageUrl: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&q=75', hasAudio: true, audioType: 'drone' },
-  { id: 'd06', section: 'ambient', size: 'large', type: 'image', title: 'Mountain Pass', description: 'Recorded at 2400m. Wind, ice, silence.', tags: ['field-recording', 'environment'], imageUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=75', hasAudio: true, audioType: 'wind' },
+  { id: 'd05', section: 'ambient', size: 'medium', type: 'image', title: 'Slow Drift, Patch 003', description: 'Rings into Clouds, sequenced by Marbles.', tags: ['generative', 'drone'], imageUrl: 'https://images.unsplash.com/photo-1493770348161-369560ae357d?w=600&q=75', hasAudio: true, audioType: 'drone' },
+  { id: 'd06', section: 'ambient', size: 'large', type: 'image', title: 'Mountain Pass', description: 'Recorded at 2400m. Wind, ice, silence.', tags: ['field-recording', 'environment'], imageUrl: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&q=75', hasAudio: true, audioType: 'wind' },
   { id: 'd07', section: 'ambient', size: 'small', type: 'note', title: 'Feedback as texture', description: 'Controlled instability is not noise. It is weather.', tags: ['process'] },
 
   // Tape
@@ -67,9 +67,9 @@ export const discoveryCards = [
   { id: 'd13', section: 'forest', size: 'medium', type: 'image', title: 'Winter Silence', description: '-18°C. Snow absorbs everything above 2kHz.', tags: ['field-recording', 'winter'], imageUrl: 'https://images.unsplash.com/photo-1477601263568-180e2c6d046e?w=600&q=75' },
 
   // Late Night
-  { id: 'd14', section: 'latenight', size: 'medium', type: 'image', title: 'Studio at 3am', description: 'The patch makes decisions you would not make awake.', tags: ['eurorack', 'process'], imageUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&q=75', hasAudio: true, audioType: 'drone' },
+  { id: 'd14', section: 'latenight', size: 'medium', type: 'image', title: 'Studio at 3am', description: 'The patch makes decisions you would not make awake.', tags: ['eurorack', 'process'], imageUrl: 'https://images.unsplash.com/photo-1558865869-c93f6f8482af?w=600&q=75', hasAudio: true, audioType: 'drone' },
   { id: 'd15', section: 'latenight', size: 'small', type: 'note', title: 'Rule of 3am', description: 'Never delete a patch before sunrise.', tags: ['philosophy'] },
-  { id: 'd16', section: 'latenight', size: 'large', type: 'image', title: 'Modular Session', description: '14 modules. One voice. Four hours.', tags: ['modular', 'ambient'], imageUrl: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&q=75', hasAudio: true, audioType: 'ambient' },
+  { id: 'd16', section: 'latenight', size: 'large', type: 'image', title: 'Modular Session', description: '14 modules. One voice. Four hours.', tags: ['modular', 'ambient'], imageUrl: 'https://images.unsplash.com/photo-1493770348161-369560ae357d?w=800&q=75', hasAudio: true, audioType: 'ambient' },
 
   // Modular
   { id: 'd17', section: 'modular', size: 'large', type: 'image', title: 'Feedback Network', description: 'Three oscillators. No filter. Pure self-oscillation.', tags: ['feedback', 'experimental'], imageUrl: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800&q=75', hasAudio: true, audioType: 'noise' },
@@ -77,8 +77,8 @@ export const discoveryCards = [
   { id: 'd19', section: 'modular', size: 'medium', type: 'image', title: 'Buchla Influence', description: 'Function generators. Timbre. Complexity as material.', tags: ['buchla', 'history'], imageUrl: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=600&q=75' },
 
   // Field
-  { id: 'd20', section: 'field', size: 'medium', type: 'image', title: 'Hydrophone Session', description: 'Underwater contact mic. A river in January.', tags: ['hydrophone', 'water'], imageUrl: 'https://images.unsplash.com/photo-1434725039720-aaad6dd32dfe?w=600&q=75', hasAudio: true, audioType: 'water' },
-  { id: 'd21', section: 'field', size: 'large', type: 'image', title: 'Train Station, 6am', description: 'The acoustics change before the first train arrives.', tags: ['urban', 'field-recording'], imageUrl: 'https://images.unsplash.com/photo-1474487548417-781cb71495f3?w=800&q=75', hasAudio: true, audioType: 'ambient' },
+  { id: 'd20', section: 'field', size: 'medium', type: 'image', title: 'Hydrophone Session', description: 'Underwater contact mic. A river in January.', tags: ['hydrophone', 'water'], imageUrl: 'https://images.unsplash.com/photo-1518176258769-f227c798150e?w=600&q=75', hasAudio: true, audioType: 'water' },
+  { id: 'd21', section: 'field', size: 'large', type: 'image', title: 'Train Station, 6am', description: 'The acoustics change before the first train arrives.', tags: ['urban', 'field-recording'], imageUrl: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&q=75', hasAudio: true, audioType: 'ambient' },
   { id: 'd22', section: 'field', size: 'small', type: 'note', title: 'Metadata matters', description: 'GPS. Humidity. Wind direction. Temperature. All of it.', tags: ['workflow', 'field-recording'] },
 
   // VHS
@@ -91,7 +91,7 @@ export const discoveryCards = [
 export const boardCollages = {
   b01: {
     images: [
-      'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&q=70',
+      'https://images.unsplash.com/photo-1493770348161-369560ae357d?w=400&q=70',
       'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400&q=70',
       'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=300&q=70',
     ],
@@ -111,7 +111,7 @@ export const boardCollages = {
     images: [
       'https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&q=70',
       'https://images.unsplash.com/photo-1477601263568-180e2c6d046e?w=300&q=70',
-      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=300&q=70',
+      'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&q=70',
     ],
     notes: ['DPA 4060', 'dawn chorus', 'bark'],
     hasAudio: true, audioType: 'nature',

@@ -67,3 +67,43 @@ body {
 .card-tint-amber   { background-color: #faf4ea; }
 .card-tint-rose    { background-color: #f7f0f0; }
 .card-tint-charcoal { background-color: #f0f0ee; }
+
+/* ─── Hero Fragment Float ─── */
+@keyframes heroFloat {
+  0%   { transform: translateY(0px) translateX(0px); }
+  25%  { transform: translateY(-6px) translateX(3px); }
+  50%  { transform: translateY(-10px) translateX(-2px); }
+  75%  { transform: translateY(-4px) translateX(4px); }
+  100% { transform: translateY(-8px) translateX(-3px); }
+}
+
+/* ─── Globales Grain (fast unsichtbar) ─── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.022;
+  pointer-events: none;
+  z-index: 9998;
+  animation: grain 12s steps(8) infinite;
+  mix-blend-mode: multiply;
+}
+
+/* ─── Nav scroll blur (via class toggle) ─── */
+.nav-scrolled {
+  backdrop-filter: blur(12px) saturate(1.4);
+  background-color: rgba(255,255,255,0.85) !important;
+  border-bottom-color: rgba(232,232,228,0.8) !important;
+}
+
+/* ─── Soft hover lift ─── */
+.hover-lift {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(26,24,20,0.08);
+}

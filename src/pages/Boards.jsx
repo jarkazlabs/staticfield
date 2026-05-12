@@ -23,11 +23,11 @@ export default function Boards({ boards, store, setPage, setActiveBoardId }) {
               <span className="text-2xs text-ss-ghost tracking-widest uppercase font-sans">Boards</span>
             </div>
             <h1 className="font-sans font-bold text-5xl text-ss-ink">Signal Boards</h1>
-            <p className="text-sm text-ss-dim mt-2 max-w-md">Focused spaces for specific sonic territories.</p>
+            <p className="text-sm text-ss-dim mt-2 max-w-md">Focused spaces. Sonic territories. Signal studies.</p>
           </div>
           <button onClick={() => setShowModal(true)}
             className="flex items-center gap-2 px-4 py-2.5 bg-ss-ink text-white text-sm font-semibold rounded-lg hover:bg-ss-dim transition-colors mb-1">
-            + New Board
+            + New archive
           </button>
         </div>
 
