@@ -26,7 +26,7 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
     <div className="min-h-screen" >
 
       {/* ─── HERO ─────────────────────────────────────────── */}
-      <section className="relative pt-14 overflow-hidden" style={{ minHeight: '100vh', backgroundColor: '#f5f2ed' }}>
+      <section className="relative pt-14 overflow-hidden" style={{ minHeight: '100vh' }}>
 
         {/* Hero Content + Cards — full width, cards bleed left/right */}
         <div className="relative max-w-7xl mx-auto px-6 pt-16 pb-8">
