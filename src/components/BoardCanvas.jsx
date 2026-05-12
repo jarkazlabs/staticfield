@@ -8,6 +8,7 @@ import { useRef, useState, useEffect, useCallback } from 'react'
 import AddCardModal   from './AddCardModal.jsx'
 import EditCardModal  from './EditCardModal.jsx'
 import CanvasSection  from './CanvasSection.jsx'
+import PedalIcon      from './PedalIcon.jsx'
 import { CARD_TINTS } from '../data/tints.js'
 
 const CARD_W_DEFAULT = 250
@@ -65,7 +66,7 @@ function buildPath(f, t, fromSide, toSide) {
 // ─── Type Badge ───────────────────────────────────────────
 
 function TypeBadge({ type }) {
-  const labels = { note:'Note', link:'Link', image:'Image', instagram:'Instagram', chain:'Chain' }
+  const labels = { note:'Note', link:'Link', image:'Image', instagram:'Instagram', chain:'Signal-Chain' }
   return <span className="font-mono text-2xs text-ss-ghost/70 tracking-widest uppercase">{labels[type]||type}</span>
 }
 
@@ -130,11 +131,14 @@ function CardContent({ card }) {
         {card.title && card.title !== 'Signal Chain' &&
           <p className="font-sans font-semibold text-sm text-ss-ink leading-snug">{card.title}</p>}
         {items.length > 0
-          ? <div className="flex items-center flex-wrap gap-1.5 p-2.5 rounded-lg border border-ss-border/60" style={{backgroundColor:'rgba(0,0,0,0.02)'}}>
+          ? <div className="flex items-center flex-wrap gap-2 p-2.5 rounded-lg border border-ss-border/60" style={{backgroundColor:'rgba(0,0,0,0.02)'}}>
               {items.map((item, i) => (
-                <span key={i} className="flex items-center gap-1.5">
-                  <span className="font-mono text-xs text-ss-ink bg-white border border-ss-border px-2 py-1 rounded-md shadow-sm">{item}</span>
-                  {i < items.length-1 && <span className="text-ss-ghost/50 text-xs">→</span>}
+                <span key={i} className="flex items-center gap-2">
+                  <span className="flex flex-col items-center gap-1">
+                    <PedalIcon size={18} color="#9e9890" />
+                    <span className="font-mono text-2xs text-ss-ink bg-white border border-ss-border px-1.5 py-0.5 rounded-md shadow-sm leading-tight text-center" style={{maxWidth:72, wordBreak:'break-word'}}>{item}</span>
+                  </span>
+                  {i < items.length-1 && <span className="text-ss-ghost/40 text-xs self-start mt-2">→</span>}
                 </span>
               ))}
             </div>

@@ -132,7 +132,7 @@ export default function EditCardModal({ card, onSave, onClose }) {
           {/* Chain Editor */}
           {card.type === 'chain' && (
             <div>
-              <label className="text-xs font-semibold text-ss-dim uppercase tracking-wide block mb-1.5">Effektkette</label>
+              <label className="text-xs font-semibold text-ss-dim uppercase tracking-wide block mb-1.5">Signal-Chain</label>
               <div className="flex items-center flex-wrap gap-1.5 p-3 rounded-lg border border-ss-border mb-3 bg-white/40">
                 {chainItems.filter(Boolean).map((item, i, arr) => (
                   <span key={i} className="flex items-center gap-1">

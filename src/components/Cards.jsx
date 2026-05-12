@@ -11,7 +11,7 @@ function TypeLabel({ type }) {
     link:  { label: 'Link',   color: 'text-ss-ghost' },
     note:  { label: 'Note',   color: 'text-ss-ghost' },
     gear:  { label: 'Gear',   color: 'text-ss-dim' },
-    chain: { label: 'Chain',  color: 'text-ss-accent' },
+    chain: { label: 'Signal-Chain',  color: 'text-ss-accent' },
   }
   const { label, color } = map[type] || map.note
   return (
@@ -204,7 +204,10 @@ export function GearCard({ card }) {
 }
 
 // ─── 7. SignalChainCard ───────────────────────────────────
+import PedalIcon from './PedalIcon.jsx'
+
 export function SignalChainCard({ card }) {
+  const items = (card.chain || []).filter(i => i && i !== '→')
   return (
     <CardShell>
       <div className="p-3 flex flex-col gap-2">
@@ -212,14 +215,16 @@ export function SignalChainCard({ card }) {
           <h3 className="font-sans text-base text-ss-ink leading-tight">{card.title}</h3>
           <TypeLabel type="chain" />
         </div>
-        {card.chain && (
-          <div className="flex items-center flex-wrap gap-1.5 p-2.5 bg-ss-surface rounded border border-ss-border my-1">
-            {card.chain.map((item, i) => (
-              <span key={i} className={
-                item === '→'
-                  ? 'text-ss-ghost font-mono text-xs'
-                  : 'font-mono text-2xs text-ss-ink bg-white border border-ss-border px-2 py-1 rounded-sm'
-              }>{item}</span>
+        {items.length > 0 && (
+          <div className="flex items-center flex-wrap gap-2 p-2.5 bg-ss-surface rounded border border-ss-border my-1">
+            {items.map((item, i) => (
+              <span key={i} className="flex items-center gap-2">
+                <span className="flex flex-col items-center gap-1">
+                  <PedalIcon size={16} color="#9e9890" />
+                  <span className="font-mono text-2xs text-ss-ink bg-white border border-ss-border px-1.5 py-0.5 rounded-sm text-center" style={{maxWidth:64, wordBreak:'break-word'}}>{item}</span>
+                </span>
+                {i < items.length-1 && <span className="text-ss-ghost/40 text-xs self-start mt-1.5">→</span>}
+              </span>
             ))}
           </div>
         )}

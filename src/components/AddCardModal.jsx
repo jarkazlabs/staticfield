@@ -8,7 +8,7 @@ const TYPES = [
   { id: 'link',      icon: '🔗', label: 'Link',        desc: 'URL / Website' },
   { id: 'image',     icon: '🖼️', label: 'Bild',        desc: 'Bild hochladen oder droppen' },
   { id: 'instagram', icon: '📸', label: 'Instagram',   desc: 'Post-URL' },
-  { id: 'chain',     icon: '⛓',  label: 'Effektkette', desc: 'Signal Chain' },
+  { id: 'chain', icon: '⛓',  label: 'Signal-Chain', desc: 'Signal Chain' },
 ]
 
 export default function AddCardModal({ onAdd, onClose }) {
@@ -265,7 +265,7 @@ export default function AddCardModal({ onAdd, onClose }) {
             {type === 'chain' && (
               <>
                 <div>
-                  <label className="text-xs font-semibold text-ss-dim uppercase tracking-wide block mb-1.5">Effektkette</label>
+                  <label className="text-xs font-semibold text-ss-dim uppercase tracking-wide block mb-1.5">Signal-Chain</label>
                   {/* Vorschau */}
                   <div className="flex items-center flex-wrap gap-1.5 p-3 bg-white/50 rounded-lg border border-ss-border mb-3 min-h-[44px]">
                     {chain.filter(Boolean).map((item, i, arr) => (

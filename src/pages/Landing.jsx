@@ -23,7 +23,7 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
   function openBoard(id) { setActiveBoardId(id); setPage('board-detail') }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#f5f2ed' }}>
+    <div className="min-h-screen" >
 
       {/* ─── HERO ─────────────────────────────────────────── */}
       <section className="relative pt-14 overflow-hidden" style={{ minHeight: '100vh', backgroundColor: '#f5f2ed' }}>
@@ -48,8 +48,8 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
               </div>
 
               {/* Big headline */}
-              <h1 className="font-sans leading-[1.0] mb-6 animate-slide-up opacity-0"
-                style={{ fontWeight: 800, fontSize: 'clamp(3rem, 7vw, 6.5rem)',
+              <h1 className="font-sans leading-[1.05] mb-6 animate-slide-up opacity-0"
+                style={{ fontWeight: 800, fontSize: 'clamp(2.2rem, 5vw, 4.5rem)',
                   animationFillMode: 'forwards', animationDelay: '0.05s' }}>
                 A visual space<br/>
                 for sound,<br/>
@@ -121,7 +121,7 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
       <div className="border-t border-ss-border" />
 
       {/* ─── Curated Signals ─── */}
-      <section className="py-20 px-6" style={{ backgroundColor: '#f5f2ed' }}>
+      <section className="py-20 px-6" >
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col items-center text-center mb-12">
             <div className="flex items-center gap-2 mb-3">
@@ -152,7 +152,7 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
       <div className="border-t border-ss-border" />
 
       {/* ─── Featured Boards ─── */}
-      <section className="py-20 px-6" style={{ backgroundColor: '#f5f2ed' }}>
+      <section className="py-20 px-6" >
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col items-center text-center mb-12">
             <div className="flex items-center gap-2 mb-3">
@@ -181,7 +181,7 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
       </section>
 
       {/* ─── Footer ─── */}
-      <footer className="border-t border-ss-border px-6 py-8" style={{ backgroundColor: '#f5f2ed' }}>
+      <footer className="border-t border-ss-border px-6 py-8" >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div>
             <p className="text-xs text-ss-ghost/60">© graain 2024</p>
