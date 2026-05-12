@@ -41,12 +41,6 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
             <div className="relative z-10 flex flex-col items-center justify-center text-center"
               style={{ paddingTop: 80, paddingBottom: 60 }}>
 
-              {/* Label */}
-              <div className="flex items-center gap-2 mb-8">
-                <div className="w-1.5 h-1.5 rounded-full bg-ss-accent" />
-                <span className="font-sans text-2xs text-ss-ghost tracking-widest uppercase">Signal Culture Archive</span>
-              </div>
-
               {/* Big headline */}
               <h1 className="font-sans leading-[1.05] mb-6 animate-slide-up opacity-0"
                 style={{ fontWeight: 800, fontSize: 'clamp(2.2rem, 5vw, 4.5rem)',
@@ -124,10 +118,7 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
       <section className="py-20 px-6" >
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col items-center text-center mb-12">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-1.5 h-1.5 rounded-full bg-ss-accent" />
-              <span className="font-sans text-2xs text-ss-ghost tracking-widest uppercase">Curated Signals</span>
-            </div>
+            <h2 className="font-sans font-bold text-3xl text-ss-ink mb-2">Curated Signals</h2>
             <p className="text-xs text-ss-ghost/70 max-w-xs">Fragments from the archive. Updated continuously.</p>
           </div>
           <div className="flex justify-center">
@@ -155,10 +146,7 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
       <section className="py-20 px-6" >
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col items-center text-center mb-12">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-1.5 h-1.5 rounded-full bg-ss-accent" />
-              <span className="font-sans text-2xs text-ss-ghost tracking-widest uppercase">Open Archives</span>
-            </div>
+            <h2 className="font-sans font-bold text-3xl text-ss-ink mb-2">Open Archives</h2>
             <p className="text-xs text-ss-ghost/70 max-w-xs">Focused spaces for sonic territories and signal studies.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
