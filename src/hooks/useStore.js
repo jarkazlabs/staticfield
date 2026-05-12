@@ -121,74 +121,27 @@ export function useStore() {
       height: 220,
       tint: 'none',
       locked: false,
-      lockedCardIds: [], // Cards die beim Sperren eingefroren wurden
     }
     setSections(s => [...s, section])
   }
 
-  const updateSection = (id, updates) => setSections(s => s.map(sec => sec.id === id ? { ...sec, ...updates } : sec))
-  const deleteSection = (id)          => setSections(s => s.filter(sec => sec.id !== id))
-  const getBoardSections = (boardId)  => sections.filter(s => s.boardId === boardId)
+  const updateSection  = (id, updates) => setSections(s => s.map(sec => sec.id === id ? { ...sec, ...updates } : sec))
+  const deleteSection  = (id)           => setSections(s => s.filter(sec => sec.id !== id))
+  const getBoardSections = (boardId)    => sections.filter(s => s.boardId === boardId)
 
-  // Beim Sperren: Cards die sich innerhalb der Section befinden einsammeln
+  // Lock: Section einfrieren (kein Verschieben, kein Resize)
   const lockSection = useCallback((sectionId) => {
-    setSections(allSections => {
-      const sec = allSections.find(s => s.id === sectionId)
-      if (!sec) return allSections
-      const newLocked = !sec.locked
+    setSections(prev => prev.map(s =>
+      s.id === sectionId ? { ...s, locked: !s.locked } : s
+    ))
+  }, [])
 
-      let lockedCardIds = sec.lockedCardIds || []
-
-      if (newLocked) {
-        // Cards finden die sich innerhalb oder überschneidend mit der Section befinden
-        const boardCards = cards.filter(c => c.boardId === sec.boardId)
-        lockedCardIds = boardCards
-          .filter(card => {
-            const cw = card.width  || 250
-            const ch = card.height || 120
-            // Überschneidet sich die Card mit der Section?
-            return (
-              card.position.x < sec.position.x + sec.width  &&
-              card.position.x + cw > sec.position.x &&
-              card.position.y < sec.position.y + sec.height &&
-              card.position.y + ch > sec.position.y
-            )
-          })
-          .map(c => c.id)
-      }
-
-      return allSections.map(s =>
-        s.id === sectionId ? { ...s, locked: newLocked, lockedCardIds } : s
-      )
-    })
-  }, [cards])
-
-  // Ref für aktuellen sections-State — vermeidet stale closure in moveSection
-  const sectionsRef = useRef(sections)
-  useEffect(() => { sectionsRef.current = sections }, [sections])
-
-  // Section verschieben — lockedCards mitbewegen
+  // Section verschieben — nur wenn nicht gesperrt
   const moveSection = useCallback((id, x, y) => {
-    const sec = sectionsRef.current.find(s => s.id === id)
-    if (!sec) return
-
-    const dx = x - sec.position.x
-    const dy = y - sec.position.y
-
-    // 1. Section verschieben
     setSections(prev => prev.map(s =>
       s.id === id ? { ...s, position: { x, y } } : s
     ))
-
-    // 2. Gruppierte Cards mitbewegen
-    if (sec.locked && sec.lockedCardIds?.length > 0 && (dx !== 0 || dy !== 0)) {
-      setCards(prev => prev.map(card =>
-        sec.lockedCardIds.includes(card.id)
-          ? { ...card, position: { x: card.position.x + dx, y: card.position.y + dy } }
-          : card
-      ))
-    }
-  }, [setCards])
+  }, [])
 
   return {
     boards, cards, connections, sections,

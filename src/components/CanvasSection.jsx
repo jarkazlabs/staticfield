@@ -99,16 +99,11 @@ export default function CanvasSection({ section, isActive, onActivate, onDragSta
           </div>
         )}
 
-        {/* Größe-Anzeige / Grouped-Anzeige */}
+        {/* Größe-Anzeige */}
         <div className="absolute bottom-2 left-3 opacity-0 group-hover/section:opacity-100 transition-opacity pointer-events-none">
-          {locked && section.lockedCardIds?.length > 0
-            ? <span className="font-mono text-2xs text-ss-accent/60">
-                {section.lockedCardIds.length} signal{section.lockedCardIds.length !== 1 ? 's' : ''} grouped
-              </span>
-            : <span className="font-mono text-2xs text-ss-ghost/40">
-                {Math.round(section.width||340)} × {Math.round(section.height||220)}
-              </span>
-          }
+          <span className="font-mono text-2xs text-ss-ghost/40">
+            {Math.round(section.width||340)} × {Math.round(section.height||220)}
+          </span>
         </div>
       </div>
 
