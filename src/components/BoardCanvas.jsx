@@ -1,18 +1,17 @@
-// BoardCanvas.jsx
-// - Dots nur auf der richtigen Seite beim Hover
-// - Saubere Connections (orthogonale Kurven)
-// - Card resize handle
-// - Section: Mitte spawnen, Vordergrund beim Bearbeiten
-// - Lock für Cards und Sections
+// BoardCanvas.jsx — Komplett überarbeitet
+// - Echte Card-Höhe via ResizeObserver für korrekte Anchor-Punkte
+// - Width + Height Resize
+// - Chain-Card Fix
+// - UX-Verbesserungen
 
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, useCallback } from 'react'
 import AddCardModal   from './AddCardModal.jsx'
 import EditCardModal  from './EditCardModal.jsx'
 import CanvasSection  from './CanvasSection.jsx'
 import { CARD_TINTS } from '../data/tints.js'
 
-const CARD_W_DEFAULT  = 250
-const CARD_H_ESTIMATE = 160
+const CARD_W_DEFAULT = 250
+const CARD_H_DEFAULT = 120
 
 function getTintStyle(card) {
   const t = CARD_TINTS.find(t => t.id === card.tint)
@@ -20,9 +19,13 @@ function getTintStyle(card) {
   return { backgroundColor: t.bg, borderColor: t.border }
 }
 
-function getAnchors(card) {
+function dist(a, b) {
+  return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2)
+}
+
+function getAnchors(card, measuredH) {
   const w = card.width  || CARD_W_DEFAULT
-  const h = card.height || CARD_H_ESTIMATE
+  const h = measuredH   || card.height || CARD_H_DEFAULT
   const x = card.position.x
   const y = card.position.y
   return {
@@ -33,13 +36,9 @@ function getAnchors(card) {
   }
 }
 
-function dist(a, b) {
-  return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2)
-}
-
-function bestAnchors(fromCard, toCard) {
-  const fa = getAnchors(fromCard)
-  const ta = getAnchors(toCard)
+function bestAnchors(fromCard, toCard, heights) {
+  const fa = getAnchors(fromCard, heights[fromCard.id])
+  const ta = getAnchors(toCard,   heights[toCard.id])
   let best = null, bestDist = Infinity
   for (const fk of Object.keys(fa)) {
     for (const tk of Object.keys(ta)) {
@@ -50,140 +49,178 @@ function bestAnchors(fromCard, toCard) {
   return best
 }
 
-// Saubere orthogonale Bezier-Kurve
 function buildPath(f, t, fromSide, toSide) {
-  const dx = Math.abs(t.x - f.x)
-  const dy = Math.abs(t.y - f.y)
-  const tension = Math.max(60, Math.min(dx, dy) * 0.6 + 40)
-  const offsets = {
-    top:    { cx:  0, cy: -tension },
-    bottom: { cx:  0, cy:  tension },
-    left:   { cx: -tension, cy: 0 },
-    right:  { cx:  tension, cy: 0 },
+  const tension = Math.max(50, Math.min(Math.abs(t.x - f.x), Math.abs(t.y - f.y)) * 0.5 + 50)
+  const off = {
+    top:    [0, -tension],
+    bottom: [0,  tension],
+    left:   [-tension, 0],
+    right:  [ tension, 0],
   }
-  const fc = offsets[fromSide] || offsets.right
-  const tc = offsets[toSide]   || offsets.left
-  return `M${f.x},${f.y} C${f.x + fc.cx},${f.y + fc.cy} ${t.x + tc.cx},${t.y + tc.cy} ${t.x},${t.y}`
+  const [fox, foy] = off[fromSide] || [tension, 0]
+  const [tox, toy] = off[toSide]   || [-tension, 0]
+  return `M${f.x},${f.y} C${f.x+fox},${f.y+foy} ${t.x+tox},${t.y+toy} ${t.x},${t.y}`
+}
+
+// ─── Type Badge ───────────────────────────────────────────
+
+function TypeBadge({ type }) {
+  const labels = { note:'Note', link:'Link', image:'Image', instagram:'Instagram', chain:'Chain' }
+  return <span className="font-mono text-2xs text-ss-ghost/70 tracking-widest uppercase">{labels[type]||type}</span>
 }
 
 // ─── Card Content ─────────────────────────────────────────
 
-function TypeBadge({ type }) {
-  const labels = { note:'Note', link:'Link', image:'Image', instagram:'Instagram', chain:'Chain' }
-  return <span className="font-mono text-2xs text-ss-ghost tracking-widest uppercase">{labels[type]||type}</span>
-}
-
 function CardContent({ card }) {
   switch (card.type) {
+
     case 'image':
-      return <>
-        {card.imageUrl && <div className="w-full aspect-video overflow-hidden rounded-sm mb-2"><img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover"/></div>}
-        <p className="font-sans font-semibold text-sm text-ss-ink leading-tight">{card.title}</p>
-        {card.description && <p className="text-xs text-ss-dim mt-1 leading-relaxed">{card.description}</p>}
-      </>
-    case 'note':
-      return <>
+      return <div className="flex flex-col gap-2">
+        {card.imageUrl && <div className="w-full aspect-video overflow-hidden rounded-md"><img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover"/></div>}
         <p className="font-sans font-semibold text-sm text-ss-ink leading-snug">{card.title}</p>
-        {card.description && <p className="text-xs text-ss-dim mt-1.5 leading-relaxed">{card.description}</p>}
-      </>
+        {card.description && <p className="text-xs text-ss-dim leading-relaxed">{card.description}</p>}
+      </div>
+
+    case 'note':
+      return <div className="flex flex-col gap-1.5">
+        <p className="font-sans font-semibold text-sm text-ss-ink leading-snug">{card.title}</p>
+        {card.description && <p className="text-xs text-ss-dim leading-relaxed whitespace-pre-wrap">{card.description}</p>}
+      </div>
+
     case 'link':
-      return <>
-        {card.imageUrl && <div className="w-full aspect-video overflow-hidden rounded-sm mb-2"><img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover opacity-90"/></div>}
-        <p className="font-sans font-semibold text-sm text-ss-ink leading-tight">{card.title}</p>
-        {card.description && <p className="text-xs text-ss-dim mt-1 leading-relaxed">{card.description}</p>}
-        {card.url && <a href={card.url} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} className="font-mono text-2xs text-ss-accent hover:underline mt-1.5 block truncate">↗ {card.url.replace('https://','')}</a>}
-      </>
+      return <div className="flex flex-col gap-2">
+        {card.imageUrl && <div className="w-full aspect-video overflow-hidden rounded-md"><img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover opacity-90"/></div>}
+        <p className="font-sans font-semibold text-sm text-ss-ink leading-snug">{card.title}</p>
+        {card.description && <p className="text-xs text-ss-dim leading-relaxed">{card.description}</p>}
+        {card.url && <a href={card.url} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()}
+          className="inline-flex items-center gap-1 font-mono text-2xs text-ss-accent hover:text-ss-ink transition-colors truncate">
+          <span>↗</span><span className="truncate">{card.url.replace(/^https?:\/\/(www\.)?/,'')}</span>
+        </a>}
+      </div>
+
     case 'instagram':
-      return <>
-        <div className="flex items-center gap-1.5 mb-1"><span className="text-base">📸</span><span className="font-mono text-2xs text-ss-ghost">Instagram</span></div>
-        <p className="font-sans font-semibold text-sm text-ss-ink leading-tight">{card.title}</p>
-        {card.url && <a href={card.url} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} className="font-mono text-2xs text-ss-accent hover:underline mt-1.5 block truncate">↗ {card.url.replace('https://www.instagram.com/','instagram.com/')}</a>}
-      </>
-    case 'chain':
-      return <>
-        <p className="font-sans font-semibold text-sm text-ss-ink leading-tight mb-2">{card.title||'Signal Chain'}</p>
-        {card.chain && <div className="flex items-center flex-wrap gap-1 p-2 rounded border border-ss-border" style={{backgroundColor:'rgba(255,255,255,0.5)'}}>
-          {card.chain.filter(i=>i&&i!=='→').map((item,i,arr)=>(
-            <span key={i} className="flex items-center gap-1">
-              <span className="font-mono text-2xs text-ss-ink bg-white border border-ss-border px-1.5 py-0.5 rounded-sm">{item}</span>
-              {i<arr.length-1 && <span className="text-ss-ghost text-xs font-mono">→</span>}
-            </span>
-          ))}
-        </div>}
-        {card.description && <p className="text-xs text-ss-dim mt-1.5">{card.description}</p>}
-      </>
-    default: return <p className="text-sm text-ss-ink">{card.title}</p>
+      return <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-1.5">
+          <span className="text-sm">📸</span>
+          <span className="font-mono text-2xs text-ss-ghost">Instagram</span>
+        </div>
+        <p className="font-sans font-semibold text-sm text-ss-ink leading-snug">{card.title}</p>
+        {card.url && <a href={card.url} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()}
+          className="font-mono text-2xs text-ss-accent hover:underline truncate">
+          ↗ {card.url.replace('https://www.instagram.com/','instagram.com/')}
+        </a>}
+      </div>
+
+    case 'chain': {
+      // Chain-Items bereinigen: alle nicht-leeren, nicht-Pfeil Items
+      const items = (card.chain || []).filter(i => i && i.trim() && i !== '→')
+      return <div className="flex flex-col gap-2">
+        {card.title && card.title !== 'Signal Chain' &&
+          <p className="font-sans font-semibold text-sm text-ss-ink leading-snug">{card.title}</p>}
+        {items.length > 0
+          ? <div className="flex items-center flex-wrap gap-1.5 p-2.5 rounded-lg border border-ss-border/60" style={{backgroundColor:'rgba(0,0,0,0.02)'}}>
+              {items.map((item, i) => (
+                <span key={i} className="flex items-center gap-1.5">
+                  <span className="font-mono text-xs text-ss-ink bg-white border border-ss-border px-2 py-1 rounded-md shadow-sm">{item}</span>
+                  {i < items.length-1 && <span className="text-ss-ghost/50 text-xs">→</span>}
+                </span>
+              ))}
+            </div>
+          : <p className="text-xs text-ss-ghost/50 italic">Noch keine Geräte hinzugefügt</p>
+        }
+        {card.description && <p className="text-xs text-ss-dim leading-relaxed">{card.description}</p>}
+      </div>
+    }
+
+    default:
+      return <p className="text-sm text-ss-ink">{card.title}</p>
   }
 }
 
 // ─── Canvas Card ──────────────────────────────────────────
 
-function CanvasCard({ card, connectingFrom, onDragStart, onTouchStart, onConnectDotDown, onEdit, onDelete, onResize, onLockToggle }) {
+function CanvasCard({ card, connectingFrom, onDragStart, onTouchStart, onConnectDotDown, onEdit, onDelete, onResize, onLockToggle, onHeightChange }) {
   const [hovered,     setHovered]     = useState(false)
-  const [hoveredSide, setHoveredSide] = useState(null) // 'top'|'bottom'|'left'|'right'
-  const cardRef = useRef(null)
-  const tintStyle  = getTintStyle(card)
-  const cardW = card.width  || CARD_W_DEFAULT
-  const locked = card.locked || false
+  const [hoveredSide, setHoveredSide] = useState(null)
+  const cardRef   = useRef(null)
+  const contentRef = useRef(null)
+  const tintStyle = getTintStyle(card)
+  const cardW     = card.width || CARD_W_DEFAULT
+  const locked    = card.locked || false
 
-  // Welche Seite der Card ist die Maus am nächsten?
+  // Echte Höhe messen und nach oben melden
+  useEffect(() => {
+    if (!contentRef.current) return
+    const ro = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        onHeightChange(card.id, entry.contentRect.height)
+      }
+    })
+    ro.observe(contentRef.current)
+    return () => ro.disconnect()
+  }, [card.id])
+
   function detectSide(e) {
-    if (!cardRef.current) return null
+    if (!cardRef.current) return 'right'
     const rect = cardRef.current.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-    const w = rect.width
-    const h = rect.height
-    const dLeft   = x
-    const dRight  = w - x
-    const dTop    = y
-    const dBottom = h - y
-    const min = Math.min(dLeft, dRight, dTop, dBottom)
-    if (min === dTop)    return 'top'
-    if (min === dBottom) return 'bottom'
-    if (min === dLeft)   return 'left'
+    const x = e.clientX - rect.left, y = e.clientY - rect.top
+    const dL = x, dR = rect.width - x, dT = y, dB = rect.height - y
+    const min = Math.min(dL, dR, dT, dB)
+    if (min === dT) return 'top'
+    if (min === dB) return 'bottom'
+    if (min === dL) return 'left'
     return 'right'
   }
 
-  function handleMouseMove(e) {
-    if (!hovered) return
-    setHoveredSide(detectSide(e))
-  }
+  function handleMouseMove(e) { if (hovered) setHoveredSide(detectSide(e)) }
 
-  // Resize mouse
+  // Resize: Breite UND Höhe
   function handleResizeMouseDown(e) {
     e.stopPropagation(); e.preventDefault()
     const startX = e.clientX, startY = e.clientY
     const startW = cardW
-    function onMove(ev) { onResize(card.id, Math.max(180, startW + ev.clientX - startX)) }
-    function onUp()     { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp) }
+    const startH = contentRef.current?.offsetHeight || CARD_H_DEFAULT
+    function onMove(ev) {
+      const newW = Math.max(180, startW + ev.clientX - startX)
+      const newH = Math.max(80,  startH + ev.clientY - startY)
+      onResize(card.id, newW, newH)
+    }
+    function onUp() { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp) }
     window.addEventListener('mousemove', onMove)
     window.addEventListener('mouseup', onUp)
   }
 
-  // Resize touch
   function handleResizeTouchStart(e) {
     e.stopPropagation()
     if (e.touches.length !== 1) return
-    const startX = e.touches[0].clientX, startW = cardW
-    function onMove(ev) { if(ev.touches.length!==1)return; ev.preventDefault(); onResize(card.id, Math.max(180, startW + ev.touches[0].clientX - startX)) }
-    function onEnd()    { window.removeEventListener('touchmove', onMove); window.removeEventListener('touchend', onEnd) }
+    const t0 = e.touches[0]
+    const startX = t0.clientX, startY = t0.clientY
+    const startW = cardW, startH = contentRef.current?.offsetHeight || CARD_H_DEFAULT
+    function onMove(ev) {
+      if (ev.touches.length !== 1) return; ev.preventDefault()
+      onResize(card.id,
+        Math.max(180, startW + ev.touches[0].clientX - startX),
+        Math.max(80,  startH + ev.touches[0].clientY - startY)
+      )
+    }
+    function onEnd() { window.removeEventListener('touchmove', onMove); window.removeEventListener('touchend', onEnd) }
     window.addEventListener('touchmove', onMove, { passive: false })
     window.addEventListener('touchend', onEnd)
   }
 
-  // Dots: nur die Seite zeigen auf der die Maus ist
   const dotsConfig = {
-    top:    { style: { top: -6,     left: '50%',  transform: 'translateX(-50%)' } },
-    bottom: { style: { bottom: -6,  left: '50%',  transform: 'translateX(-50%)' } },
-    left:   { style: { left: -6,    top:  '50%',  transform: 'translateY(-50%)' } },
-    right:  { style: { right: -6,   top:  '50%',  transform: 'translateY(-50%)' } },
+    top:    { style: { top: -7,    left: '50%', transform: 'translateX(-50%)' } },
+    bottom: { style: { bottom: -7, left: '50%', transform: 'translateX(-50%)' } },
+    left:   { style: { left: -7,   top: '50%',  transform: 'translateY(-50%)' } },
+    right:  { style: { right: -7,  top: '50%',  transform: 'translateY(-50%)' } },
   }
 
-  // Welche Dots zeigen: beim Verbinden alle, beim Hover nur die nächste Seite
   const visibleDots = connectingFrom
-    ? (connectingFrom === card.id ? Object.keys(dotsConfig) : []) // Quelle zeigt alle, Ziele keine Dots
+    ? (connectingFrom === card.id ? Object.keys(dotsConfig) : [])
     : (hovered && hoveredSide ? [hoveredSide] : [])
+
+  // Minimale Höhe falls card.height gesetzt
+  const minHeight = card.height ? { minHeight: card.height } : {}
 
   return (
     <div
@@ -203,67 +240,79 @@ function CanvasCard({ card, connectingFrom, onDragStart, onTouchStart, onConnect
         onTouchStart(e, card.id)
       }}
     >
-      {/* Card */}
+      {/* Card Shell */}
       <div
         ref={cardRef}
         className={`
-          border rounded-lg p-3 flex flex-col gap-1 relative
-          transition-shadow duration-200
-          ${locked ? 'cursor-default' : connectingFrom && connectingFrom !== card.id ? 'ring-2 ring-ss-accent/30 cursor-crosshair shadow-md' : hovered ? 'shadow-lg cursor-grab' : 'shadow-sm cursor-grab'}
+          border rounded-xl flex flex-col relative overflow-hidden
+          transition-all duration-200
+          ${locked
+            ? 'cursor-default shadow-sm'
+            : connectingFrom && connectingFrom !== card.id
+              ? 'ring-2 ring-ss-accent/40 cursor-crosshair shadow-lg'
+              : hovered ? 'shadow-xl cursor-grab' : 'shadow-sm cursor-grab'
+          }
         `}
-        style={tintStyle}
+        style={{ ...tintStyle, ...minHeight }}
       >
-        {/* Lock-Indikator */}
-        {locked && (
-          <div className="absolute top-2 right-2 text-ss-ghost/40 text-xs" title="Gesperrt">🔒</div>
-        )}
-        <div className="flex justify-between items-start mb-1">
+        {/* Toolbar oben */}
+        <div className="flex items-center justify-between px-3 pt-2.5 pb-1">
           <TypeBadge type={card.type} />
           {hovered && !connectingFrom && (
-            <div className="flex items-center gap-1.5" data-action="buttons">
+            <div className="flex items-center gap-1" data-action="buttons">
               <button data-action="lock" onMouseDown={e=>{e.stopPropagation(); onLockToggle(card.id)}}
-                className={`text-xs transition-colors ${locked ? 'text-ss-accent' : 'text-ss-ghost hover:text-ss-dim'}`} title={locked?'Entsperren':'Sperren'}>🔒</button>
+                className={`w-5 h-5 flex items-center justify-center rounded transition-colors text-xs
+                  ${locked ? 'text-ss-accent' : 'text-ss-ghost/50 hover:text-ss-ghost'}`}
+                title={locked?'Entsperren':'Sperren'}>🔒</button>
               <button data-action="edit" onMouseDown={e=>{e.stopPropagation(); onEdit(card)}}
-                className="text-ss-ghost hover:text-ss-ink text-xs transition-colors" title="Bearbeiten">✏️</button>
+                className="w-5 h-5 flex items-center justify-center rounded text-ss-ghost/50 hover:text-ss-ghost transition-colors text-xs"
+                title="Bearbeiten">✏️</button>
               <button data-action="delete" onMouseDown={e=>{e.stopPropagation(); onDelete(card.id)}}
-                className="text-ss-ghost hover:text-red-400 text-xs transition-colors" title="Löschen">✕</button>
+                className="w-5 h-5 flex items-center justify-center rounded text-ss-ghost/50 hover:text-red-400 transition-colors text-xs"
+                title="Löschen">✕</button>
             </div>
           )}
         </div>
-        <CardContent card={card} />
 
-        {/* Resize-Handle unten rechts */}
+        {/* Content */}
+        <div ref={contentRef} className="px-3 pb-3 flex-1">
+          <CardContent card={card} />
+        </div>
+
+        {/* Resize Handle */}
         {hovered && !locked && (
           <div data-action="resize"
-            className="absolute bottom-0 right-0 w-5 h-5 cursor-se-resize flex items-end justify-end p-1"
+            className="absolute bottom-0 right-0 w-6 h-6 cursor-se-resize flex items-end justify-end p-1.5 opacity-60 hover:opacity-100 transition-opacity"
             onMouseDown={handleResizeMouseDown}
             onTouchStart={handleResizeTouchStart}
-            title="Breite ändern"
+            title="Größe ändern"
           >
-            <svg width="8" height="8" viewBox="0 0 8 8"><path d="M8 0 L8 8 L0 8 Z" fill="#d4d4ce"/></svg>
+            <svg width="9" height="9" viewBox="0 0 9 9">
+              <path d="M9 0 L9 9 L0 9 Z" fill="#c8c8c2"/>
+            </svg>
           </div>
         )}
       </div>
 
-      {/* Verbindungspunkte — nur sichtbare Seite */}
+      {/* Verbindungspunkte */}
       {visibleDots.map(side => (
         <div key={side} data-action="connect"
-          className="absolute w-3.5 h-3.5 rounded-full flex items-center justify-center cursor-crosshair z-20 transition-all duration-100"
+          className="absolute w-3.5 h-3.5 rounded-full flex items-center justify-center cursor-crosshair z-20 transition-all duration-100 hover:scale-125"
           style={{
             ...dotsConfig[side].style,
-            backgroundColor: '#9e9e9a',
-            boxShadow: '0 0 0 2px white, 0 1px 4px rgba(0,0,0,0.12)',
+            backgroundColor: connectingFrom === card.id ? '#7a8c3c' : '#a8a8a0',
+            boxShadow: '0 0 0 2.5px white, 0 2px 4px rgba(0,0,0,0.1)',
           }}
           onMouseDown={e=>{e.stopPropagation(); e.preventDefault(); onConnectDotDown(card.id, side)}}
           title="Verbindung ziehen"
         >
-          <span style={{fontSize:8, color:'white', lineHeight:1, fontWeight:700}}>+</span>
+          <span style={{fontSize:7, color:'white', fontWeight:800, lineHeight:1}}>+</span>
         </div>
       ))}
 
-      {/* Ziel-Highlight beim Verbinden */}
+      {/* Ziel-Highlight */}
       {connectingFrom && connectingFrom !== card.id && hovered && (
-        <div className="absolute inset-0 rounded-lg ring-2 ring-ss-accent pointer-events-none" style={{zIndex:11}} />
+        <div className="absolute inset-0 rounded-xl ring-2 ring-ss-accent pointer-events-none" style={{zIndex:11}} />
       )}
     </div>
   )
@@ -278,10 +327,16 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
   const [connectLine,    setConnectLine]    = useState(null)
   const [showAddModal,   setShowAddModal]   = useState(false)
   const [editCard,       setEditCard]       = useState(null)
-  const [activeSection,  setActiveSection]  = useState(null) // Section im Vordergrund
+  const [activeSection,  setActiveSection]  = useState(null)
+  // Echte gemessene Höhen der Cards
+  const [cardHeights,    setCardHeights]    = useState({})
+
+  const handleHeightChange = useCallback((cardId, h) => {
+    setCardHeights(prev => prev[cardId] === h ? prev : { ...prev, [cardId]: h })
+  }, [])
 
   const CANVAS_W = Math.max(1600, ...cards.map(c => c.position.x + (c.width||CARD_W_DEFAULT) + 200), 100)
-  const CANVAS_H = Math.max(1000, ...cards.map(c => c.position.y + 500), 100)
+  const CANVAS_H = Math.max(1000, ...cards.map(c => c.position.y + (cardHeights[c.id]||300) + 200), 100)
 
   function canvasPos(clientX, clientY) {
     const rect = canvasRef.current.getBoundingClientRect()
@@ -294,7 +349,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
   function anchorPoint(cardId, side) {
     const c = cards.find(c => c.id === cardId)
     if (!c) return { x:0, y:0 }
-    return getAnchors(c)[side] || getAnchors(c).right
+    return getAnchors(c, cardHeights[cardId])[side] || getAnchors(c, cardHeights[cardId]).right
   }
 
   function handleMouseMove(e) {
@@ -318,14 +373,14 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
     if (dragging) { setDragging(null); return }
     if (connectingFrom) {
       const pos = canvasPos(e.clientX, e.clientY)
-      const target = cards.find(c =>
-        c.id !== connectingFrom.cardId &&
-        pos.x >= c.position.x && pos.x <= c.position.x + (c.width||CARD_W_DEFAULT) &&
-        pos.y >= c.position.y && pos.y <= c.position.y + CARD_H_ESTIMATE
-      )
+      const target = cards.find(c => {
+        const h = cardHeights[c.id] || CARD_H_DEFAULT
+        return c.id !== connectingFrom.cardId &&
+          pos.x >= c.position.x && pos.x <= c.position.x + (c.width||CARD_W_DEFAULT) &&
+          pos.y >= c.position.y && pos.y <= c.position.y + h
+      })
       if (target) addConnection(connectingFrom.cardId, target.id)
-      setConnectingFrom(null)
-      setConnectLine(null)
+      setConnectingFrom(null); setConnectLine(null)
     }
   }
 
@@ -349,30 +404,24 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
     if (e.touches.length !== 1) return
     const sec = sections.find(s => s.id === sectionId)
     if (!sec || sec.locked) return
-    const t = e.touches[0]
-    const pos = canvasPos(t.clientX, t.clientY)
+    const pos = canvasPos(e.touches[0].clientX, e.touches[0].clientY)
     setDragging({ sectionId, offX: pos.x - sec.position.x, offY: pos.y - sec.position.y })
   }
 
   function handleTouchStart(e, cardId) {
     if (e.touches.length !== 1) return
-    const t = e.touches[0]
-    const pos = canvasPos(t.clientX, t.clientY)
     const card = cards.find(c => c.id === cardId)
     if (!card || card.locked) return
+    const pos = canvasPos(e.touches[0].clientX, e.touches[0].clientY)
     setDragging({ cardId, offX: pos.x - card.position.x, offY: pos.y - card.position.y })
   }
 
   function handleTouchMove(e) {
     if (!dragging || e.touches.length !== 1) return
     e.preventDefault()
-    const t = e.touches[0]
-    const pos = canvasPos(t.clientX, t.clientY)
-    if (dragging.sectionId) {
-      moveSection(dragging.sectionId, Math.max(0, pos.x - dragging.offX), Math.max(0, pos.y - dragging.offY))
-    } else {
-      moveCard(dragging.cardId, Math.max(0, pos.x - dragging.offX), Math.max(0, pos.y - dragging.offY))
-    }
+    const pos = canvasPos(e.touches[0].clientX, e.touches[0].clientY)
+    if (dragging.sectionId) moveSection(dragging.sectionId, Math.max(0,pos.x-dragging.offX), Math.max(0,pos.y-dragging.offY))
+    else moveCard(dragging.cardId, Math.max(0,pos.x-dragging.offX), Math.max(0,pos.y-dragging.offY))
   }
 
   function handleConnectDotDown(cardId, side) {
@@ -381,8 +430,8 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
     setConnectLine({ x1:from.x, y1:from.y, x2:from.x, y2:from.y })
   }
 
-  function handleResizeCard(cardId, newWidth) {
-    updateCard(cardId, { width: newWidth })
+  function handleResizeCard(cardId, newW, newH) {
+    updateCard(cardId, { width: newW, height: newH })
   }
 
   function handleLockToggle(cardId) {
@@ -390,7 +439,6 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
     if (card) updateCard(cardId, { locked: !card.locked })
   }
 
-  // Section spawnen in Canvas-Mitte
   function handleAddSection() {
     const el = canvasRef.current
     const cx = el.scrollLeft + el.clientWidth  / 2 - 170
@@ -399,9 +447,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
   }
 
   useEffect(() => {
-    function onKey(e) {
-      if (e.key === 'Escape') { setConnectingFrom(null); setConnectLine(null) }
-    }
+    function onKey(e) { if (e.key === 'Escape') { setConnectingFrom(null); setConnectLine(null) } }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [])
@@ -410,7 +456,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
     <div className="flex-1 flex flex-col overflow-hidden">
 
       {/* Toolbar */}
-      <div className="bg-white border-b border-ss-border px-5 py-2.5 flex items-center gap-3 flex-shrink-0">
+      <div className="bg-white border-b border-ss-border px-5 py-2.5 flex items-center gap-2.5 flex-shrink-0">
         <button onClick={() => setShowAddModal(true)}
           className="flex items-center gap-1.5 px-3 py-1.5 bg-ss-ink text-white text-xs font-semibold rounded-lg hover:bg-ss-dim transition-colors">
           + Signal
@@ -420,19 +466,24 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
           + Section
         </button>
         {connectingFrom && (
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-ss-accentBg border border-ss-accent/30 rounded-lg">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-ss-accentBg border border-ss-accent/30 rounded-lg ml-1">
             <div className="w-2 h-2 rounded-full bg-ss-accent animate-pulse" />
             <span className="text-xs text-ss-accent font-medium">Auf Ziel-Card loslassen — ESC abbr.</span>
           </div>
         )}
-        <span className="ml-auto text-xs text-ss-ghost hidden sm:block">{cards.length} Signals · Linie = trennen</span>
+        <span className="ml-auto text-2xs text-ss-ghost hidden sm:block font-mono">{cards.length} signals · click line to disconnect</span>
       </div>
 
       {/* Canvas */}
       <div
         ref={canvasRef}
-        className="flex-1 overflow-auto bg-[#fafaf8]"
-        style={{ cursor: connectingFrom ? 'crosshair' : 'default', touchAction: dragging ? 'none' : 'pan-x pan-y' }}
+        className="flex-1 overflow-auto"
+        style={{
+          background: 'radial-gradient(circle at 1px 1px, #e8e8e4 1px, transparent 0) 0 0 / 24px 24px',
+          backgroundColor: '#fafaf8',
+          cursor: connectingFrom ? 'crosshair' : 'default',
+          touchAction: dragging ? 'none' : 'pan-x pan-y',
+        }}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={() => setDragging(null)}
@@ -444,9 +495,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
 
           {/* Sections */}
           {sections.map(section => (
-            <CanvasSection
-              key={section.id}
-              section={section}
+            <CanvasSection key={section.id} section={section}
               isActive={activeSection === section.id}
               onActivate={() => setActiveSection(section.id)}
               onDragStart={handleSectionDragStart}
@@ -458,36 +507,37 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
 
           {/* SVG Linien */}
           <svg className="absolute inset-0 pointer-events-none" width={CANVAS_W} height={CANVAS_H} style={{zIndex:1}}>
+            <defs>
+              <marker id="dot-end" markerWidth="4" markerHeight="4" refX="2" refY="2">
+                <circle cx="2" cy="2" r="1.5" fill="#c0c0b8"/>
+              </marker>
+            </defs>
             {connections.map(cn => {
-              const fromCard = cards.find(c => c.id === cn.from)
-              const toCard   = cards.find(c => c.id === cn.to)
-              if (!fromCard || !toCard) return null
-              const pts = bestAnchors(fromCard, toCard)
+              const fc = cards.find(c => c.id === cn.from)
+              const tc = cards.find(c => c.id === cn.to)
+              if (!fc || !tc) return null
+              const pts = bestAnchors(fc, tc, cardHeights)
               if (!pts) return null
               const { from: f, to: t, fromSide, toSide } = pts
               const path = buildPath(f, t, fromSide, toSide)
               return (
                 <g key={cn.id}>
-                  <path d={path} stroke="transparent" strokeWidth="14" fill="none"
+                  <path d={path} stroke="transparent" strokeWidth="12" fill="none"
                     style={{pointerEvents:'stroke', cursor:'pointer'}} onClick={()=>deleteConnection(cn.id)} />
-                  <path d={path} stroke="#c8c8c2" strokeWidth="1.5" fill="none" strokeDasharray="4 5"
-                    style={{pointerEvents:'none'}} />
-                  <circle cx={f.x} cy={f.y} r="2.5" fill="#c8c8c2" style={{pointerEvents:'none'}} />
-                  <circle cx={t.x} cy={t.y} r="2.5" fill="#c8c8c2" style={{pointerEvents:'none'}} />
+                  <path d={path} stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"
+                    markerEnd="url(#dot-end)" style={{pointerEvents:'none'}} />
                 </g>
               )
             })}
             {connectLine && (
               <line x1={connectLine.x1} y1={connectLine.y1} x2={connectLine.x2} y2={connectLine.y2}
-                stroke="#7a8c3c" strokeWidth="2" strokeDasharray="5 4" />
+                stroke="#7a8c3c" strokeWidth="1.5" strokeDasharray="5 4" />
             )}
           </svg>
 
           {/* Cards */}
           {cards.map(card => (
-            <CanvasCard
-              key={card.id}
-              card={card}
+            <CanvasCard key={card.id} card={card}
               connectingFrom={connectingFrom?.cardId}
               onDragStart={handleDragStart}
               onTouchStart={handleTouchStart}
@@ -496,15 +546,16 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
               onDelete={deleteCard}
               onResize={handleResizeCard}
               onLockToggle={handleLockToggle}
+              onHeightChange={handleHeightChange}
             />
           ))}
 
           {cards.length === 0 && sections.length === 0 && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center">
-              <p className="text-ss-ghost text-sm">Noch keine Signals auf diesem Board.</p>
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+              <p className="text-ss-ghost/60 text-sm">Empty board.</p>
               <button onClick={() => setShowAddModal(true)}
                 className="px-4 py-2 border border-ss-border rounded-lg text-sm text-ss-dim hover:border-ss-muted hover:text-ss-ink transition-all">
-                + Ersten Signal hinzufügen
+                + Add first signal
               </button>
             </div>
           )}
