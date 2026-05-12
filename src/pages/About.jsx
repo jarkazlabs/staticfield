@@ -9,7 +9,7 @@ export default function About() {
           <span className="font-mono text-2xs text-ss-ghost tracking-widest uppercase">About</span>
         </div>
         <h1 className="font-sans text-5xl text-ss-ink mb-12 pb-10 border-b border-ss-border" style={{ fontWeight: 600 }}>
-          What is Signal Space?
+          What is graain?
         </h1>
 
         <blockquote className="font-sans text-2xl text-ss-ink italic leading-snug mb-12 pl-5 border-l-2 border-ss-muted">
@@ -20,7 +20,7 @@ export default function About() {
           {[
             {
               heading: 'Why this exists',
-              body: 'Most tools are built for productivity. Signal Space is built for culture. A place to collect, organize and connect the things that shape how you work with sound — gear you love, patches that worked, field recordings you made, notes you wrote at 2am.',
+              body: 'Most tools are built for productivity. graain is built for culture. A place to collect, organize and connect the things that shape how you work with sound — gear you love, patches that worked, field recordings you made, notes you wrote at 2am.',
             },
             {
               heading: "Who it's for",
@@ -51,7 +51,7 @@ export default function About() {
           </div>
 
           <p className="font-mono text-2xs text-ss-ghost/50 pt-4">
-            Signal Space — MVP v0.1 — Vite + React + Tailwind CSS
+            graain — MVP v0.1 — Vite + React + Tailwind CSS
           </p>
         </div>
       </div>

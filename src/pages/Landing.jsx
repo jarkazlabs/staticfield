@@ -172,8 +172,8 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
       <footer className="border-t border-ss-border px-6 py-8" >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div>
-            <p className="text-xs text-ss-ghost/60">© graain 2024</p>
-            <p className="text-xs text-ss-ghost/40 mt-0.5">A signal culture archive</p>
+            <p className="text-xs text-ss-ghost/60">© 2026 JARKAZ Labs</p>
+            <p className="text-xs text-ss-ghost/40 mt-0.5">All rights reserved.</p>
           </div>
           <div className="flex gap-5">
             {['Twitter', 'Instagram', 'Mastodon'].map(l => (
