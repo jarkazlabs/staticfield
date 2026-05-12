@@ -7,7 +7,7 @@ export default function Logo({ size = 'md' }) {
     <span style={{
       fontFamily: '"Prompt", system-ui, sans-serif',
       fontSize,
-      fontWeight: 300,
+      fontWeight: 500,
       letterSpacing: '-0.02em',
       color: '#111110',
       lineHeight: 1,
