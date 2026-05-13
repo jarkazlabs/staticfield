@@ -7,7 +7,7 @@ export default function Logo({ size = 'md' }) {
 
   return (
     <img
-      src="/signalspace/graain.svg"
+      src="/signalspace/graain-logo.svg"
       alt="graain"
       width={w}
       height={h}
