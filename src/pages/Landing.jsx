@@ -1,11 +1,11 @@
-// Landing.jsx — Mockup-style Hero: linksbündige Headline, Cards links+rechts
+// Landing.jsx — Responsive Hero
 
 import { curatedStrips, DEMO_BOARDS as boards } from '../data/signals.js'
 import BoardCollage      from '../components/BoardCollage.jsx'
 import StripCollageCard  from '../components/StripCollageCard.jsx'
 import HeroPreview       from '../components/HeroPreview.jsx'
 
-const BRANDS = ['SUPERBOOTH', 'Mutable Instruments', 'TPTOP audio', 'intellijel designs', 'FREQUENCIES']
+const BRANDS = ['SUPERBOOTH', 'Mutable Instruments', 'TPTOP audio', 'intellijel', 'FREQUENCIES']
 
 function AvatarCluster() {
   const colors = ['#c8b89a','#b8a88a','#d4c4b0','#bfaf9c']
@@ -23,27 +23,25 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
   function openBoard(id) { setActiveBoardId(id); setPage('board-detail') }
 
   return (
-    <div className="min-h-screen" >
+    <div className="min-h-screen bg-ss-bg">
 
-      {/* ─── HERO ─────────────────────────────────────────── */}
+      {/* ─── HERO ─── */}
       <section className="relative pt-14 overflow-hidden" style={{ minHeight: '100vh' }}>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-10 sm:pt-16 pb-8">
+          <div className="relative" style={{ minHeight: 580 }}>
 
-        {/* Hero Content + Cards — full width, cards bleed left/right */}
-        <div className="relative max-w-7xl mx-auto px-6 pt-16 pb-8">
-          <div className="relative" style={{ minHeight: 640 }}>
-
-            {/* Cards — absolute positioned, behind and around headline */}
-            <div className="absolute inset-0 pointer-events-none">
+            {/* Cards — Desktop only */}
+            <div className="absolute inset-0 pointer-events-none hidden lg:block">
               <HeroPreview />
             </div>
 
-            {/* Headline — centered with margin to avoid cards */}
+            {/* Headline — centered */}
             <div className="relative z-10 flex flex-col items-center justify-center text-center"
-              style={{ paddingTop: 80, paddingBottom: 60 }}>
+              style={{ paddingTop: 40, paddingBottom: 40 }}>
 
-              {/* Big headline */}
               <h1 className="font-sans leading-[1.05] mb-6 animate-slide-up opacity-0"
-                style={{ fontWeight: 800, fontSize: 'clamp(2.2rem, 5vw, 4.5rem)',
+                style={{ fontWeight: 800,
+                  fontSize: 'clamp(2rem, 6vw, 4.5rem)',
                   animationFillMode: 'forwards', animationDelay: '0.05s' }}>
                 A visual space<br/>
                 for sound,<br/>
@@ -54,41 +52,37 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
                 creative drift.
               </h1>
 
-              {/* Subtext */}
-              <p className="text-base text-ss-dim max-w-sm leading-relaxed mb-8 animate-slide-up opacity-0"
+              <p className="text-sm sm:text-base text-ss-dim max-w-xs sm:max-w-sm leading-relaxed mb-8 animate-slide-up opacity-0"
                 style={{ animationFillMode: 'forwards', animationDelay: '0.12s' }}>
                 Build evolving archives for sound and ideas.
               </p>
 
-              {/* CTAs */}
-              <div className="flex items-center gap-3 mb-8 animate-slide-up opacity-0"
+              <div className="flex flex-col sm:flex-row items-center gap-3 mb-8 animate-slide-up opacity-0 w-full sm:w-auto"
                 style={{ animationFillMode: 'forwards', animationDelay: '0.18s' }}>
                 <button onClick={() => setPage('boards')}
-                  className="flex items-center gap-2 px-6 py-3 bg-ss-ink text-white text-sm font-semibold rounded-lg hover:bg-ss-dim transition-colors hover-lift">
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-ss-ink text-white text-sm font-semibold rounded-lg hover:bg-ss-dim transition-colors">
                   Start collecting
                 </button>
                 <button onClick={() => setPage('explore')}
-                  className="px-6 py-3 border border-ss-border text-ss-ink text-sm font-semibold rounded-lg hover:border-ss-muted hover:bg-white transition-all hover-lift">
+                  className="w-full sm:w-auto px-6 py-3 border border-ss-border text-ss-ink text-sm font-semibold rounded-lg hover:border-ss-muted hover:bg-white transition-all">
                   Explore boards
                 </button>
               </div>
 
-              {/* Social proof */}
               <div className="flex items-center gap-3 animate-fade-in opacity-0"
                 style={{ animationFillMode: 'forwards', animationDelay: '0.24s' }}>
                 <AvatarCluster />
-                <div className="text-xs text-ss-dim leading-tight">
+                <div className="text-xs text-ss-dim leading-tight text-left">
                   <span className="font-medium text-ss-ink">2,341 boards</span> · <span className="font-medium text-ss-ink">8,657 members</span><br/>
                   <span className="text-ss-ghost/70">Join creatives building signal worlds.</span>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
 
-        {/* Scroll to explore */}
-        <div className="flex flex-col items-center gap-2 pb-10 animate-fade-in opacity-0"
+        {/* Scroll indicator — hidden on mobile */}
+        <div className="hidden sm:flex flex-col items-center gap-2 pb-10 animate-fade-in opacity-0"
           style={{ animationFillMode: 'forwards', animationDelay: '0.5s' }}>
           <span className="font-sans text-xs text-ss-ghost/60 tracking-widest uppercase">Scroll to explore</span>
           <div className="w-px h-5 bg-ss-border animate-pulse"/>
@@ -97,15 +91,15 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
           </svg>
         </div>
 
-        {/* Brand leiste */}
-        <div className="border-t border-ss-border/50 py-6">
-          <div className="max-w-7xl mx-auto px-6">
-            <p className="text-2xs text-ss-ghost/40 uppercase tracking-widest text-center mb-5 font-sans">
+        {/* Brand bar */}
+        <div className="border-t border-ss-border/50 py-5 sm:py-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <p className="text-2xs text-ss-ghost/40 uppercase tracking-widest text-center mb-4 font-sans">
               Trusted by creatives and studios
             </p>
-            <div className="flex items-center justify-center gap-10 flex-wrap">
+            <div className="flex items-center justify-center gap-5 sm:gap-10 flex-wrap">
               {BRANDS.map(b => (
-                <span key={b} className="font-sans text-sm font-semibold text-ss-dim/40 tracking-tight">{b}</span>
+                <span key={b} className="font-sans text-xs sm:text-sm font-semibold text-ss-dim/40 tracking-tight">{b}</span>
               ))}
             </div>
           </div>
@@ -115,14 +109,14 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
       <div className="border-t border-ss-border" />
 
       {/* ─── Curated Signals ─── */}
-      <section className="py-20 px-6" >
+      <section className="py-12 sm:py-20 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
-          <div className="flex flex-col items-center text-center mb-12">
-            <h2 className="font-sans font-bold text-3xl text-ss-ink mb-2">Curated Signals</h2>
+          <div className="flex flex-col items-center text-center mb-8 sm:mb-12">
+            <h2 className="font-sans font-bold text-2xl sm:text-3xl text-ss-ink mb-2">Curated Signals</h2>
             <p className="text-xs text-ss-ghost/70 max-w-xs">Fragments from the archive. Updated continuously.</p>
           </div>
           <div className="flex justify-center">
-            <div className="scroll-strip flex gap-4 pb-2 max-w-full">
+            <div className="scroll-strip flex gap-3 sm:gap-4 pb-2 max-w-full">
               {curatedStrips.map((item, i) => (
                 <div key={item.id} className="animate-fade-in opacity-0"
                   style={{ animationFillMode: 'forwards', animationDelay: `${i * 0.08}s` }}>
@@ -131,7 +125,7 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
               ))}
             </div>
           </div>
-          <div className="mt-10 flex justify-center">
+          <div className="mt-8 sm:mt-10 flex justify-center">
             <button onClick={() => setPage('explore')}
               className="text-xs text-ss-ghost hover:text-ss-dim font-mono tracking-wide transition-colors flex items-center gap-1.5">
               continue drifting →
@@ -143,13 +137,13 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
       <div className="border-t border-ss-border" />
 
       {/* ─── Featured Boards ─── */}
-      <section className="py-20 px-6" >
+      <section className="py-12 sm:py-20 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
-          <div className="flex flex-col items-center text-center mb-12">
-            <h2 className="font-sans font-bold text-3xl text-ss-ink mb-2">Open Archives</h2>
+          <div className="flex flex-col items-center text-center mb-8 sm:mb-12">
+            <h2 className="font-sans font-bold text-2xl sm:text-3xl text-ss-ink mb-2">Open Archives</h2>
             <p className="text-xs text-ss-ghost/70 max-w-xs">Focused spaces for sonic territories and signal studies.</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
             {boards.map((board, i) => (
               <div key={board.id} className="animate-slide-up opacity-0"
                 style={{ animationFillMode: 'forwards', animationDelay: `${i * 0.07}s` }}>
@@ -159,9 +153,9 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
               </div>
             ))}
           </div>
-          <div className="mt-14 flex justify-center">
+          <div className="mt-10 sm:mt-14 flex justify-center">
             <button onClick={() => setPage('boards')}
-              className="flex items-center gap-2 px-7 py-3 bg-ss-ink text-white text-sm font-medium rounded-lg hover:bg-ss-dim transition-colors hover-lift">
+              className="flex items-center gap-2 px-6 sm:px-7 py-3 bg-ss-ink text-white text-sm font-medium rounded-lg hover:bg-ss-dim transition-colors">
               Enter all archives
             </button>
           </div>
@@ -169,8 +163,8 @@ export default function Landing({ setPage, setActiveBoardId, store }) {
       </section>
 
       {/* ─── Footer ─── */}
-      <footer className="border-t border-ss-border px-6 py-8" >
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <footer className="border-t border-ss-border px-4 sm:px-6 py-6 sm:py-8">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <p className="text-xs text-ss-ghost/60">© 2026 JARKAZ Labs</p>
             <p className="text-xs text-ss-ghost/40 mt-0.5">All rights reserved.</p>

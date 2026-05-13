@@ -48,7 +48,7 @@ export default function EditCardModal({ card, onSave, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
       onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="rounded-xl shadow-2xl w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto"
+      <div className="rounded-xl shadow-2xl w-full max-w-md mx-2 sm:mx-4 max-h-[90vh] overflow-y-auto"
         style={{ backgroundColor: canTint ? (CARD_TINTS.find(t => t.id === tint)?.bg || '#ffffff') : '#ffffff' }}>
 
         <div className="flex items-center justify-between px-5 py-4 border-b border-ss-border sticky top-0 rounded-t-xl"

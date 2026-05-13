@@ -121,7 +121,7 @@ function DiscoverySection({ section, cards }) {
 
 export default function DiscoveryFeed() {
   return (
-    <div className="max-w-7xl mx-auto px-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6">
       {discoverySections.map(section => {
         const cards = discoveryCards.filter(c => c.section === section.id)
         return (
