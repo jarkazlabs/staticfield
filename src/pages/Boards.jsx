@@ -27,7 +27,7 @@ export default function Boards({ boards, store, setPage, setActiveBoardId }) {
           </div>
           <button onClick={() => setShowModal(true)}
             className="flex items-center gap-2 px-4 py-2.5 bg-ss-ink text-white text-sm font-semibold rounded-lg hover:bg-ss-dim transition-colors mb-1">
-            + New archive
+            + New Board
           </button>
         </div>
 

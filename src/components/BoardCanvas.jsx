@@ -70,6 +70,50 @@ function TypeBadge({ type }) {
   return <span className="font-mono text-2xs text-ss-ghost/70 tracking-widest uppercase">{labels[type]||type}</span>
 }
 
+// ─── Note Card mit Expand-Toggle ─────────────────────────
+function NoteCardContent({ title, description }) {
+  const [expanded, setExpanded] = useState(false)
+  const COLLAPSED_H = 96 // px — ca. 5 Zeilen
+
+  // Brauchen wir den Toggle überhaupt?
+  const textRef = useRef(null)
+  const [overflows, setOverflows] = useState(false)
+
+  useEffect(() => {
+    if (textRef.current) {
+      setOverflows(textRef.current.scrollHeight > COLLAPSED_H + 4)
+    }
+  }, [description])
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      <p className="font-sans font-semibold text-sm text-ss-ink leading-snug">{title}</p>
+      {description && (
+        <div className="relative">
+          <div
+            ref={textRef}
+            className="text-xs text-ss-dim leading-relaxed transition-all duration-300 overflow-hidden"
+            style={{ maxHeight: expanded ? textRef.current?.scrollHeight + 'px' : COLLAPSED_H + 'px' }}
+          >
+            {description}
+          </div>
+          {/* Toggle-Button — nur wenn Text überläuft */}
+          {overflows && (
+            <button
+              data-action="expand"
+              onMouseDown={e => { e.stopPropagation(); setExpanded(v => !v) }}
+              className="mt-1.5 flex items-center gap-1 font-mono text-2xs text-ss-ghost/60 hover:text-ss-accent transition-colors"
+            >
+              <span>{expanded ? '↑' : '↓'}</span>
+              <span>{expanded ? 'weniger' : 'mehr'}</span>
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ─── Card Content ─────────────────────────────────────────
 
 function CardContent({ card }) {
@@ -83,22 +127,7 @@ function CardContent({ card }) {
       </div>
 
     case 'note':
-      return <div className="flex flex-col gap-1.5">
-        <p className="font-sans font-semibold text-sm text-ss-ink leading-snug">{card.title}</p>
-        {card.description && (
-          <div className="relative">
-            <div
-              className="text-xs text-ss-dim leading-relaxed overflow-y-auto pr-0.5"
-              style={{ maxHeight: 120, scrollbarWidth: 'thin' }}
-            >
-              {card.description}
-            </div>
-            {/* Fade unten — zeigt an dass mehr Text da ist */}
-            <div className="absolute bottom-0 left-0 right-0 h-5 pointer-events-none rounded-b"
-              style={{ background: 'linear-gradient(to bottom, transparent, var(--card-bg, white))' }} />
-          </div>
-        )}
-      </div>
+      return <NoteCardContent title={card.title} description={card.description} />
 
     case 'link':
       return <div className="flex flex-col gap-2">
@@ -278,8 +307,10 @@ function CanvasCard({ card, connectingFrom, onDragStart, onTouchStart, onConnect
             <div className="flex items-center gap-1" data-action="buttons">
               <button data-action="lock" onMouseDown={e=>{e.stopPropagation(); onLockToggle(card.id)}}
                 className={`w-5 h-5 flex items-center justify-center rounded transition-colors text-xs
-                  ${locked ? 'text-ss-accent' : 'text-ss-ghost/50 hover:text-ss-ghost'}`}
-                title={locked?'Entsperren':'Sperren'}>🔒</button>
+                  ${locked ? 'text-red-400' : 'text-ss-ghost/40 hover:text-ss-ghost'}`}
+                title={locked ? 'Entsperren' : 'Sperren'}>
+                {locked ? '🔒' : '🔓'}
+              </button>
               <button data-action="edit" onMouseDown={e=>{e.stopPropagation(); onEdit(card)}}
                 className="w-5 h-5 flex items-center justify-center rounded text-ss-ghost/50 hover:text-ss-ghost transition-colors text-xs"
                 title="Bearbeiten">✏️</button>

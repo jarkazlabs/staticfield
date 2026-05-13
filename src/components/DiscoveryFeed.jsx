@@ -88,10 +88,7 @@ function DiscoverySection({ section, cards }) {
       {/* Section Header */}
       <div className="flex items-end justify-between mb-7">
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-ss-accent" />
-            <span className="font-sans text-2xs text-ss-ghost tracking-widest uppercase">{section.label}</span>
-          </div>
+          <h2 className="font-sans font-bold text-3xl text-ss-ink mb-1">{section.label}</h2>
           {section.description && (
             <p className="text-xs text-ss-dim max-w-xs">{section.description}</p>
           )}

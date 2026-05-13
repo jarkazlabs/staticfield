@@ -176,9 +176,11 @@ export default function CanvasSection({ section, isActive, onActivate, onDragSta
         {/* Lock */}
         <button
           onClick={handleLockToggle}
-          className={`text-xs transition-colors ${locked ? 'text-ss-accent' : 'text-ss-ghost/40 hover:text-ss-ghost'}`}
+          className={`text-xs transition-colors ${locked ? 'text-red-400' : 'text-ss-ghost/40 hover:text-ss-ghost'}`}
           title={locked ? 'Entsperren' : 'Sperren'}
-        >🔒</button>
+        >
+          {locked ? '🔒' : '🔓'}
+        </button>
 
         {/* Löschen */}
         {!locked && (
