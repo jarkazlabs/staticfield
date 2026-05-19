@@ -7,8 +7,8 @@ export default function Logo({ size = 'md' }) {
 
   return (
     <img
-      src="/signalspace/graain-logo.svg"
-      alt="graain"
+      src="/staticfield/staticfield-logo.svg"
+      alt="staticfield"
       width={w}
       height={h}
       style={{ display: 'block' }}
