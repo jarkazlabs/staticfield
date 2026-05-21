@@ -1,6 +1,7 @@
 // EditCardModal.jsx — Card bearbeiten + Farbe wählen (Note & Chain)
 import { useState, useRef } from 'react'
 import { CARD_TINTS } from '../data/tints.js'
+import { PatternForm } from './PatternCard.jsx'
 
 const TINTABLE = ['note', 'chain']
 
@@ -14,6 +15,14 @@ export default function EditCardModal({ card, onSave, onClose }) {
   const [chainItems,  setChain]  = useState(
     card.chain ? card.chain.filter(i => i !== '→') : ['', '']
   )
+  // Pattern state — initialisiert aus card
+  const [patternData, setPatternData] = useState({
+    notes:       card.notes       || '',
+    bpm:         card.bpm         || '',
+    scale:       card.scale       || '',
+    description: card.description || '',
+    title:       card.title       || '',
+  })
   const fileRef = useRef()
 
   function processFile(file) {
@@ -28,6 +37,10 @@ export default function EditCardModal({ card, onSave, onClose }) {
   function updateChainItem(i,v) { setChain(c => { const n=[...c]; n[i]=v; return n }) }
 
   function handleSave() {
+    if (card.type === 'pattern') {
+      onSave(card.id, { ...patternData, title: patternData.title || 'Pattern' })
+      return
+    }
     const updates = { title, description }
     if (TINTABLE.includes(card.type)) updates.tint = tint
     if (card.type === 'link' || card.type === 'instagram') updates.url = url
@@ -161,6 +174,11 @@ export default function EditCardModal({ card, onSave, onClose }) {
                 + Gerät / Effekt hinzufügen
               </button>
             </div>
+          )}
+
+          {/* ─── PATTERN ─── */}
+          {card.type === 'pattern' && (
+            <PatternForm data={patternData} onChange={setPatternData} />
           )}
 
           <button onClick={handleSave}

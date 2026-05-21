@@ -9,6 +9,7 @@ import AddCardModal   from './AddCardModal.jsx'
 import EditCardModal  from './EditCardModal.jsx'
 import CanvasSection  from './CanvasSection.jsx'
 import PedalIcon      from './PedalIcon.jsx'
+import { PatternCardContent } from './PatternCard.jsx'
 import { CARD_TINTS } from '../data/tints.js'
 
 const CARD_W_DEFAULT = 250
@@ -66,7 +67,7 @@ function buildPath(f, t, fromSide, toSide) {
 // ─── Type Badge ───────────────────────────────────────────
 
 function TypeBadge({ type }) {
-  const labels = { note:'Note', link:'Link', image:'Image', instagram:'Instagram', chain:'Signal-Chain' }
+  const labels = { note:'Note', link:'Link', image:'Image', instagram:'Instagram', chain:'Signal-Chain', pattern:'Pattern' }
   return <span className="font-mono text-2xs text-ss-ghost/70 tracking-widest uppercase">{labels[type]||type}</span>
 }
 
@@ -176,6 +177,9 @@ function CardContent({ card }) {
         {card.description && <p className="text-xs text-ss-dim leading-relaxed">{card.description}</p>}
       </div>
     }
+
+    case 'pattern':
+      return <PatternCardContent card={card} />
 
     default:
       return <p className="text-sm text-ss-ink">{card.title}</p>

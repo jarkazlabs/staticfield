@@ -2,25 +2,29 @@
 
 import { useState, useRef } from 'react'
 import { CARD_TINTS } from '../data/tints.js'
+import { PatternForm } from './PatternCard.jsx'
 
 const TYPES = [
-  { id: 'note',      icon: '✏️', label: 'Note',        desc: 'Eigener Text' },
-  { id: 'link',      icon: '🔗', label: 'Link',        desc: 'URL / Website' },
-  { id: 'image',     icon: '🖼️', label: 'Bild',        desc: 'Bild hochladen oder droppen' },
-  { id: 'instagram', icon: '📸', label: 'Instagram',   desc: 'Post-URL' },
-  { id: 'chain', icon: '⛓',  label: 'Signal-Chain', desc: 'Signal Chain' },
+  { id: 'note',      icon: '✏️', label: 'Note',          desc: 'Eigener Text' },
+  { id: 'link',      icon: '🔗', label: 'Link',          desc: 'URL / Website' },
+  { id: 'image',     icon: '🖼️', label: 'Bild',          desc: 'Bild hochladen oder droppen' },
+  { id: 'instagram', icon: '📸', label: 'Instagram',     desc: 'Post-URL' },
+  { id: 'chain',     icon: '⛓',  label: 'Signal-Chain',  desc: 'Signal Chain' },
+  { id: 'pattern',   icon: '♩',  label: 'Pattern',       desc: 'Noten-Skizze, max. 8 Steps' },
 ]
 
 export default function AddCardModal({ onAdd, onClose }) {
-  const [step,       setStep]   = useState('type')
-  const [type,       setType]   = useState(null)
-  const [title,      setTitle]  = useState('')
-  const [description,setDesc]   = useState('')
-  const [url,        setUrl]    = useState('')
-  const [imageData,  setImage]  = useState(null)
-  const [tint,       setTint]   = useState('none')
-  const [chain,      setChain]  = useState(['', '', ''])
-  const [dragOver,   setDragOver] = useState(false)
+  const [step,        setStep]      = useState('type')
+  const [type,        setType]      = useState(null)
+  const [title,       setTitle]     = useState('')
+  const [description, setDesc]      = useState('')
+  const [url,         setUrl]       = useState('')
+  const [imageData,   setImage]     = useState(null)
+  const [tint,        setTint]      = useState('none')
+  const [chain,       setChain]     = useState(['', '', ''])
+  const [dragOver,    setDragOver]  = useState(false)
+  // Pattern state
+  const [patternData, setPatternData] = useState({ notes: '', bpm: '', scale: '', description: '' })
   const fileRef = useRef()
 
   function handleTypeSelect(t) { setType(t); setStep('form') }
@@ -33,15 +37,11 @@ export default function AddCardModal({ onAdd, onClose }) {
   }
 
   function handleImageUpload(e) { processFile(e.target.files[0]) }
-
-  // Drag & Drop Handler
-  function handleDragOver(e)  { e.preventDefault(); setDragOver(true) }
-  function handleDragLeave(e) { e.preventDefault(); setDragOver(false) }
+  function handleDragOver(e)    { e.preventDefault(); setDragOver(true) }
+  function handleDragLeave(e)   { e.preventDefault(); setDragOver(false) }
   function handleDrop(e) {
-    e.preventDefault()
-    setDragOver(false)
-    const file = e.dataTransfer.files[0]
-    processFile(file)
+    e.preventDefault(); setDragOver(false)
+    processFile(e.dataTransfer.files[0])
   }
 
   function addChainItem()       { setChain(c => [...c, '']) }
@@ -49,6 +49,10 @@ export default function AddCardModal({ onAdd, onClose }) {
   function updateChainItem(i,v) { setChain(c => { const n=[...c]; n[i]=v; return n }) }
 
   function handleSubmit() {
+    if (type === 'pattern') {
+      onAdd('pattern', { ...patternData, title: patternData.title || 'Pattern' })
+      onClose(); return
+    }
     const data = { title: title.trim(), description }
     if (type === 'note' || type === 'chain') data.tint = tint
     if (type === 'link' || type === 'instagram') data.url = url
@@ -66,9 +70,11 @@ export default function AddCardModal({ onAdd, onClose }) {
     onClose()
   }
 
-  const canSubmit = type === 'chain'
-    ? chain.some(Boolean)
-    : type === 'image' ? !!imageData : !!title.trim()
+  const canSubmit = type === 'pattern'
+    ? !!(patternData.notes?.trim())
+    : type === 'chain'
+      ? chain.some(Boolean)
+      : type === 'image' ? !!imageData : !!title.trim()
 
   const currentTintBg = CARD_TINTS.find(t => t.id === tint)?.bg || '#ffffff'
 
@@ -309,6 +315,11 @@ export default function AddCardModal({ onAdd, onClose }) {
                   </div>
                 </div>
               </>
+            )}
+
+            {/* ─── PATTERN ─── */}
+            {type === 'pattern' && (
+              <PatternForm data={patternData} onChange={setPatternData} />
             )}
 
             <button onClick={handleSubmit} disabled={!canSubmit}
