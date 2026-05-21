@@ -1,32 +1,32 @@
-// App.jsx — Haupt-Router mit zentralem Store
+// App.jsx — Router mit Fields-Umbenennung + neue Seiten
 import { useState } from 'react'
-import Nav          from './components/Nav.jsx'
-import Landing      from './pages/Landing.jsx'
-import Explore      from './pages/Explore.jsx'
-import Boards       from './pages/Boards.jsx'
-import BoardDetail  from './pages/BoardDetail.jsx'
-import About        from './pages/About.jsx'
+import Nav         from './components/Nav.jsx'
+import Landing     from './pages/Landing.jsx'
+import Explore     from './pages/Explore.jsx'
+import Fields      from './pages/Fields.jsx'
+import FieldDetail from './pages/FieldDetail.jsx'
+import Manifesto   from './pages/Manifesto.jsx'
 import { useStore } from './hooks/useStore.js'
 
 export default function App() {
-  const [page, setPage]               = useState('landing')
-  const [activeBoardId, setActiveBoardId] = useState(null)
+  const [page, setPage]                   = useState('landing')
+  const [activeFieldId, setActiveFieldId] = useState(null)
   const store = useStore()
 
   function renderPage() {
     switch (page) {
       case 'landing':
-        return <Landing setPage={setPage} setActiveBoardId={setActiveBoardId} store={store} />
+        return <Landing setPage={setPage} setActiveFieldId={setActiveFieldId} store={store} />
       case 'explore':
         return <Explore />
-      case 'boards':
-        return <Boards boards={store.boards} store={store} setPage={setPage} setActiveBoardId={setActiveBoardId} />
-      case 'board-detail':
-        return <BoardDetail boardId={activeBoardId} boards={store.boards} store={store} setPage={setPage} />
-      case 'about':
-        return <About />
+      case 'fields':
+        return <Fields fields={store.boards} store={store} setPage={setPage} setActiveFieldId={setActiveFieldId} />
+      case 'field-detail':
+        return <FieldDetail fieldId={activeFieldId} fields={store.boards} store={store} setPage={setPage} />
+      case 'manifesto':
+        return <Manifesto setPage={setPage} />
       default:
-        return <Landing setPage={setPage} setActiveBoardId={setActiveBoardId} store={store} />
+        return <Landing setPage={setPage} setActiveFieldId={setActiveFieldId} store={store} />
     }
   }
 

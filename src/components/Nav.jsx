@@ -1,10 +1,10 @@
-// Nav.jsx — Responsive mit Hamburger-Menü auf Mobile
+// Nav.jsx — staticfield Nav: Logo · Explore · Fields · Manifesto · Start your field
 import { useEffect, useState } from 'react'
 import Logo from './Logo.jsx'
 
 export default function Nav({ page, setPage }) {
-  const [scrolled,   setScrolled]   = useState(false)
-  const [menuOpen,   setMenuOpen]   = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     function onScroll() { setScrolled(window.scrollY > 20) }
@@ -15,9 +15,9 @@ export default function Nav({ page, setPage }) {
   function navigate(id) { setPage(id); setMenuOpen(false) }
 
   const links = [
-    { id: 'boards',  label: 'Boards'  },
-    { id: 'explore', label: 'Explore' },
-    { id: 'about',   label: 'About'   },
+    { id: 'explore',   label: 'Explore'   },
+    { id: 'fields',    label: 'Fields'    },
+    { id: 'manifesto', label: 'Manifesto' },
   ]
 
   return (
@@ -32,8 +32,8 @@ export default function Nav({ page, setPage }) {
             <Logo size="sm" />
           </button>
 
-          {/* Desktop nav — hidden on mobile */}
-          <nav className="hidden md:flex items-center gap-6">
+          {/* Desktop nav */}
+          <nav className="hidden md:flex items-center gap-7">
             {links.map(link => (
               <button key={link.id} onClick={() => navigate(link.id)}
                 className={`text-sm transition-colors duration-200
@@ -43,28 +43,19 @@ export default function Nav({ page, setPage }) {
             ))}
           </nav>
 
-          {/* Desktop right */}
+          {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3 flex-shrink-0">
-            <button className="text-ss-ghost hover:text-ss-dim transition-colors p-1">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.5"/>
-                <line x1="11" y1="11" x2="15" y2="15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
+            <button onClick={() => navigate('fields')}
+              className="flex items-center gap-1.5 px-4 py-2 bg-ss-ink text-white text-sm font-semibold rounded-lg hover:bg-ss-dim transition-colors">
+              Start your field →
             </button>
-            <button onClick={() => navigate('boards')}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-ss-ink text-white text-xs font-semibold rounded-lg hover:bg-ss-dim transition-colors">
-              + New board
-            </button>
-            <div className="w-7 h-7 rounded-full bg-ss-muted border border-ss-border flex items-center justify-center">
-              <span className="text-ss-dim text-xs font-medium">J</span>
-            </div>
           </div>
 
-          {/* Mobile: CTA + Hamburger */}
+          {/* Mobile */}
           <div className="flex md:hidden items-center gap-2">
-            <button onClick={() => navigate('boards')}
+            <button onClick={() => navigate('fields')}
               className="px-3 py-1.5 bg-ss-ink text-white text-xs font-semibold rounded-lg">
-              + New board
+              Start your field
             </button>
             <button onClick={() => setMenuOpen(o => !o)}
               className="w-9 h-9 flex flex-col items-center justify-center gap-1.5 rounded-lg hover:bg-ss-surface transition-colors">
@@ -73,11 +64,10 @@ export default function Nav({ page, setPage }) {
               <span className={`block w-5 h-0.5 bg-ss-ink transition-all duration-200 ${menuOpen ? '-rotate-45 -translate-y-2' : ''}`}/>
             </button>
           </div>
-
         </div>
       </header>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile menu */}
       {menuOpen && (
         <div className="fixed inset-0 z-40 md:hidden" onClick={() => setMenuOpen(false)}>
           <div className="absolute top-14 left-0 right-0 bg-white border-b border-ss-border shadow-lg"
@@ -90,9 +80,6 @@ export default function Nav({ page, setPage }) {
                   {link.label}
                 </button>
               ))}
-              <div className="border-t border-ss-border mt-2 pt-3">
-                <button className="text-left px-3 py-2 text-sm text-ss-ghost">Account</button>
-              </div>
             </div>
           </div>
         </div>
