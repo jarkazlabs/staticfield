@@ -40,17 +40,17 @@ function ConnectedField() {
         <circle cx="223" cy="273" r="2.5" fill="#c8c8c0"/>
         <circle cx="268" cy="288" r="2.5" fill="#c8c8c0"/>
 
-        {/* NOTE right-middle → PHOTO left-middle: NOTE right=446,centerY=108 → PHOTO left=465,centerY=137 */}
-        <path d="M 446,108 C 455,108 455,137 465,137"
+        {/* NOTE right-middle → PHOTO left-middle: NOTE right=446,centerY=108 → PHOTO left=500,centerY=165 */}
+        <path d="M 446,108 C 473,108 473,165 500,165"
           stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
         <circle cx="446" cy="108" r="2.5" fill="#c8c8c0"/>
-        <circle cx="465" cy="137" r="2.5" fill="#c8c8c0"/>
+        <circle cx="500" cy="165" r="2.5" fill="#c8c8c0"/>
 
-        {/* PHOTO bottom-middle → YOUTUBE top-middle: PHOTO bottom=242,centerX=542 → YT top=320,centerX=547 */}
-        <path d="M 542,242 C 542,281 547,300 547,320"
+        {/* PHOTO bottom-middle → YOUTUBE top-middle: PHOTO bottom=270,centerX=577 → YT top=330,centerX=547 */}
+        <path d="M 577,270 C 577,300 547,310 547,330"
           stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
-        <circle cx="542" cy="242" r="2.5" fill="#c8c8c0"/>
-        <circle cx="547" cy="320" r="2.5" fill="#c8c8c0"/>
+        <circle cx="577" cy="270" r="2.5" fill="#c8c8c0"/>
+        <circle cx="547" cy="330" r="2.5" fill="#c8c8c0"/>
 
         {/* PATTERN right-middle → SYNTH left-middle */}
         <path d="M 200,485 C 229,485 229,485 258,485"
@@ -107,8 +107,8 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* PHOTO — left:465, top:30, w:155 → centerX=542, centerY=137, bottom=242 */}
-      <div className="absolute" style={{ left: 465, top: 30, width: 155, zIndex: 2 }}>
+      {/* PHOTO — left:500, top:60, w:155 → centerX=577, centerY=165, bottom=270 */}
+      <div className="absolute" style={{ left: 500, top: 60, width: 155, zIndex: 2 }}>
         <div className="bg-white rounded-xl border border-ss-border shadow-sm overflow-hidden field-float" style={{ animationDelay: '0.5s' }}>
           <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=300&q=75" alt="" className="w-full aspect-square object-cover"/>
           <div className="px-2.5 py-2">
@@ -117,8 +117,8 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* YOUTUBE — left:455, top:320, w:185 → left=455, centerX=547, top=320 */}
-      <div className="absolute" style={{ left: 455, top: 320, width: 185, zIndex: 3 }}>
+      {/* YOUTUBE — left:455, top:330, w:185 → left=455, centerX=547, top=330 */}
+      <div className="absolute" style={{ left: 455, top: 330, width: 185, zIndex: 3 }}>
         <div className="bg-white rounded-xl border border-ss-border shadow-md overflow-hidden field-float" style={{ animationDelay: '2.5s' }}>
           <div className="w-full aspect-video bg-ss-ink relative overflow-hidden">
             <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=300&q=70" alt="" className="w-full h-full object-cover opacity-60"/>

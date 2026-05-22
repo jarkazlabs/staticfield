@@ -128,7 +128,7 @@ export default function BoardCollage({ board, boardCards = [], onClick, onDelete
         `}>
           {hovered && (
             <div className="bg-white rounded-lg px-3 py-1.5 shadow-lg transform translate-y-0 transition-transform">
-              <span className="text-xs font-semibold text-ss-ink">Open board →</span>
+              <span className="text-xs font-semibold text-ss-ink">Open field →</span>
             </div>
           )}
         </div>
