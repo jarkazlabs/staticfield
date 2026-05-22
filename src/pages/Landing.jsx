@@ -3,100 +3,48 @@
 
 import { useState } from 'react'
 
-// ─── HERO FIELD VISUALIZATION — Option A ──────────────────
-// Cards + Linien erscheinen sequentiell, einmalig, ~4.5s total
-// Dann sanftes Float. Keine Überlagerung.
-
-// Linie wächst via stroke-dashoffset CSS-Animation
-// Jede Linie hat eine eigene CSS-Klasse mit delay
+// ─── HERO FIELD VISUALIZATION ─────────────────────────────
+// Alle Cards sofort sichtbar. Nur sanftes Float.
 
 function ConnectedField() {
-  // Layout — klar verteilt, keine Überlappung:
-  // Col A (links):  x=30–250
-  // Col B (mitte):  x=270–480  
-  // Col C (rechts): x=460–620
-  //
-  // Row 1: top ~30–130
-  // Row 2: top ~180–280
-  // Row 3: top ~330–420
-  // Row 4: top ~460–540
-  //
-  // Sequenz: IMAGE(A1) → NOTE(B1) → LINK(B2) → CHAIN(A2) → PHOTO(C1) → YT(C2) → PATTERN(A3) → SYNTH(B3)
-  // Jede Card: delay + 0.6s, Linie danach: + 0.3s
-
   return (
     <div className="relative w-full select-none" style={{ height: 580 }}>
 
-      {/* ── SVG Linien — alle mit pathLength + dashoffset animation ── */}
+      {/* SVG — gestrichelte Linien wie in der App */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 5 }}>
-        <defs>
-          {/* Jede Linie bekommt eigene Animation via style */}
-        </defs>
-
-        {/* 1. IMAGE right → NOTE left  (erscheint bei ~0.7s) */}
         <path d="M 225,90 C 248,90 248,118 268,118"
-          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"
-          pathLength="1"
-          style={{ strokeDashoffset: 1, animation: 'lineReveal 0.35s ease 0.7s forwards' }}/>
-        <circle cx="225" cy="90" r="2.5" fill="#c8c8c0"
-          style={{ opacity: 0, animation: 'dotReveal 0.1s ease 0.7s forwards' }}/>
-        <circle cx="268" cy="118" r="2.5" fill="#c8c8c0"
-          style={{ opacity: 0, animation: 'dotReveal 0.1s ease 0.7s forwards' }}/>
+          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
+        <circle cx="225" cy="90" r="2.5" fill="#c8c8c0"/>
+        <circle cx="268" cy="118" r="2.5" fill="#c8c8c0"/>
 
-        {/* 2. NOTE bottom → LINK top  (erscheint bei ~1.7s) */}
         <path d="M 355,182 C 355,210 355,215 355,228"
-          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"
-          pathLength="1"
-          style={{ strokeDashoffset: 1, animation: 'lineReveal 0.35s ease 1.7s forwards' }}/>
-        <circle cx="355" cy="182" r="2.5" fill="#c8c8c0"
-          style={{ opacity: 0, animation: 'dotReveal 0.1s ease 1.7s forwards' }}/>
-        <circle cx="355" cy="228" r="2.5" fill="#c8c8c0"
-          style={{ opacity: 0, animation: 'dotReveal 0.1s ease 1.7s forwards' }}/>
+          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
+        <circle cx="355" cy="182" r="2.5" fill="#c8c8c0"/>
+        <circle cx="355" cy="228" r="2.5" fill="#c8c8c0"/>
 
-        {/* 3. LINK left → CHAIN right  (erscheint bei ~2.7s) */}
         <path d="M 268,300 C 245,300 245,268 222,268"
-          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"
-          pathLength="1"
-          style={{ strokeDashoffset: 1, animation: 'lineReveal 0.35s ease 2.7s forwards' }}/>
-        <circle cx="268" cy="300" r="2.5" fill="#c8c8c0"
-          style={{ opacity: 0, animation: 'dotReveal 0.1s ease 2.7s forwards' }}/>
-        <circle cx="222" cy="268" r="2.5" fill="#c8c8c0"
-          style={{ opacity: 0, animation: 'dotReveal 0.1s ease 2.7s forwards' }}/>
+          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
+        <circle cx="268" cy="300" r="2.5" fill="#c8c8c0"/>
+        <circle cx="222" cy="268" r="2.5" fill="#c8c8c0"/>
 
-        {/* 4. PHOTO top → NOTE right  (erscheint bei ~3.1s) */}
-        <path d="M 460,85 C 440,85 430,118 445,118"
-          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"
-          pathLength="1"
-          style={{ strokeDashoffset: 1, animation: 'lineReveal 0.35s ease 3.1s forwards' }}/>
-        <circle cx="460" cy="85" r="2.5" fill="#c8c8c0"
-          style={{ opacity: 0, animation: 'dotReveal 0.1s ease 3.1s forwards' }}/>
-        <circle cx="445" cy="118" r="2.5" fill="#c8c8c0"
-          style={{ opacity: 0, animation: 'dotReveal 0.1s ease 3.1s forwards' }}/>
+        <path d="M 460,85 C 440,85 445,118 445,118"
+          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
+        <circle cx="460" cy="85" r="2.5" fill="#c8c8c0"/>
+        <circle cx="445" cy="118" r="2.5" fill="#c8c8c0"/>
 
-        {/* 5. PHOTO bottom → YT top  (erscheint bei ~3.7s) */}
         <path d="M 520,290 C 520,310 520,318 520,328"
-          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"
-          pathLength="1"
-          style={{ strokeDashoffset: 1, animation: 'lineReveal 0.35s ease 3.7s forwards' }}/>
-        <circle cx="520" cy="290" r="2.5" fill="#c8c8c0"
-          style={{ opacity: 0, animation: 'dotReveal 0.1s ease 3.7s forwards' }}/>
-        <circle cx="520" cy="328" r="2.5" fill="#c8c8c0"
-          style={{ opacity: 0, animation: 'dotReveal 0.1s ease 3.7s forwards' }}/>
+          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
+        <circle cx="520" cy="290" r="2.5" fill="#c8c8c0"/>
+        <circle cx="520" cy="328" r="2.5" fill="#c8c8c0"/>
 
-        {/* 6. PATTERN right → SYNTH left  (erscheint bei ~4.4s) */}
         <path d="M 198,490 C 222,490 235,480 258,480"
-          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"
-          pathLength="1"
-          style={{ strokeDashoffset: 1, animation: 'lineReveal 0.35s ease 4.4s forwards' }}/>
-        <circle cx="198" cy="490" r="2.5" fill="#c8c8c0"
-          style={{ opacity: 0, animation: 'dotReveal 0.1s ease 4.4s forwards' }}/>
-        <circle cx="258" cy="480" r="2.5" fill="#c8c8c0"
-          style={{ opacity: 0, animation: 'dotReveal 0.1s ease 4.4s forwards' }}/>
+          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
+        <circle cx="198" cy="490" r="2.5" fill="#c8c8c0"/>
+        <circle cx="258" cy="480" r="2.5" fill="#c8c8c0"/>
       </svg>
 
-      {/* ── 1. IMAGE — A1, top left ── delay 0.0s */}
-      <div className="absolute" style={{ left: 30, top: 30, width: 195, zIndex: 3,
-        opacity: 0, animation: 'cardReveal 0.4s ease 0.0s forwards' }}>
+      {/* IMAGE */}
+      <div className="absolute" style={{ left: 30, top: 30, width: 195, zIndex: 3 }}>
         <div className="bg-white rounded-xl border border-ss-border shadow-md overflow-hidden field-float" style={{ animationDelay: '0s' }}>
           <div className="w-full aspect-video overflow-hidden">
             <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=75" alt="" className="w-full h-full object-cover"/>
@@ -108,18 +56,16 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* ── 2. NOTE — B1 ── delay 1.0s */}
-      <div className="absolute" style={{ left: 268, top: 60, width: 178, zIndex: 4,
-        opacity: 0, animation: 'cardReveal 0.4s ease 1.0s forwards' }}>
+      {/* NOTE */}
+      <div className="absolute" style={{ left: 268, top: 60, width: 178, zIndex: 4 }}>
         <div className="rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ backgroundColor: '#faf7f0', animationDelay: '1s' }}>
           <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-2">Note</p>
           <p className="font-mono text-sm text-ss-ink leading-relaxed">leave more<br/>silence</p>
         </div>
       </div>
 
-      {/* ── 3. LINK — B2 ── delay 2.0s */}
-      <div className="absolute" style={{ left: 268, top: 228, width: 195, zIndex: 3,
-        opacity: 0, animation: 'cardReveal 0.4s ease 2.0s forwards' }}>
+      {/* LINK */}
+      <div className="absolute" style={{ left: 268, top: 228, width: 195, zIndex: 3 }}>
         <div className="bg-white rounded-xl border border-ss-border shadow-md p-3.5 field-float" style={{ animationDelay: '1.5s' }}>
           <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Link</p>
           <p className="font-sans font-semibold text-xs text-ss-ink mb-1.5">ModWiggler Thread</p>
@@ -128,9 +74,8 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* ── 4. SIGNAL CHAIN — A2 ── delay 3.0s */}
-      <div className="absolute" style={{ left: 18, top: 228, width: 205, zIndex: 3,
-        opacity: 0, animation: 'cardReveal 0.4s ease 3.0s forwards' }}>
+      {/* SIGNAL CHAIN */}
+      <div className="absolute" style={{ left: 18, top: 228, width: 205, zIndex: 3 }}>
         <div className="rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ backgroundColor: '#faf6e8', animationDelay: '2s' }}>
           <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Signal Chain</p>
           <p className="font-sans font-semibold text-xs text-ss-ink mb-2">Delay → Filter → Reverb</p>
@@ -145,9 +90,8 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* ── 5. PHOTO — C1 ── delay 0.5s (rechts, eigene Spalte) */}
-      <div className="absolute" style={{ right: 15, top: 30, width: 155, zIndex: 2,
-        opacity: 0, animation: 'cardReveal 0.4s ease 0.5s forwards' }}>
+      {/* PHOTO */}
+      <div className="absolute" style={{ right: 15, top: 30, width: 155, zIndex: 2 }}>
         <div className="bg-white rounded-xl border border-ss-border shadow-sm overflow-hidden field-float" style={{ animationDelay: '0.5s' }}>
           <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=300&q=75" alt="" className="w-full aspect-square object-cover"/>
           <div className="px-2.5 py-2">
@@ -156,9 +100,8 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* ── 6. YOUTUBE — C2 ── delay 1.5s */}
-      <div className="absolute" style={{ right: 15, top: 328, width: 185, zIndex: 3,
-        opacity: 0, animation: 'cardReveal 0.4s ease 1.5s forwards' }}>
+      {/* YOUTUBE */}
+      <div className="absolute" style={{ right: 15, top: 328, width: 185, zIndex: 3 }}>
         <div className="bg-white rounded-xl border border-ss-border shadow-md overflow-hidden field-float" style={{ animationDelay: '2.5s' }}>
           <div className="w-full aspect-video bg-ss-ink relative overflow-hidden">
             <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=300&q=70" alt="" className="w-full h-full object-cover opacity-60"/>
@@ -175,9 +118,8 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* ── 7. PATTERN — A3 ── delay 3.8s */}
-      <div className="absolute" style={{ left: 30, top: 430, width: 170, zIndex: 3,
-        opacity: 0, animation: 'cardReveal 0.4s ease 3.8s forwards' }}>
+      {/* PATTERN */}
+      <div className="absolute" style={{ left: 30, top: 430, width: 170, zIndex: 3 }}>
         <div className="bg-white rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ animationDelay: '3s' }}>
           <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Pattern</p>
           <p className="font-sans font-semibold text-xs text-ss-ink mb-1.5">Ambient Idea 01</p>
@@ -186,9 +128,8 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* ── 8. SYNTH PATCH — B3 ── delay 4.6s */}
-      <div className="absolute" style={{ left: 258, top: 440, width: 175, zIndex: 3,
-        opacity: 0, animation: 'cardReveal 0.4s ease 4.6s forwards' }}>
+      {/* SYNTH PATCH */}
+      <div className="absolute" style={{ left: 258, top: 440, width: 175, zIndex: 3 }}>
         <div className="rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ backgroundColor: '#eef1e8', animationDelay: '2s' }}>
           <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Synth Patch</p>
           <p className="font-sans font-semibold text-xs text-ss-ink mb-2">Atmos Drift</p>
