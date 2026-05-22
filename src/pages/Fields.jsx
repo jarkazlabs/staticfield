@@ -1,15 +1,21 @@
-// Fields.jsx — Fields-Übersicht (ehemals Boards)
+// Fields.jsx — Fields-Übersicht mit Löschbestätigung
 import { useState } from 'react'
-import AddBoardModal from '../components/AddBoardModal.jsx'
-import BoardCollage  from '../components/BoardCollage.jsx'
+import AddBoardModal    from '../components/AddBoardModal.jsx'
+import BoardCollage     from '../components/BoardCollage.jsx'
+import DeleteFieldModal from '../components/DeleteFieldModal.jsx'
 
 export default function Fields({ fields, store, setPage, setActiveFieldId }) {
-  const [showModal, setShowModal] = useState(false)
+  const [showAddModal,    setShowAddModal]    = useState(false)
+  const [fieldToDelete,   setFieldToDelete]   = useState(null) // field-Objekt
 
   function openField(id) { setActiveFieldId(id); setPage('field-detail') }
   function handleAddField(title, description) {
     const id = store.addBoard(title, description)
     openField(id)
+  }
+  function handleDeleteConfirm() {
+    store.deleteBoard(fieldToDelete.id)
+    setFieldToDelete(null)
   }
 
   return (
@@ -25,7 +31,7 @@ export default function Fields({ fields, store, setPage, setActiveFieldId }) {
             <h1 className="font-sans font-bold text-3xl sm:text-5xl text-ss-ink">Signal Fields</h1>
             <p className="text-sm text-ss-dim mt-2 max-w-md">Focused spaces. Sonic territories. Signal studies.</p>
           </div>
-          <button onClick={() => setShowModal(true)}
+          <button onClick={() => setShowAddModal(true)}
             className="flex items-center gap-2 px-4 py-2.5 bg-ss-ink text-white text-sm font-semibold rounded-lg hover:bg-ss-dim transition-colors self-start sm:self-auto">
             + New Field
           </button>
@@ -39,18 +45,26 @@ export default function Fields({ fields, store, setPage, setActiveFieldId }) {
                 board={field}
                 boardCards={store.getBoardCards(field.id)}
                 onClick={() => openField(field.id)}
-                onDelete={store.deleteBoard}
+                onDelete={() => setFieldToDelete(field)}
               />
             </div>
           ))}
         </div>
       </div>
 
-      {showModal && (
+      {showAddModal && (
         <AddBoardModal
           onAdd={handleAddField}
-          onClose={() => setShowModal(false)}
+          onClose={() => setShowAddModal(false)}
           label="Field"
+        />
+      )}
+
+      {fieldToDelete && (
+        <DeleteFieldModal
+          field={fieldToDelete}
+          onConfirm={handleDeleteConfirm}
+          onClose={() => setFieldToDelete(null)}
         />
       )}
     </div>
