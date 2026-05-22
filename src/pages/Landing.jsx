@@ -4,27 +4,63 @@
 import { useState } from 'react'
 
 // ─── HERO FIELD VISUALIZATION ─────────────────────────────
-// Cards fade in once on load, staggered. Then gentle float. No loop.
 
 function ConnectedField() {
-  return (
-    <div className="relative w-full select-none" style={{ height: 560 }}>
+  // Card dimensions (estimated heights):
+  // IMAGE:  left:55,  top:40,  w:195, h:~170 → right=250, centerY=125
+  // NOTE:   left:270, top:110, w:175, h:~90  → left=270,  centerY=155
+  // LINK:   left:310, top:255, w:195, h:~110 → left=310,  centerY=310
+  // CHAIN:  left:55,  top:285, w:220, h:~85  → right=275, centerY=327
+  // PATTERN:left:70,  top:435, w:190, h:~95  → right=260, centerY=482
+  // SYNTH:  left:278, top:435, w:185, h:~80  → left=278,  centerY=475
+  // PHOTO:  right:20=left:420,top:145,w:160,h:~195 → left=420, centerY=243
+  // YT:     right:10=left:410,top:360,w:195,h:~160 → left=410, centerY=440
 
-      {/* SVG connector lines — visible from start, fade in with field */}
+  return (
+    <div className="relative w-full select-none" style={{ height: 580 }}>
+
+      {/* SVG — gestrichelte Linien wie in der App, Ankerpunkte an Card-Rändern */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
-        <path d="M 175,185 C 175,215 230,225 255,235" stroke="#d4d0c8" strokeWidth="1" fill="none" strokeLinecap="round" opacity="0.8"/>
-        <path d="M 390,195 C 420,195 440,230 445,260" stroke="#d4d0c8" strokeWidth="1" fill="none" strokeLinecap="round" opacity="0.8"/>
-        <path d="M 420,330 C 380,360 300,370 270,390" stroke="#d4d0c8" strokeWidth="1" fill="none" strokeLinecap="round" opacity="0.8"/>
-        <path d="M 140,420 C 140,460 180,475 210,490" stroke="#d4d0c8" strokeWidth="1" fill="none" strokeLinecap="round" opacity="0.8"/>
-        <path d="M 530,310 C 520,340 490,355 470,365" stroke="#d4d0c8" strokeWidth="1" fill="none" strokeLinecap="round" opacity="0.8"/>
-        <circle cx="175" cy="185" r="2.5" fill="#c8c4bc"/>
-        <circle cx="390" cy="195" r="2.5" fill="#c8c4bc"/>
-        <circle cx="420" cy="330" r="2.5" fill="#c8c4bc"/>
-        <circle cx="530" cy="310" r="2.5" fill="#c8c4bc"/>
+        {/* IMAGE right → NOTE left */}
+        <path d="M 250,125 C 260,125 260,155 270,155"
+          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
+        <circle cx="250" cy="125" r="2.5" fill="#c8c8c0"/>
+        <circle cx="270" cy="155" r="2.5" fill="#c8c8c0"/>
+
+        {/* NOTE bottom → LINK top */}
+        <path d="M 357,200 C 357,230 357,245 357,255"
+          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
+        <circle cx="357" cy="200" r="2.5" fill="#c8c8c0"/>
+        <circle cx="357" cy="255" r="2.5" fill="#c8c8c0"/>
+
+        {/* CHAIN right → LINK left */}
+        <path d="M 275,327 C 292,327 292,310 310,310"
+          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
+        <circle cx="275" cy="327" r="2.5" fill="#c8c8c0"/>
+        <circle cx="310" cy="310" r="2.5" fill="#c8c8c0"/>
+
+        {/* PATTERN right → SYNTH left */}
+        <path d="M 260,482 C 269,482 269,475 278,475"
+          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
+        <circle cx="260" cy="482" r="2.5" fill="#c8c8c0"/>
+        <circle cx="278" cy="475" r="2.5" fill="#c8c8c0"/>
+
+        {/* PHOTO left → NOTE right */}
+        <path d="M 420,243 C 400,243 365,195 350,195"
+          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
+        <circle cx="420" cy="243" r="2.5" fill="#c8c8c0"/>
+        <circle cx="350" cy="195" r="2.5" fill="#c8c8c0"/>
+
+        {/* PHOTO bottom → YT top */}
+        <path d="M 500,340 C 500,350 500,350 500,360"
+          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
+        <circle cx="500" cy="340" r="2.5" fill="#c8c8c0"/>
+        <circle cx="500" cy="360" r="2.5" fill="#c8c8c0"/>
       </svg>
 
-      {/* IMAGE: Fog Layer */}
-      <div className="animate-slide-up opacity-0 absolute" style={{ left: 30, top: 40, width: 195, zIndex: 3, animationFillMode: 'forwards', animationDelay: '0.1s' }}>
+      {/* IMAGE: Fog Layer — links, leicht eingerückt */}
+      <div className="animate-slide-up opacity-0 absolute"
+        style={{ left: 55, top: 40, width: 195, zIndex: 3, animationFillMode: 'forwards', animationDelay: '0.1s' }}>
         <div className="bg-white rounded-xl border border-ss-border shadow-md overflow-hidden field-float" style={{ animationDelay: '0s' }}>
           <div className="w-full aspect-video overflow-hidden">
             <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=75" alt="" className="w-full h-full object-cover"/>
@@ -37,7 +73,8 @@ function ConnectedField() {
       </div>
 
       {/* NOTE: leave more silence */}
-      <div className="animate-slide-up opacity-0 absolute" style={{ left: 255, top: 110, width: 175, zIndex: 4, animationFillMode: 'forwards', animationDelay: '0.2s' }}>
+      <div className="animate-slide-up opacity-0 absolute"
+        style={{ left: 270, top: 110, width: 175, zIndex: 4, animationFillMode: 'forwards', animationDelay: '0.2s' }}>
         <div className="rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ backgroundColor: '#faf7f0', animationDelay: '1.5s' }}>
           <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-2">Note</p>
           <p className="font-mono text-sm text-ss-ink leading-relaxed">leave more<br/>silence</p>
@@ -45,7 +82,8 @@ function ConnectedField() {
       </div>
 
       {/* LINK: ModWiggler */}
-      <div className="animate-slide-up opacity-0 absolute" style={{ left: 295, top: 260, width: 195, zIndex: 3, animationFillMode: 'forwards', animationDelay: '0.32s' }}>
+      <div className="animate-slide-up opacity-0 absolute"
+        style={{ left: 310, top: 255, width: 195, zIndex: 3, animationFillMode: 'forwards', animationDelay: '0.32s' }}>
         <div className="bg-white rounded-xl border border-ss-border shadow-md p-3.5 field-float" style={{ animationDelay: '2s' }}>
           <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Link</p>
           <p className="font-sans font-semibold text-xs text-ss-ink mb-1.5">ModWiggler Thread</p>
@@ -54,8 +92,9 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* SIGNAL CHAIN */}
-      <div className="animate-slide-up opacity-0 absolute" style={{ left: 30, top: 290, width: 220, zIndex: 3, animationFillMode: 'forwards', animationDelay: '0.44s' }}>
+      {/* SIGNAL CHAIN — leicht rechts vom linken Rand */}
+      <div className="animate-slide-up opacity-0 absolute"
+        style={{ left: 55, top: 285, width: 220, zIndex: 3, animationFillMode: 'forwards', animationDelay: '0.44s' }}>
         <div className="rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ backgroundColor: '#faf6e8', animationDelay: '1s' }}>
           <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Signal Chain</p>
           <p className="font-sans font-semibold text-xs text-ss-ink mb-2.5">Delay → Filter → Reverb</p>
@@ -70,8 +109,9 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* PATTERN */}
-      <div className="animate-slide-up opacity-0 absolute" style={{ left: 30, top: 450, width: 190, zIndex: 3, animationFillMode: 'forwards', animationDelay: '0.54s' }}>
+      {/* PATTERN — ganz unten links, mehr Einzug */}
+      <div className="animate-slide-up opacity-0 absolute"
+        style={{ left: 70, top: 435, width: 190, zIndex: 3, animationFillMode: 'forwards', animationDelay: '0.54s' }}>
         <div className="bg-white rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ animationDelay: '3s' }}>
           <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Pattern</p>
           <p className="font-sans font-semibold text-xs text-ss-ink mb-2">Ambient Idea 01</p>
@@ -81,7 +121,8 @@ function ConnectedField() {
       </div>
 
       {/* SYNTH PATCH */}
-      <div className="animate-slide-up opacity-0 absolute" style={{ left: 260, top: 450, width: 185, zIndex: 3, animationFillMode: 'forwards', animationDelay: '0.62s' }}>
+      <div className="animate-slide-up opacity-0 absolute"
+        style={{ left: 278, top: 435, width: 185, zIndex: 3, animationFillMode: 'forwards', animationDelay: '0.62s' }}>
         <div className="rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ backgroundColor: '#eef1e8', animationDelay: '2s' }}>
           <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Synth Patch</p>
           <p className="font-sans font-semibold text-xs text-ss-ink mb-2.5">Atmos Drift</p>
@@ -89,8 +130,9 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* PHOTO */}
-      <div className="animate-slide-up opacity-0 absolute" style={{ right: 20, top: 150, width: 160, zIndex: 2, animationFillMode: 'forwards', animationDelay: '0.28s' }}>
+      {/* PHOTO — rechts */}
+      <div className="animate-slide-up opacity-0 absolute"
+        style={{ right: 20, top: 145, width: 160, zIndex: 2, animationFillMode: 'forwards', animationDelay: '0.28s' }}>
         <div className="bg-white rounded-xl border border-ss-border shadow-sm overflow-hidden field-float" style={{ animationDelay: '0.5s' }}>
           <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=300&q=75" alt="" className="w-full aspect-square object-cover"/>
           <div className="px-2.5 py-2">
@@ -99,8 +141,9 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* YOUTUBE */}
-      <div className="animate-slide-up opacity-0 absolute" style={{ right: 10, top: 370, width: 195, zIndex: 3, animationFillMode: 'forwards', animationDelay: '0.48s' }}>
+      {/* YOUTUBE — rechts unten */}
+      <div className="animate-slide-up opacity-0 absolute"
+        style={{ right: 10, top: 360, width: 195, zIndex: 3, animationFillMode: 'forwards', animationDelay: '0.48s' }}>
         <div className="bg-white rounded-xl border border-ss-border shadow-md overflow-hidden field-float" style={{ animationDelay: '1.5s' }}>
           <div className="w-full aspect-video bg-ss-ink relative overflow-hidden">
             <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=300&q=70" alt="" className="w-full h-full object-cover opacity-60"/>
@@ -117,9 +160,6 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* Fade bottom */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none"
-        style={{ background: 'linear-gradient(to bottom, transparent, #f5f2ed)', zIndex: 10 }}/>
     </div>
   )
 }
@@ -229,8 +269,7 @@ function AppPreview() {
           </div>
         </div>
         {/* Canvas */}
-        <div className="flex-1 relative overflow-hidden"
-          style={{ background: 'radial-gradient(circle at 1px 1px, #e8e8e4 1px, transparent 0) 0 0 / 18px 18px, #fafaf8' }}>
+        <div className="flex-1 relative overflow-hidden bg-[#fafaf8]">
           <svg className="absolute inset-0 w-full h-full pointer-events-none">
             <path d="M 165,60 C 185,80 210,90 220,110" stroke="#d4d0c8" strokeWidth="0.8" fill="none" strokeDasharray="3 3"/>
             <path d="M 165,170 C 185,165 200,160 200,155" stroke="#d4d0c8" strokeWidth="0.8" fill="none" strokeDasharray="3 3"/>
@@ -282,7 +321,7 @@ export default function Landing({ setPage, setActiveFieldId, store }) {
             <div className="lg:w-[44%] flex-shrink-0 z-10 relative pt-4">
 
               <h1 className="font-sans leading-[1.04] mb-6 animate-slide-up opacity-0"
-                style={{ fontWeight: 800, fontSize: 'clamp(2.4rem, 5vw, 4.2rem)',
+                style={{ fontWeight: 800, fontSize: 'clamp(2.8rem, 5.5vw, 5rem)',
                   animationFillMode: 'forwards', animationDelay: '0.04s' }}>
                 Build worlds<br/>
                 from{' '}
@@ -292,7 +331,7 @@ export default function Landing({ setPage, setActiveFieldId, store }) {
                 }}>signals.</span>
               </h1>
 
-              <p className="text-sm sm:text-base text-ss-dim leading-relaxed mb-8 max-w-sm animate-slide-up opacity-0"
+              <p className="text-base sm:text-lg text-ss-dim leading-relaxed mb-8 max-w-sm animate-slide-up opacity-0"
                 style={{ animationFillMode: 'forwards', animationDelay: '0.1s' }}>
                 Collect sounds, images, links and notes.<br/>
                 Connect them. Develop ideas.<br/>
