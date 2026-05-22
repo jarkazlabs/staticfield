@@ -5,45 +5,62 @@ import { useState } from 'react'
 
 // ─── HERO FIELD VISUALIZATION ─────────────────────────────
 // Alle Cards sofort sichtbar. Nur sanftes Float.
+//
+// Exakte Card-Dimensionen:
+// IMAGE:   left:30,  top:30,  w:195, h:155  → right=225, centerY=108  bottom=185
+// NOTE:    left:268, top:60,  w:178, h:95   → left=268,  centerY=108  bottom=155, right=446
+// LINK:    left:268, top:228, w:195, h:120  → left=268,  centerY=288  top=228
+// CHAIN:   left:18,  top:228, w:205, h:90   → right=223, centerY=273  top=228
+// PHOTO:   right:15→left:470,top:30,w:155,h:210 → left=470,centerY=135 bottom=240
+// YOUTUBE: right:15→left:460,top:328,w:185,h:160→ top=328, centerX=552
+// PATTERN: left:30,  top:430, w:170, h:110  → right=200, centerY=485
+// SYNTH:   left:258, top:440, w:175, h:90   → left=258,  centerY=485
 
 function ConnectedField() {
   return (
     <div className="relative w-full select-none" style={{ height: 580 }}>
 
-      {/* SVG — gestrichelte Linien wie in der App */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 5 }}>
-        <path d="M 225,90 C 248,90 248,118 268,118"
-          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
-        <circle cx="225" cy="90" r="2.5" fill="#c8c8c0"/>
-        <circle cx="268" cy="118" r="2.5" fill="#c8c8c0"/>
 
-        <path d="M 355,182 C 355,210 355,215 355,228"
+        {/* IMAGE right-middle → NOTE left-middle */}
+        <path d="M 225,108 C 246,108 247,108 268,108"
           stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
-        <circle cx="355" cy="182" r="2.5" fill="#c8c8c0"/>
-        <circle cx="355" cy="228" r="2.5" fill="#c8c8c0"/>
+        <circle cx="225" cy="108" r="2.5" fill="#c8c8c0"/>
+        <circle cx="268" cy="108" r="2.5" fill="#c8c8c0"/>
 
-        <path d="M 268,300 C 245,300 245,268 222,268"
+        {/* NOTE bottom-middle → LINK top-middle */}
+        <path d="M 357,155 C 357,190 357,205 357,228"
           stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
-        <circle cx="268" cy="300" r="2.5" fill="#c8c8c0"/>
-        <circle cx="222" cy="268" r="2.5" fill="#c8c8c0"/>
+        <circle cx="357" cy="155" r="2.5" fill="#c8c8c0"/>
+        <circle cx="357" cy="228" r="2.5" fill="#c8c8c0"/>
 
-        <path d="M 460,85 C 440,85 445,118 445,118"
+        {/* CHAIN right-middle → LINK left-middle */}
+        <path d="M 223,273 C 245,273 246,288 268,288"
           stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
-        <circle cx="460" cy="85" r="2.5" fill="#c8c8c0"/>
-        <circle cx="445" cy="118" r="2.5" fill="#c8c8c0"/>
+        <circle cx="223" cy="273" r="2.5" fill="#c8c8c0"/>
+        <circle cx="268" cy="288" r="2.5" fill="#c8c8c0"/>
 
-        <path d="M 520,290 C 520,310 520,318 520,328"
+        {/* NOTE right-middle → PHOTO left-middle: NOTE right=446,centerY=108 → PHOTO left=465,centerY=137 */}
+        <path d="M 446,108 C 455,108 455,137 465,137"
           stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
-        <circle cx="520" cy="290" r="2.5" fill="#c8c8c0"/>
-        <circle cx="520" cy="328" r="2.5" fill="#c8c8c0"/>
+        <circle cx="446" cy="108" r="2.5" fill="#c8c8c0"/>
+        <circle cx="465" cy="137" r="2.5" fill="#c8c8c0"/>
 
-        <path d="M 198,490 C 222,490 235,480 258,480"
+        {/* PHOTO bottom-middle → YOUTUBE top-middle: PHOTO bottom=242,centerX=542 → YT top=320,centerX=547 */}
+        <path d="M 542,242 C 542,281 547,300 547,320"
           stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
-        <circle cx="198" cy="490" r="2.5" fill="#c8c8c0"/>
-        <circle cx="258" cy="480" r="2.5" fill="#c8c8c0"/>
+        <circle cx="542" cy="242" r="2.5" fill="#c8c8c0"/>
+        <circle cx="547" cy="320" r="2.5" fill="#c8c8c0"/>
+
+        {/* PATTERN right-middle → SYNTH left-middle */}
+        <path d="M 200,485 C 229,485 229,485 258,485"
+          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
+        <circle cx="200" cy="485" r="2.5" fill="#c8c8c0"/>
+        <circle cx="258" cy="485" r="2.5" fill="#c8c8c0"/>
+
       </svg>
 
-      {/* IMAGE */}
+      {/* IMAGE — left:30, top:30, w:195 */}
       <div className="absolute" style={{ left: 30, top: 30, width: 195, zIndex: 3 }}>
         <div className="bg-white rounded-xl border border-ss-border shadow-md overflow-hidden field-float" style={{ animationDelay: '0s' }}>
           <div className="w-full aspect-video overflow-hidden">
@@ -56,7 +73,7 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* NOTE */}
+      {/* NOTE — left:268, top:60, w:178 */}
       <div className="absolute" style={{ left: 268, top: 60, width: 178, zIndex: 4 }}>
         <div className="rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ backgroundColor: '#faf7f0', animationDelay: '1s' }}>
           <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-2">Note</p>
@@ -64,7 +81,7 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* LINK */}
+      {/* LINK — left:268, top:228, w:195 */}
       <div className="absolute" style={{ left: 268, top: 228, width: 195, zIndex: 3 }}>
         <div className="bg-white rounded-xl border border-ss-border shadow-md p-3.5 field-float" style={{ animationDelay: '1.5s' }}>
           <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Link</p>
@@ -74,7 +91,7 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* SIGNAL CHAIN */}
+      {/* SIGNAL CHAIN — left:18, top:228, w:205 */}
       <div className="absolute" style={{ left: 18, top: 228, width: 205, zIndex: 3 }}>
         <div className="rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ backgroundColor: '#faf6e8', animationDelay: '2s' }}>
           <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Signal Chain</p>
@@ -90,8 +107,8 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* PHOTO */}
-      <div className="absolute" style={{ right: 15, top: 30, width: 155, zIndex: 2 }}>
+      {/* PHOTO — left:465, top:30, w:155 → centerX=542, centerY=137, bottom=242 */}
+      <div className="absolute" style={{ left: 465, top: 30, width: 155, zIndex: 2 }}>
         <div className="bg-white rounded-xl border border-ss-border shadow-sm overflow-hidden field-float" style={{ animationDelay: '0.5s' }}>
           <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=300&q=75" alt="" className="w-full aspect-square object-cover"/>
           <div className="px-2.5 py-2">
@@ -100,8 +117,8 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* YOUTUBE */}
-      <div className="absolute" style={{ right: 15, top: 328, width: 185, zIndex: 3 }}>
+      {/* YOUTUBE — left:455, top:320, w:185 → left=455, centerX=547, top=320 */}
+      <div className="absolute" style={{ left: 455, top: 320, width: 185, zIndex: 3 }}>
         <div className="bg-white rounded-xl border border-ss-border shadow-md overflow-hidden field-float" style={{ animationDelay: '2.5s' }}>
           <div className="w-full aspect-video bg-ss-ink relative overflow-hidden">
             <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=300&q=70" alt="" className="w-full h-full object-cover opacity-60"/>
@@ -118,7 +135,7 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* PATTERN */}
+      {/* PATTERN — left:30, top:430, w:170 */}
       <div className="absolute" style={{ left: 30, top: 430, width: 170, zIndex: 3 }}>
         <div className="bg-white rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ animationDelay: '3s' }}>
           <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Pattern</p>
@@ -128,7 +145,7 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* SYNTH PATCH */}
+      {/* SYNTH PATCH — left:258, top:440, w:175 */}
       <div className="absolute" style={{ left: 258, top: 440, width: 175, zIndex: 3 }}>
         <div className="rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ backgroundColor: '#eef1e8', animationDelay: '2s' }}>
           <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Synth Patch</p>
