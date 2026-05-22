@@ -3,64 +3,100 @@
 
 import { useState } from 'react'
 
-// ─── HERO FIELD VISUALIZATION ─────────────────────────────
+// ─── HERO FIELD VISUALIZATION — Option A ──────────────────
+// Cards + Linien erscheinen sequentiell, einmalig, ~4.5s total
+// Dann sanftes Float. Keine Überlagerung.
+
+// Linie wächst via stroke-dashoffset CSS-Animation
+// Jede Linie hat eine eigene CSS-Klasse mit delay
 
 function ConnectedField() {
-  // Card dimensions (estimated heights):
-  // IMAGE:  left:55,  top:40,  w:195, h:~170 → right=250, centerY=125
-  // NOTE:   left:270, top:110, w:175, h:~90  → left=270,  centerY=155
-  // LINK:   left:310, top:255, w:195, h:~110 → left=310,  centerY=310
-  // CHAIN:  left:55,  top:285, w:220, h:~85  → right=275, centerY=327
-  // PATTERN:left:70,  top:435, w:190, h:~95  → right=260, centerY=482
-  // SYNTH:  left:278, top:435, w:185, h:~80  → left=278,  centerY=475
-  // PHOTO:  right:20=left:420,top:145,w:160,h:~195 → left=420, centerY=243
-  // YT:     right:10=left:410,top:360,w:195,h:~160 → left=410, centerY=440
+  // Layout — klar verteilt, keine Überlappung:
+  // Col A (links):  x=30–250
+  // Col B (mitte):  x=270–480  
+  // Col C (rechts): x=460–620
+  //
+  // Row 1: top ~30–130
+  // Row 2: top ~180–280
+  // Row 3: top ~330–420
+  // Row 4: top ~460–540
+  //
+  // Sequenz: IMAGE(A1) → NOTE(B1) → LINK(B2) → CHAIN(A2) → PHOTO(C1) → YT(C2) → PATTERN(A3) → SYNTH(B3)
+  // Jede Card: delay + 0.6s, Linie danach: + 0.3s
 
   return (
     <div className="relative w-full select-none" style={{ height: 580 }}>
 
-      {/* SVG — gestrichelte Linien wie in der App, Ankerpunkte an Card-Rändern */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
-        {/* IMAGE right → NOTE left */}
-        <path d="M 250,125 C 260,125 260,155 270,155"
-          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
-        <circle cx="250" cy="125" r="2.5" fill="#c8c8c0"/>
-        <circle cx="270" cy="155" r="2.5" fill="#c8c8c0"/>
+      {/* ── SVG Linien — alle mit pathLength + dashoffset animation ── */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 5 }}>
+        <defs>
+          {/* Jede Linie bekommt eigene Animation via style */}
+        </defs>
 
-        {/* NOTE bottom → LINK top */}
-        <path d="M 357,200 C 357,230 357,245 357,255"
-          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
-        <circle cx="357" cy="200" r="2.5" fill="#c8c8c0"/>
-        <circle cx="357" cy="255" r="2.5" fill="#c8c8c0"/>
+        {/* 1. IMAGE right → NOTE left  (erscheint bei ~0.7s) */}
+        <path d="M 225,90 C 248,90 248,118 268,118"
+          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"
+          pathLength="1"
+          style={{ strokeDashoffset: 1, animation: 'lineReveal 0.35s ease 0.7s forwards' }}/>
+        <circle cx="225" cy="90" r="2.5" fill="#c8c8c0"
+          style={{ opacity: 0, animation: 'dotReveal 0.1s ease 0.7s forwards' }}/>
+        <circle cx="268" cy="118" r="2.5" fill="#c8c8c0"
+          style={{ opacity: 0, animation: 'dotReveal 0.1s ease 0.7s forwards' }}/>
 
-        {/* CHAIN right → LINK left */}
-        <path d="M 275,327 C 292,327 292,310 310,310"
-          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
-        <circle cx="275" cy="327" r="2.5" fill="#c8c8c0"/>
-        <circle cx="310" cy="310" r="2.5" fill="#c8c8c0"/>
+        {/* 2. NOTE bottom → LINK top  (erscheint bei ~1.7s) */}
+        <path d="M 355,182 C 355,210 355,215 355,228"
+          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"
+          pathLength="1"
+          style={{ strokeDashoffset: 1, animation: 'lineReveal 0.35s ease 1.7s forwards' }}/>
+        <circle cx="355" cy="182" r="2.5" fill="#c8c8c0"
+          style={{ opacity: 0, animation: 'dotReveal 0.1s ease 1.7s forwards' }}/>
+        <circle cx="355" cy="228" r="2.5" fill="#c8c8c0"
+          style={{ opacity: 0, animation: 'dotReveal 0.1s ease 1.7s forwards' }}/>
 
-        {/* PATTERN right → SYNTH left */}
-        <path d="M 260,482 C 269,482 269,475 278,475"
-          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
-        <circle cx="260" cy="482" r="2.5" fill="#c8c8c0"/>
-        <circle cx="278" cy="475" r="2.5" fill="#c8c8c0"/>
+        {/* 3. LINK left → CHAIN right  (erscheint bei ~2.7s) */}
+        <path d="M 268,300 C 245,300 245,268 222,268"
+          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"
+          pathLength="1"
+          style={{ strokeDashoffset: 1, animation: 'lineReveal 0.35s ease 2.7s forwards' }}/>
+        <circle cx="268" cy="300" r="2.5" fill="#c8c8c0"
+          style={{ opacity: 0, animation: 'dotReveal 0.1s ease 2.7s forwards' }}/>
+        <circle cx="222" cy="268" r="2.5" fill="#c8c8c0"
+          style={{ opacity: 0, animation: 'dotReveal 0.1s ease 2.7s forwards' }}/>
 
-        {/* PHOTO left → NOTE right */}
-        <path d="M 420,243 C 400,243 365,195 350,195"
-          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
-        <circle cx="420" cy="243" r="2.5" fill="#c8c8c0"/>
-        <circle cx="350" cy="195" r="2.5" fill="#c8c8c0"/>
+        {/* 4. PHOTO top → NOTE right  (erscheint bei ~3.1s) */}
+        <path d="M 460,85 C 440,85 430,118 445,118"
+          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"
+          pathLength="1"
+          style={{ strokeDashoffset: 1, animation: 'lineReveal 0.35s ease 3.1s forwards' }}/>
+        <circle cx="460" cy="85" r="2.5" fill="#c8c8c0"
+          style={{ opacity: 0, animation: 'dotReveal 0.1s ease 3.1s forwards' }}/>
+        <circle cx="445" cy="118" r="2.5" fill="#c8c8c0"
+          style={{ opacity: 0, animation: 'dotReveal 0.1s ease 3.1s forwards' }}/>
 
-        {/* PHOTO bottom → YT top */}
-        <path d="M 500,340 C 500,350 500,350 500,360"
-          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
-        <circle cx="500" cy="340" r="2.5" fill="#c8c8c0"/>
-        <circle cx="500" cy="360" r="2.5" fill="#c8c8c0"/>
+        {/* 5. PHOTO bottom → YT top  (erscheint bei ~3.7s) */}
+        <path d="M 520,290 C 520,310 520,318 520,328"
+          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"
+          pathLength="1"
+          style={{ strokeDashoffset: 1, animation: 'lineReveal 0.35s ease 3.7s forwards' }}/>
+        <circle cx="520" cy="290" r="2.5" fill="#c8c8c0"
+          style={{ opacity: 0, animation: 'dotReveal 0.1s ease 3.7s forwards' }}/>
+        <circle cx="520" cy="328" r="2.5" fill="#c8c8c0"
+          style={{ opacity: 0, animation: 'dotReveal 0.1s ease 3.7s forwards' }}/>
+
+        {/* 6. PATTERN right → SYNTH left  (erscheint bei ~4.4s) */}
+        <path d="M 198,490 C 222,490 235,480 258,480"
+          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"
+          pathLength="1"
+          style={{ strokeDashoffset: 1, animation: 'lineReveal 0.35s ease 4.4s forwards' }}/>
+        <circle cx="198" cy="490" r="2.5" fill="#c8c8c0"
+          style={{ opacity: 0, animation: 'dotReveal 0.1s ease 4.4s forwards' }}/>
+        <circle cx="258" cy="480" r="2.5" fill="#c8c8c0"
+          style={{ opacity: 0, animation: 'dotReveal 0.1s ease 4.4s forwards' }}/>
       </svg>
 
-      {/* IMAGE: Fog Layer — links, leicht eingerückt */}
-      <div className="animate-slide-up opacity-0 absolute"
-        style={{ left: 55, top: 40, width: 195, zIndex: 3, animationFillMode: 'forwards', animationDelay: '0.1s' }}>
+      {/* ── 1. IMAGE — A1, top left ── delay 0.0s */}
+      <div className="absolute" style={{ left: 30, top: 30, width: 195, zIndex: 3,
+        opacity: 0, animation: 'cardReveal 0.4s ease 0.0s forwards' }}>
         <div className="bg-white rounded-xl border border-ss-border shadow-md overflow-hidden field-float" style={{ animationDelay: '0s' }}>
           <div className="w-full aspect-video overflow-hidden">
             <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=75" alt="" className="w-full h-full object-cover"/>
@@ -72,36 +108,36 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* NOTE: leave more silence */}
-      <div className="animate-slide-up opacity-0 absolute"
-        style={{ left: 270, top: 110, width: 175, zIndex: 4, animationFillMode: 'forwards', animationDelay: '0.2s' }}>
-        <div className="rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ backgroundColor: '#faf7f0', animationDelay: '1.5s' }}>
+      {/* ── 2. NOTE — B1 ── delay 1.0s */}
+      <div className="absolute" style={{ left: 268, top: 60, width: 178, zIndex: 4,
+        opacity: 0, animation: 'cardReveal 0.4s ease 1.0s forwards' }}>
+        <div className="rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ backgroundColor: '#faf7f0', animationDelay: '1s' }}>
           <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-2">Note</p>
           <p className="font-mono text-sm text-ss-ink leading-relaxed">leave more<br/>silence</p>
         </div>
       </div>
 
-      {/* LINK: ModWiggler */}
-      <div className="animate-slide-up opacity-0 absolute"
-        style={{ left: 310, top: 255, width: 195, zIndex: 3, animationFillMode: 'forwards', animationDelay: '0.32s' }}>
-        <div className="bg-white rounded-xl border border-ss-border shadow-md p-3.5 field-float" style={{ animationDelay: '2s' }}>
+      {/* ── 3. LINK — B2 ── delay 2.0s */}
+      <div className="absolute" style={{ left: 268, top: 228, width: 195, zIndex: 3,
+        opacity: 0, animation: 'cardReveal 0.4s ease 2.0s forwards' }}>
+        <div className="bg-white rounded-xl border border-ss-border shadow-md p-3.5 field-float" style={{ animationDelay: '1.5s' }}>
           <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Link</p>
           <p className="font-sans font-semibold text-xs text-ss-ink mb-1.5">ModWiggler Thread</p>
-          <p className="font-mono text-2xs text-ss-dim mb-2">Designing with space — minimal patches that breathe</p>
+          <p className="font-mono text-2xs text-ss-dim mb-2">Designing with space — minimal patches</p>
           <span className="font-mono text-2xs text-ss-accent">↗ modwiggler.com</span>
         </div>
       </div>
 
-      {/* SIGNAL CHAIN — leicht rechts vom linken Rand */}
-      <div className="animate-slide-up opacity-0 absolute"
-        style={{ left: 55, top: 285, width: 220, zIndex: 3, animationFillMode: 'forwards', animationDelay: '0.44s' }}>
-        <div className="rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ backgroundColor: '#faf6e8', animationDelay: '1s' }}>
+      {/* ── 4. SIGNAL CHAIN — A2 ── delay 3.0s */}
+      <div className="absolute" style={{ left: 18, top: 228, width: 205, zIndex: 3,
+        opacity: 0, animation: 'cardReveal 0.4s ease 3.0s forwards' }}>
+        <div className="rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ backgroundColor: '#faf6e8', animationDelay: '2s' }}>
           <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Signal Chain</p>
-          <p className="font-sans font-semibold text-xs text-ss-ink mb-2.5">Delay → Filter → Reverb</p>
+          <p className="font-sans font-semibold text-xs text-ss-ink mb-2">Delay → Filter → Reverb</p>
           <div className="flex items-center gap-1.5">
             {['Delay','Filter','Reverb'].map((item, i, arr) => (
               <span key={i} className="flex items-center gap-1.5">
-                <span className="font-mono text-2xs text-ss-ink bg-white border border-ss-border/60 px-2 py-1 rounded-md">{item}</span>
+                <span className="font-mono text-2xs text-ss-ink bg-white border border-ss-border/60 px-1.5 py-0.5 rounded-md">{item}</span>
                 {i < arr.length-1 && <span className="text-ss-ghost/50 text-2xs">→</span>}
               </span>
             ))}
@@ -109,30 +145,9 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* PATTERN — ganz unten links, mehr Einzug */}
-      <div className="animate-slide-up opacity-0 absolute"
-        style={{ left: 70, top: 435, width: 190, zIndex: 3, animationFillMode: 'forwards', animationDelay: '0.54s' }}>
-        <div className="bg-white rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ animationDelay: '3s' }}>
-          <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Pattern</p>
-          <p className="font-sans font-semibold text-xs text-ss-ink mb-2">Ambient Idea 01</p>
-          <div className="font-mono text-2xs text-ss-dim bg-ss-surface/60 rounded px-2 py-1.5 border border-ss-border/40">C4 — Eb4 — G4</div>
-          <p className="font-mono text-2xs text-ss-ghost/50 mt-1.5">72 bpm · C minor</p>
-        </div>
-      </div>
-
-      {/* SYNTH PATCH */}
-      <div className="animate-slide-up opacity-0 absolute"
-        style={{ left: 278, top: 435, width: 185, zIndex: 3, animationFillMode: 'forwards', animationDelay: '0.62s' }}>
-        <div className="rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ backgroundColor: '#eef1e8', animationDelay: '2s' }}>
-          <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Synth Patch</p>
-          <p className="font-sans font-semibold text-xs text-ss-ink mb-2.5">Atmos Drift</p>
-          <span className="font-mono text-2xs text-ss-dim border border-ss-border/50 bg-white/60 px-2 py-0.5 rounded-md">Mutable Instruments</span>
-        </div>
-      </div>
-
-      {/* PHOTO — rechts */}
-      <div className="animate-slide-up opacity-0 absolute"
-        style={{ right: 20, top: 145, width: 160, zIndex: 2, animationFillMode: 'forwards', animationDelay: '0.28s' }}>
+      {/* ── 5. PHOTO — C1 ── delay 0.5s (rechts, eigene Spalte) */}
+      <div className="absolute" style={{ right: 15, top: 30, width: 155, zIndex: 2,
+        opacity: 0, animation: 'cardReveal 0.4s ease 0.5s forwards' }}>
         <div className="bg-white rounded-xl border border-ss-border shadow-sm overflow-hidden field-float" style={{ animationDelay: '0.5s' }}>
           <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=300&q=75" alt="" className="w-full aspect-square object-cover"/>
           <div className="px-2.5 py-2">
@@ -141,14 +156,14 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* YOUTUBE — rechts unten */}
-      <div className="animate-slide-up opacity-0 absolute"
-        style={{ right: 10, top: 360, width: 195, zIndex: 3, animationFillMode: 'forwards', animationDelay: '0.48s' }}>
-        <div className="bg-white rounded-xl border border-ss-border shadow-md overflow-hidden field-float" style={{ animationDelay: '1.5s' }}>
+      {/* ── 6. YOUTUBE — C2 ── delay 1.5s */}
+      <div className="absolute" style={{ right: 15, top: 328, width: 185, zIndex: 3,
+        opacity: 0, animation: 'cardReveal 0.4s ease 1.5s forwards' }}>
+        <div className="bg-white rounded-xl border border-ss-border shadow-md overflow-hidden field-float" style={{ animationDelay: '2.5s' }}>
           <div className="w-full aspect-video bg-ss-ink relative overflow-hidden">
             <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=300&q=70" alt="" className="w-full h-full object-cover opacity-60"/>
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-8 h-8 rounded-full bg-white/90 flex items-center justify-center shadow">
+              <div className="w-7 h-7 rounded-full bg-white/90 flex items-center justify-center shadow">
                 <span className="text-ss-ink text-xs ml-0.5">▶</span>
               </div>
             </div>
@@ -157,6 +172,27 @@ function ConnectedField() {
             <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">YouTube</p>
             <p className="font-sans font-semibold text-xs text-ss-ink leading-tight">Making an ambient patch</p>
           </div>
+        </div>
+      </div>
+
+      {/* ── 7. PATTERN — A3 ── delay 3.8s */}
+      <div className="absolute" style={{ left: 30, top: 430, width: 170, zIndex: 3,
+        opacity: 0, animation: 'cardReveal 0.4s ease 3.8s forwards' }}>
+        <div className="bg-white rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ animationDelay: '3s' }}>
+          <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Pattern</p>
+          <p className="font-sans font-semibold text-xs text-ss-ink mb-1.5">Ambient Idea 01</p>
+          <div className="font-mono text-2xs text-ss-dim bg-ss-surface/60 rounded px-2 py-1.5 border border-ss-border/40">C4 — Eb4 — G4</div>
+          <p className="font-mono text-2xs text-ss-ghost/50 mt-1">72 bpm</p>
+        </div>
+      </div>
+
+      {/* ── 8. SYNTH PATCH — B3 ── delay 4.6s */}
+      <div className="absolute" style={{ left: 258, top: 440, width: 175, zIndex: 3,
+        opacity: 0, animation: 'cardReveal 0.4s ease 4.6s forwards' }}>
+        <div className="rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ backgroundColor: '#eef1e8', animationDelay: '2s' }}>
+          <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Synth Patch</p>
+          <p className="font-sans font-semibold text-xs text-ss-ink mb-2">Atmos Drift</p>
+          <span className="font-mono text-2xs text-ss-dim border border-ss-border/50 bg-white/60 px-2 py-0.5 rounded-md">Mutable Instruments</span>
         </div>
       </div>
 
@@ -225,78 +261,96 @@ function AvatarCluster() {
   )
 }
 
-// ─── APP PREVIEW ILLUSTRATION ─────────────────────────────
+// ─── APP PREVIEW — Browser Chrome ────────────────────────
 
 function AppPreview() {
   const cards = [
-    { type: 'Field Recording', title: 'Rain on metal roof.wav', hasWave: true, left: 80, top: 20, w: 170 },
-    { type: 'Note',            title: 'structure is freedom',   left: 270, top: 10,  w: 145 },
-    { type: 'Signal Chain',    title: 'Delay → Reverb',         left: 80,  top: 155, w: 155 },
-    { type: 'Image',           title: 'Brutalist textures',     hasImg: true, left: 245, top: 120, w: 130 },
-    { type: 'Link',            title: 'A Guide to Texture',     left: 400, top: 170, w: 135 },
+    { type: 'Field Recording', title: 'Rain on metal roof.wav', hasWave: true, left: 30, top: 20, w: 175 },
+    { type: 'Note',            title: 'structure is freedom',                  left: 225, top: 10, w: 148 },
+    { type: 'Signal Chain',    title: 'Delay → Reverb',                        left: 30,  top: 158, w: 158 },
+    { type: 'Image',           title: 'Brutalist textures', hasImg: true,      left: 200, top: 118, w: 132 },
+    { type: 'Link',            title: 'A Guide to Texture',                    left: 348, top: 168, w: 138 },
   ]
+
   return (
     <div className="w-full rounded-2xl border border-ss-border shadow-xl bg-white overflow-hidden">
-      {/* Window chrome */}
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-ss-border bg-ss-surface/60">
-        <div className="flex gap-1.5">
-          {['#f0c0c0','#f0e0b0','#c0e0c0'].map((c,i) => <div key={i} className="w-2.5 h-2.5 rounded-full" style={{backgroundColor:c}}/>)}
+
+      {/* Browser chrome */}
+      <div className="bg-[#f0f0ee] border-b border-ss-border px-3 py-2.5 flex items-center gap-2">
+        {/* Traffic lights */}
+        <div className="flex gap-1.5 flex-shrink-0">
+          <div className="w-3 h-3 rounded-full bg-[#ff5f57]"/>
+          <div className="w-3 h-3 rounded-full bg-[#febc2e]"/>
+          <div className="w-3 h-3 rounded-full bg-[#28c840]"/>
         </div>
-        <div className="flex-1 flex items-center justify-center">
-          <div className="flex items-center gap-3 text-2xs text-ss-ghost font-mono">
-            <span className="opacity-60">Boards</span>
-            <span className="opacity-60">Archive</span>
-            <span className="opacity-60">Favorites</span>
-          </div>
+
+        {/* URL bar */}
+        <div className="flex-1 mx-2 bg-white border border-ss-border/60 rounded-md px-3 py-1 flex items-center gap-1.5">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" className="flex-shrink-0">
+            <circle cx="5" cy="5" r="4" stroke="#c8c4bc" strokeWidth="1"/>
+            <path d="M3 5 Q5 2 7 5 Q5 8 3 5Z" stroke="#c8c4bc" strokeWidth="0.8" fill="none"/>
+            <line x1="5" y1="1" x2="5" y2="9" stroke="#c8c4bc" strokeWidth="0.8"/>
+          </svg>
+          <span className="font-mono text-2xs text-ss-ghost truncate">staticfield.app/field/coastal-textures</span>
+        </div>
+
+        {/* Nav icons placeholder */}
+        <div className="flex gap-2 flex-shrink-0">
+          {[0,1].map(i => (
+            <div key={i} className="w-4 h-4 rounded bg-ss-border/40"/>
+          ))}
         </div>
       </div>
-      {/* Layout: sidebar + canvas */}
-      <div className="flex" style={{ height: 280 }}>
-        {/* Sidebar */}
-        <div className="w-36 border-r border-ss-border bg-ss-surface/30 flex-shrink-0 p-3">
-          <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-3">My Field</p>
-          {['Field Recordings','Signal Chains','References','Ideas','Archive'].map(item => (
-            <div key={item} className={`text-xs py-1.5 px-2 rounded mb-0.5 truncate
-              ${item === 'Field Recordings' ? 'bg-ss-ink text-white font-medium' : 'text-ss-dim hover:text-ss-ink'}`}>
-              {item}
-            </div>
-          ))}
-          <div className="mt-4 pt-3 border-t border-ss-border/50">
-            <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-2">Collections</p>
-            {['Field Rec.','Textures','Ideas'].map(item => (
-              <div key={item} className="text-xs text-ss-dim py-1 px-2 truncate">{item}</div>
-            ))}
+
+      {/* Tab bar */}
+      <div className="bg-[#e8e8e4] border-b border-ss-border/60 px-3 flex items-end gap-1 pt-1.5">
+        <div className="bg-white border border-b-0 border-ss-border rounded-t-md px-3 py-1.5 flex items-center gap-2 min-w-0">
+          <div className="w-3 h-3 rounded-full bg-ss-accent/60 flex-shrink-0"/>
+          <span className="font-sans text-2xs text-ss-ink truncate">Coastal Textures — staticfield</span>
+          <span className="text-ss-ghost/40 text-2xs flex-shrink-0 ml-1">×</span>
+        </div>
+        <div className="px-3 py-1.5 flex items-center">
+          <span className="font-sans text-2xs text-ss-ghost/50">+</span>
+        </div>
+      </div>
+
+      {/* Canvas content */}
+      <div className="relative bg-[#fafaf8] overflow-hidden" style={{ height: 255 }}>
+        {/* Subtle dot grid */}
+        <div className="absolute inset-0 opacity-40"
+          style={{ backgroundImage: 'radial-gradient(circle, #d4d0c8 1px, transparent 1px)', backgroundSize: '20px 20px' }}/>
+
+        {/* Connection lines */}
+        <svg className="absolute inset-0 w-full h-full pointer-events-none">
+          <path d="M 205,55 C 215,55 215,45 225,45"
+            stroke="#c8c8c0" strokeWidth="1" fill="none" strokeDasharray="3 4"/>
+          <path d="M 188,158 C 200,140 200,135 200,128"
+            stroke="#c8c8c0" strokeWidth="1" fill="none" strokeDasharray="3 4"/>
+          <circle cx="205" cy="55" r="2" fill="#c8c4bc"/>
+          <circle cx="188" cy="158" r="2" fill="#c8c4bc"/>
+        </svg>
+
+        {/* Cards */}
+        {cards.map((card, i) => (
+          <div key={i} className="absolute bg-white rounded-xl border border-ss-border shadow-sm p-2.5"
+            style={{ left: card.left, top: card.top, width: card.w }}>
+            <p className="font-mono uppercase text-ss-ghost mb-1.5" style={{ fontSize: 8, letterSpacing: '0.08em' }}>{card.type}</p>
+            {card.hasWave && (
+              <div className="flex items-center gap-px mb-1.5 h-4">
+                {[3,5,8,4,11,7,3,9,6,4,8,5,10,3,7,6,9,4,8,5].map((h, j) => (
+                  <div key={j} style={{ width:2, height:h, backgroundColor:'#1a1814', borderRadius:1, opacity:0.55, flexShrink:0 }}/>
+                ))}
+              </div>
+            )}
+            {card.hasImg && (
+              <div className="w-full aspect-video bg-ss-surface rounded overflow-hidden mb-1.5">
+                <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=200&q=50"
+                  alt="" className="w-full h-full object-cover"/>
+              </div>
+            )}
+            <p className="font-sans font-semibold text-ss-ink leading-tight" style={{ fontSize: 10 }}>{card.title}</p>
           </div>
-        </div>
-        {/* Canvas */}
-        <div className="flex-1 relative overflow-hidden bg-[#fafaf8]">
-          <svg className="absolute inset-0 w-full h-full pointer-events-none">
-            <path d="M 165,60 C 185,80 210,90 220,110" stroke="#d4d0c8" strokeWidth="0.8" fill="none" strokeDasharray="3 3"/>
-            <path d="M 165,170 C 185,165 200,160 200,155" stroke="#d4d0c8" strokeWidth="0.8" fill="none" strokeDasharray="3 3"/>
-            <circle cx="165" cy="60" r="2" fill="#c8c4bc"/>
-            <circle cx="165" cy="170" r="2" fill="#c8c4bc"/>
-          </svg>
-          {cards.map((card, i) => (
-            <div key={i} className="absolute bg-white rounded-lg border border-ss-border shadow-sm p-2.5"
-              style={{ left: card.left, top: card.top, width: card.w }}>
-              <p className="font-mono text-2xs text-ss-ghost uppercase mb-1" style={{fontSize:9}}>{card.type}</p>
-              {card.hasWave && (
-                <div className="flex items-center gap-px mb-1 h-4">
-                  {[3,5,8,4,11,7,3,9,6,4,8,5,10,3,7].map((h,j) => (
-                    <div key={j} style={{width:2,height:h,backgroundColor:'#1a1814',borderRadius:1,opacity:0.55,flexShrink:0}}/>
-                  ))}
-                </div>
-              )}
-              {card.hasImg && (
-                <div className="w-full aspect-video bg-ss-surface rounded overflow-hidden mb-1">
-                  <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=150&q=50"
-                    alt="" className="w-full h-full object-cover"/>
-                </div>
-              )}
-              <p className="font-sans font-semibold text-ss-ink leading-tight" style={{fontSize:10}}>{card.title}</p>
-            </div>
-          ))}
-        </div>
+        ))}
       </div>
     </div>
   )
