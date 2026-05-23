@@ -18,7 +18,7 @@ import { useState } from 'react'
 
 function ConnectedField() {
   return (
-    <div className="relative w-full select-none" style={{ height: 630 }}>
+    <div className="relative w-full select-none" style={{ height: 530 }}>
 
       <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 5 }}>
 
@@ -63,12 +63,12 @@ function ConnectedField() {
         <circle cx="562" cy="360" r="2.5" fill="#c8c8c0"/>
 
         {/* PATTERN right-center → SYNTH left-center
-            PATTERN: left:30, top:490, w:170, h≈100 → right=200, centerY=490+50=540
-            SYNTH:   left:258, top:500, w:175, h≈80  → left=258, centerY=500+40=540 */}
-        <path d="M 200,540 C 229,540 229,540 258,540"
+            PATTERN: left:30, top:390, w:170, h≈100 → right=200, centerY=390+50=440
+            SYNTH:   left:258, top:400, w:175, h≈80  → left=258, centerY=400+40=440 */}
+        <path d="M 200,440 C 229,440 229,440 258,440"
           stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
-        <circle cx="200" cy="540" r="2.5" fill="#c8c8c0"/>
-        <circle cx="258" cy="540" r="2.5" fill="#c8c8c0"/>
+        <circle cx="200" cy="440" r="2.5" fill="#c8c8c0"/>
+        <circle cx="258" cy="440" r="2.5" fill="#c8c8c0"/>
 
       </svg>
 
@@ -147,8 +147,8 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* PATTERN — left:30, top:490, w:170 */}
-      <div className="absolute" style={{ left: 30, top: 490, width: 170, zIndex: 3 }}>
+      {/* PATTERN — left:30, top:390, w:170 */}
+      <div className="absolute" style={{ left: 30, top: 390, width: 170, zIndex: 3 }}>
         <div className="bg-white rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ animationDelay: '3s' }}>
           <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Pattern</p>
           <p className="font-sans font-semibold text-xs text-ss-ink mb-1.5">Ambient Idea 01</p>
@@ -157,8 +157,8 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* SYNTH PATCH — left:258, top:500, w:175 */}
-      <div className="absolute" style={{ left: 258, top: 500, width: 175, zIndex: 3 }}>
+      {/* SYNTH PATCH — left:258, top:400, w:175 */}
+      <div className="absolute" style={{ left: 258, top: 400, width: 175, zIndex: 3 }}>
         <div className="rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ backgroundColor: '#eef1e8', animationDelay: '2s' }}>
           <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Synth Patch</p>
           <p className="font-sans font-semibold text-xs text-ss-ink mb-2">Atmos Drift</p>
