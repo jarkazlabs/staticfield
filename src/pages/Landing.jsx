@@ -18,45 +18,57 @@ import { useState } from 'react'
 
 function ConnectedField() {
   return (
-    <div className="relative w-full select-none" style={{ height: 580 }}>
+    <div className="relative w-full select-none" style={{ height: 630 }}>
 
       <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 5 }}>
 
-        {/* IMAGE right-middle → NOTE left-middle */}
-        <path d="M 225,108 C 246,108 247,108 268,108"
+        {/* IMAGE right-center → NOTE left-center
+            IMAGE: left:30, top:30, w:195, h≈155 → right=225, centerY=30+77=107
+            NOTE:  left:268, top:60, w:178, h≈95  → left=268, centerY=60+47=107 */}
+        <path d="M 225,107 C 246,107 247,107 268,107"
           stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
-        <circle cx="225" cy="108" r="2.5" fill="#c8c8c0"/>
-        <circle cx="268" cy="108" r="2.5" fill="#c8c8c0"/>
+        <circle cx="225" cy="107" r="2.5" fill="#c8c8c0"/>
+        <circle cx="268" cy="107" r="2.5" fill="#c8c8c0"/>
 
-        {/* NOTE bottom-middle → LINK top-middle */}
-        <path d="M 357,155 C 357,190 357,205 357,228"
+        {/* NOTE bottom-center → LINK top-center
+            NOTE bottom: 60+95=155, centerX=268+89=357
+            LINK top: 228, centerX=268+97=365 */}
+        <path d="M 357,155 C 357,191 365,210 365,228"
           stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
         <circle cx="357" cy="155" r="2.5" fill="#c8c8c0"/>
-        <circle cx="357" cy="228" r="2.5" fill="#c8c8c0"/>
+        <circle cx="365" cy="228" r="2.5" fill="#c8c8c0"/>
 
-        {/* CHAIN right-middle → LINK left-middle */}
+        {/* CHAIN right-center → LINK left-center
+            CHAIN: left:18, top:228, w:205, h≈90 → right=223, centerY=228+45=273
+            LINK:  left:268, top:228, h≈120      → left=268, centerY=228+60=288 */}
         <path d="M 223,273 C 245,273 246,288 268,288"
           stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
         <circle cx="223" cy="273" r="2.5" fill="#c8c8c0"/>
         <circle cx="268" cy="288" r="2.5" fill="#c8c8c0"/>
 
-        {/* NOTE right-middle → PHOTO left-middle: NOTE right=446,centerY=108 → PHOTO left=500,centerY=165 */}
-        <path d="M 446,108 C 473,108 473,165 500,165"
+        {/* NOTE right-center → PHOTO left-center
+            NOTE:  right=446, centerY=107
+            PHOTO: left:490, top:55, w:155, h≈185 → left=490, centerY=55+92=147 */}
+        <path d="M 446,107 C 468,107 468,147 490,147"
           stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
-        <circle cx="446" cy="108" r="2.5" fill="#c8c8c0"/>
-        <circle cx="500" cy="165" r="2.5" fill="#c8c8c0"/>
+        <circle cx="446" cy="107" r="2.5" fill="#c8c8c0"/>
+        <circle cx="490" cy="147" r="2.5" fill="#c8c8c0"/>
 
-        {/* PHOTO bottom-middle → YOUTUBE top-middle: PHOTO bottom=270,centerX=577 → YT top=330,centerX=547 */}
-        <path d="M 577,270 C 577,300 547,310 547,330"
+        {/* PHOTO bottom-center → YOUTUBE top-center
+            PHOTO: left:490, top:55, h≈185 → bottom=240, centerX=490+77=567
+            YOUTUBE: left:470, top:360, w:185 → top=360, centerX=470+92=562 */}
+        <path d="M 567,240 C 567,300 562,330 562,360"
           stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
-        <circle cx="577" cy="270" r="2.5" fill="#c8c8c0"/>
-        <circle cx="547" cy="330" r="2.5" fill="#c8c8c0"/>
+        <circle cx="567" cy="240" r="2.5" fill="#c8c8c0"/>
+        <circle cx="562" cy="360" r="2.5" fill="#c8c8c0"/>
 
-        {/* PATTERN right-middle → SYNTH left-middle */}
-        <path d="M 200,485 C 229,485 229,485 258,485"
+        {/* PATTERN right-center → SYNTH left-center
+            PATTERN: left:30, top:490, w:170, h≈100 → right=200, centerY=490+50=540
+            SYNTH:   left:258, top:500, w:175, h≈80  → left=258, centerY=500+40=540 */}
+        <path d="M 200,540 C 229,540 229,540 258,540"
           stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
-        <circle cx="200" cy="485" r="2.5" fill="#c8c8c0"/>
-        <circle cx="258" cy="485" r="2.5" fill="#c8c8c0"/>
+        <circle cx="200" cy="540" r="2.5" fill="#c8c8c0"/>
+        <circle cx="258" cy="540" r="2.5" fill="#c8c8c0"/>
 
       </svg>
 
@@ -107,8 +119,8 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* PHOTO — left:500, top:60, w:155 → centerX=577, centerY=165, bottom=270 */}
-      <div className="absolute" style={{ left: 500, top: 60, width: 155, zIndex: 2 }}>
+      {/* PHOTO — left:490, top:55, w:155 → centerX=567, centerY=147, bottom=240 */}
+      <div className="absolute" style={{ left: 490, top: 55, width: 155, zIndex: 2 }}>
         <div className="bg-white rounded-xl border border-ss-border shadow-sm overflow-hidden field-float" style={{ animationDelay: '0.5s' }}>
           <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=300&q=75" alt="" className="w-full aspect-square object-cover"/>
           <div className="px-2.5 py-2">
@@ -117,8 +129,8 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* YOUTUBE — left:455, top:330, w:185 → left=455, centerX=547, top=330 */}
-      <div className="absolute" style={{ left: 455, top: 330, width: 185, zIndex: 3 }}>
+      {/* YOUTUBE — left:470, top:360, w:185 — klar unter PHOTO, kein Overlap mit SYNTH */}
+      <div className="absolute" style={{ left: 470, top: 360, width: 185, zIndex: 3 }}>
         <div className="bg-white rounded-xl border border-ss-border shadow-md overflow-hidden field-float" style={{ animationDelay: '2.5s' }}>
           <div className="w-full aspect-video bg-ss-ink relative overflow-hidden">
             <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=300&q=70" alt="" className="w-full h-full object-cover opacity-60"/>
@@ -135,8 +147,8 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* PATTERN — left:30, top:430, w:170 */}
-      <div className="absolute" style={{ left: 30, top: 430, width: 170, zIndex: 3 }}>
+      {/* PATTERN — left:30, top:490, w:170 */}
+      <div className="absolute" style={{ left: 30, top: 490, width: 170, zIndex: 3 }}>
         <div className="bg-white rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ animationDelay: '3s' }}>
           <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Pattern</p>
           <p className="font-sans font-semibold text-xs text-ss-ink mb-1.5">Ambient Idea 01</p>
@@ -145,8 +157,8 @@ function ConnectedField() {
         </div>
       </div>
 
-      {/* SYNTH PATCH — left:258, top:440, w:175 */}
-      <div className="absolute" style={{ left: 258, top: 440, width: 175, zIndex: 3 }}>
+      {/* SYNTH PATCH — left:258, top:500, w:175 */}
+      <div className="absolute" style={{ left: 258, top: 500, width: 175, zIndex: 3 }}>
         <div className="rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ backgroundColor: '#eef1e8', animationDelay: '2s' }}>
           <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Synth Patch</p>
           <p className="font-sans font-semibold text-xs text-ss-ink mb-2">Atmos Drift</p>
