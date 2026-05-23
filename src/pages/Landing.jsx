@@ -350,7 +350,7 @@ export default function Landing({ setPage, setActiveFieldId, store }) {
                 Build worlds<br/>
                 from{' '}
                 <span style={{
-                  background: 'linear-gradient(135deg, #b5737a 0%, #8a9fb5 55%, #4a8a8a 100%)',
+                  background: 'linear-gradient(135deg, #c45a64 0%, #6b8fc4 55%, #2e8a8a 100%)',
                   WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
                 }}>signals.</span>
               </h1>
