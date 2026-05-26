@@ -5,10 +5,11 @@
 // - UX-Verbesserungen
 
 import { useRef, useState, useEffect, useCallback } from 'react'
-import AddCardModal   from './AddCardModal.jsx'
-import EditCardModal  from './EditCardModal.jsx'
-import CanvasSection  from './CanvasSection.jsx'
-import PedalIcon      from './PedalIcon.jsx'
+import AddCardModal      from './AddCardModal.jsx'
+import EditCardModal     from './EditCardModal.jsx'
+import DeleteCardModal   from './DeleteCardModal.jsx'
+import CanvasSection     from './CanvasSection.jsx'
+import PedalIcon         from './PedalIcon.jsx'
 import { PatternCardContent } from './PatternCard.jsx'
 import { CARD_TINTS } from '../data/tints.js'
 
@@ -378,6 +379,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
   const [connectLine,    setConnectLine]    = useState(null)
   const [showAddModal,   setShowAddModal]   = useState(false)
   const [editCard,       setEditCard]       = useState(null)
+  const [cardToDelete,   setCardToDelete]   = useState(null)
   const [activeSection,  setActiveSection]  = useState(null)
   // Echte gemessene Höhen der Cards
   const [cardHeights,    setCardHeights]    = useState({})
@@ -593,7 +595,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
               onTouchStart={handleTouchStart}
               onConnectDotDown={handleConnectDotDown}
               onEdit={setEditCard}
-              onDelete={deleteCard}
+              onDelete={c => setCardToDelete(cards.find(x => x.id === c) || { id: c, type: 'note', title: '' })}
               onResize={handleResizeCard}
               onLockToggle={handleLockToggle}
               onHeightChange={handleHeightChange}
@@ -614,6 +616,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
 
       {showAddModal && <AddCardModal onAdd={(type,data)=>addCard(boardId,type,data)} onClose={()=>setShowAddModal(false)} />}
       {editCard    && <EditCardModal card={editCard} onSave={(id,data)=>{updateCard(id,data);setEditCard(null)}} onClose={()=>setEditCard(null)} />}
+      {cardToDelete && <DeleteCardModal card={cardToDelete} onConfirm={() => { deleteCard(cardToDelete.id); setCardToDelete(null) }} onClose={() => setCardToDelete(null)} />}
     </div>
   )
 }
