@@ -347,18 +347,17 @@ export default function Landing({ setPage, setActiveFieldId, store }) {
               <h1 className="font-sans leading-[1.04] mb-6 animate-slide-up opacity-0"
                 style={{ fontWeight: 800, fontSize: 'clamp(2.8rem, 5.5vw, 5rem)',
                   animationFillMode: 'forwards', animationDelay: '0.04s' }}>
-                A place for <span style={{
+                Patch <span style={{
                   background: 'linear-gradient(135deg, #c45a64 0%, #6b8fc4 55%, #2e8a8a 100%)',
                   WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
                 }}>signals</span><br/>
-                to become ideas.
+                into ideas.
               </h1>
 
               <p className="text-base sm:text-lg text-ss-dim leading-relaxed mb-8 max-w-sm animate-slide-up opacity-0"
                 style={{ animationFillMode: 'forwards', animationDelay: '0.1s' }}>
-                Collect what moves you.<br/>
-                Connect the dots.<br/>
-                Return when ready.
+                Collect sounds, links, notes and references.<br/>
+                Connect them. Return later.
               </p>
 
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-8 animate-slide-up opacity-0"
