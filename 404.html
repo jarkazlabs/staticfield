@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>staticfield</title>
+  <script>
+    // GitHub Pages 404-Trick:
+    // Wandelt /staticfield/fields in /?/fields um
+    // App.jsx löst das dann wieder auf
+    var path = window.location.pathname;
+    var base = '/staticfield';
+    var rest = path.replace(base, '').replace(/^\//, '');
+    if (rest && rest !== 'index.html') {
+      window.location.replace(base + '/?/' + rest + window.location.hash);
+    } else {
+      window.location.replace(base + '/');
+    }
+  </script>
+</head>
+<body></body>
+</html>
