@@ -156,7 +156,7 @@ export default function BoardCollage({ board, boardCards = [], onClick, onDelete
           <span className="text-xs text-ss-ghost">by {board.author}</span>
           {!board.isDemo && onDelete && (
             <button
-              onClick={e => { e.stopPropagation(); onDelete(board.id) }}
+              onClick={e => { e.stopPropagation(); onDelete(board) }}
               className="text-2xs text-ss-ghost/50 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
             >
               ✕

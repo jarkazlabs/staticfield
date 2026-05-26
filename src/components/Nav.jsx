@@ -1,4 +1,4 @@
-// Nav.jsx — staticfield Nav: Logo · Explore · Fields · Manifesto · Start your field
+// Nav.jsx — staticfield Nav: Logo · Explore · Fields · Manifesto · Your fields
 import { useEffect, useState } from 'react'
 import Logo from './Logo.jsx'
 
@@ -47,7 +47,7 @@ export default function Nav({ page, setPage }) {
           <div className="hidden md:flex items-center gap-3 flex-shrink-0">
             <button onClick={() => navigate('fields')}
               className="flex items-center gap-1.5 px-4 py-2 bg-ss-ink text-white text-sm font-semibold rounded-lg hover:bg-ss-dim transition-colors">
-              Start your field →
+              Your fields
             </button>
           </div>
 
@@ -55,7 +55,7 @@ export default function Nav({ page, setPage }) {
           <div className="flex md:hidden items-center gap-2">
             <button onClick={() => navigate('fields')}
               className="px-3 py-1.5 bg-ss-ink text-white text-xs font-semibold rounded-lg">
-              Start your field
+              Your fields
             </button>
             <button onClick={() => setMenuOpen(o => !o)}
               className="w-9 h-9 flex flex-col items-center justify-center gap-1.5 rounded-lg hover:bg-ss-surface transition-colors">

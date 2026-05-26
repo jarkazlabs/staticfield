@@ -602,7 +602,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
 
           {cards.length === 0 && sections.length === 0 && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-              <p className="text-ss-ghost/60 text-sm">Empty board.</p>
+              <p className="text-ss-ghost/60 text-sm">Empty field.</p>
               <button onClick={() => setShowAddModal(true)}
                 className="px-4 py-2 border border-ss-border rounded-lg text-sm text-ss-dim hover:border-ss-muted hover:text-ss-ink transition-all">
                 + Add first signal

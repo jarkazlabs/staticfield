@@ -123,6 +123,19 @@ export function PatternForm({ data, onChange }) {
   return (
     <div className="flex flex-col gap-4">
 
+      {/* Titel */}
+      <div>
+        <label className="text-xs font-semibold text-ss-dim uppercase tracking-wide block mb-1.5">
+          Titel <span className="font-normal text-ss-ghost normal-case">(optional)</span>
+        </label>
+        <input
+          value={data.title || ''}
+          onChange={e => onChange({ ...data, title: e.target.value })}
+          placeholder="z.B. Ambient Idea 01"
+          className="w-full border border-ss-border rounded-lg px-3 py-2 text-sm text-ss-ink focus:outline-none focus:border-ss-ink transition-colors"
+        />
+      </div>
+
       {/* Noten-Eingabe */}
       <div>
         <div className="flex items-center justify-between mb-1.5">

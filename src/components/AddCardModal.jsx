@@ -74,7 +74,10 @@ export default function AddCardModal({ onAdd, onClose }) {
     ? !!(patternData.notes?.trim())
     : type === 'chain'
       ? chain.some(Boolean)
-      : type === 'image' ? !!imageData : !!title.trim()
+      : type === 'image' ? !!imageData
+      : type === 'link' ? !!(title.trim() && url.trim())
+      : type === 'instagram' ? !!url.trim()
+      : !!title.trim()
 
   const currentTintBg = CARD_TINTS.find(t => t.id === tint)?.bg || '#ffffff'
 
