@@ -354,10 +354,15 @@ export default function Landing({ setPage, setActiveFieldId, store }) {
                 into ideas.
               </h1>
 
-              <p className="text-base sm:text-lg text-ss-dim leading-relaxed mb-8 max-w-sm animate-slide-up opacity-0"
+              <p className="text-base sm:text-lg text-ss-dim leading-relaxed mb-3 max-w-sm animate-slide-up opacity-0"
                 style={{ animationFillMode: 'forwards', animationDelay: '0.1s' }}>
                 Collect sounds, links, notes and references.<br/>
                 Connect them. Return later.
+              </p>
+
+              <p className="text-xs text-ss-ghost/70 leading-relaxed mb-8 max-w-sm animate-slide-up opacity-0"
+                style={{ animationFillMode: 'forwards', animationDelay: '0.13s' }}>
+                With staticfield, your discoveries become part of an evolving creative field.
               </p>
 
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-8 animate-slide-up opacity-0"
