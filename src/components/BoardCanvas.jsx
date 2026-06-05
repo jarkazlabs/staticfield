@@ -189,17 +189,15 @@ function CardContent({ card }) {
 
 // ─── Canvas Card ──────────────────────────────────────────
 
-function CanvasCard({ card, connectingFrom, onDragStart, onTouchStart, onConnectDotDown, onEdit, onDelete, onDuplicate, onResize, onLockToggle, onHeightChange }) {
+function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onTouchStart, onConnectDotDown, onEdit, onDelete, onDuplicate, onResize, onLockToggle, onHeightChange }) {
   const [hovered,     setHovered]     = useState(false)
   const [hoveredSide, setHoveredSide] = useState(null)
-  const [toolbarOpen, setToolbarOpen] = useState(false)
   const [menuOpen,    setMenuOpen]    = useState(false)
-  const cardRef   = useRef(null)
+  const cardRef    = useRef(null)
   const contentRef = useRef(null)
-  const tintStyle = getTintStyle(card)
-  const cardW     = card.width || CARD_W_DEFAULT
-  const locked    = card.locked || false
-  const showToolbar = hovered || toolbarOpen
+  const tintStyle  = getTintStyle(card)
+  const cardW      = card.width || CARD_W_DEFAULT
+  const locked     = card.locked || false
 
   // Menü schließen bei Klick außerhalb
   useEffect(() => {
@@ -277,9 +275,10 @@ function CanvasCard({ card, connectingFrom, onDragStart, onTouchStart, onConnect
     right:  { style: { right: -7,  top: '50%',  transform: 'translateY(-50%)' } },
   }
 
+  // Dots alleen bij hover en niet selected (zodat toolbar en dots nooit tegelijk)
   const visibleDots = connectingFrom
     ? (connectingFrom === card.id ? Object.keys(dotsConfig) : [])
-    : (hovered && hoveredSide ? [hoveredSide] : [])
+    : (!selected && hovered && hoveredSide ? [hoveredSide] : [])
 
   // Minimale Höhe falls card.height gesetzt
   const minHeight = card.height ? { minHeight: card.height } : {}
@@ -287,7 +286,7 @@ function CanvasCard({ card, connectingFrom, onDragStart, onTouchStart, onConnect
   return (
     <div
       className="absolute select-none"
-      style={{ left: card.position.x, top: card.position.y, width: cardW, zIndex: (hovered || toolbarOpen) ? 10 : 2 }}
+      style={{ left: card.position.x, top: card.position.y, width: cardW, zIndex: (selected || hovered) ? 10 : 2 }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => { setHovered(false); setHoveredSide(null) }}
       onMouseMove={handleMouseMove}
@@ -304,7 +303,7 @@ function CanvasCard({ card, connectingFrom, onDragStart, onTouchStart, onConnect
       onClick={e => {
         if (e.target.closest('[data-action]')) return
         if (connectingFrom) return
-        setToolbarOpen(v => !v)
+        onSelect(selected ? null : card.id)
         setMenuOpen(false)
       }}
     >
@@ -318,7 +317,9 @@ function CanvasCard({ card, connectingFrom, onDragStart, onTouchStart, onConnect
             ? 'cursor-default shadow-sm'
             : connectingFrom && connectingFrom !== card.id
               ? 'ring-2 ring-ss-accent/40 cursor-crosshair shadow-lg'
-              : (hovered || toolbarOpen) ? 'shadow-xl cursor-grab' : 'shadow-sm cursor-grab'
+              : selected
+                ? 'ring-2 ring-ss-ink/20 shadow-xl cursor-grab'
+                : hovered ? 'shadow-lg cursor-grab' : 'shadow-sm cursor-grab'
           }
         `}
         style={{ ...tintStyle, ...minHeight }}
@@ -335,7 +336,7 @@ function CanvasCard({ card, connectingFrom, onDragStart, onTouchStart, onConnect
         </div>
 
         {/* Resize Handle */}
-        {hovered && !locked && (
+        {(hovered || selected) && !locked && (
           <div data-action="resize"
             className="absolute bottom-0 right-0 w-6 h-6 cursor-se-resize flex items-end justify-end p-1.5 opacity-60 hover:opacity-100 transition-opacity"
             onMouseDown={handleResizeMouseDown}
@@ -349,8 +350,8 @@ function CanvasCard({ card, connectingFrom, onDragStart, onTouchStart, onConnect
         )}
       </div>
 
-      {/* ── Bottom Toolbar ── */}
-      {showToolbar && !connectingFrom && (
+      {/* ── Bottom Toolbar — alleen bij selected ── */}
+      {selected && !connectingFrom && (
         <div data-action="toolbar"
           className="absolute left-1/2 -translate-x-1/2 flex items-center gap-0.5 bg-white border border-ss-border rounded-xl shadow-lg px-1.5 py-1"
           style={{ bottom: -42, zIndex: 30, whiteSpace: 'nowrap' }}
@@ -388,7 +389,7 @@ function CanvasCard({ card, connectingFrom, onDragStart, onTouchStart, onConnect
             {menuOpen && (
               <div data-menu className="absolute bottom-full mb-2 right-0 bg-white border border-ss-border rounded-xl shadow-xl py-1 min-w-[145px]" style={{ zIndex: 50 }}>
                 <button data-action="edit"
-                  onMouseDown={e => { e.stopPropagation(); onEdit(card); setMenuOpen(false); setToolbarOpen(false) }}
+                  onMouseDown={e => { e.stopPropagation(); onEdit(card); setMenuOpen(false); onSelect(null) }}
                   className="w-full text-left px-3 py-2 text-xs text-ss-ink hover:bg-ss-surface transition-colors flex items-center gap-2">
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                     <path d="M8.5 1.5l2 2L4 10H2v-2L8.5 1.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
@@ -397,7 +398,7 @@ function CanvasCard({ card, connectingFrom, onDragStart, onTouchStart, onConnect
                 </button>
                 <div className="h-px bg-ss-border/60 mx-2 my-1"/>
                 <button data-action="delete"
-                  onMouseDown={e => { e.stopPropagation(); onDelete(card.id); setMenuOpen(false); setToolbarOpen(false) }}
+                  onMouseDown={e => { e.stopPropagation(); onDelete(card.id); setMenuOpen(false); onSelect(null) }}
                   className="w-full text-left px-3 py-2 text-xs text-red-500 hover:bg-red-50 transition-colors flex items-center gap-2">
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                     <path d="M2 3h8M5 3V2h2v1M4 5l.5 5M8 5l-.5 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
@@ -445,6 +446,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
   const [editCard,       setEditCard]       = useState(null)
   const [cardToDelete,   setCardToDelete]   = useState(null)
   const [activeSection,  setActiveSection]  = useState(null)
+  const [selectedCardId, setSelectedCardId] = useState(null)
   // Echte gemessene Höhen der Cards
   const [cardHeights,    setCardHeights]    = useState({})
 
@@ -612,7 +614,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
         onMouseLeave={() => setDragging(null)}
         onTouchMove={handleTouchMove}
         onTouchEnd={() => setDragging(null)}
-        onClick={() => setActiveSection(null)}
+        onClick={() => { setActiveSection(null); setSelectedCardId(null) }}
       >
         <div className="relative" style={{ width: CANVAS_W, height: CANVAS_H }}>
 
@@ -663,6 +665,8 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
           {cards.map(card => (
             <CanvasCard key={card.id} card={card}
               connectingFrom={connectingFrom?.cardId}
+              selected={selectedCardId === card.id}
+              onSelect={setSelectedCardId}
               onDragStart={handleDragStart}
               onTouchStart={handleTouchStart}
               onConnectDotDown={handleConnectDotDown}

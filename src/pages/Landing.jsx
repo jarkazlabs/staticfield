@@ -356,8 +356,8 @@ export default function Landing({ setPage, setActiveFieldId, store }) {
 
               <p className="text-base sm:text-lg text-ss-dim leading-relaxed mb-3 max-w-sm animate-slide-up opacity-0"
                 style={{ animationFillMode: 'forwards', animationDelay: '0.1s' }}>
-                Collect sounds, links, notes and references.<br/>
-                Connect them. Return later.
+                Collect inspiration. Connect thoughts.<br/>
+                Develop ideas over time.
               </p>
 
               <p className="text-xs text-ss-ghost/70 leading-relaxed mb-8 max-w-sm animate-slide-up opacity-0"
