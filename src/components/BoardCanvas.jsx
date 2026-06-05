@@ -69,7 +69,7 @@ function buildPath(f, t, fromSide, toSide) {
 
 function TypeBadge({ type }) {
   const labels = { note:'Note', link:'Link', image:'Image', instagram:'Instagram', chain:'Signal-Chain', pattern:'Pattern' }
-  return <span className="font-mono text-2xs text-ss-ghost/70 tracking-widest uppercase">{labels[type]||type}</span>
+  return <span className="font-mono text-xs text-ss-ghost/70 tracking-widest uppercase">{labels[type]||type}</span>
 }
 
 // ─── Note Card mit Expand-Toggle ─────────────────────────
@@ -365,7 +365,7 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
         >
           {/* Duplicate */}
           <button data-action="duplicate"
-            onMouseDown={e => { e.stopPropagation(); onDuplicate(card) }}
+            onClick={e => { e.stopPropagation(); onDuplicate(card) }}
             className="flex items-center px-2 py-1.5 rounded-lg text-ss-dim hover:text-ss-ink hover:bg-ss-surface transition-colors"
             title="Duplizieren">
             <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
@@ -375,7 +375,7 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
           </button>
           {/* Lock */}
           <button data-action="lock"
-            onMouseDown={e => { e.stopPropagation(); onLockToggle(card.id) }}
+            onClick={e => { e.stopPropagation(); onLockToggle(card.id) }}
             className={`flex items-center px-2 py-1.5 rounded-lg transition-colors text-xs ${locked ? 'text-red-400 hover:bg-red-50' : 'text-ss-dim hover:text-ss-ink hover:bg-ss-surface'}`}
             title={locked ? 'Entsperren' : 'Sperren'}>
             {locked ? '🔒' : '🔓'}
@@ -384,7 +384,7 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
           {/* ··· */}
           <div className="relative" data-menu>
             <button data-action="menu"
-              onMouseDown={e => { e.stopPropagation(); setMenuOpen(v => !v) }}
+              onClick={e => { e.stopPropagation(); setMenuOpen(v => !v) }}
               className="flex items-center px-2 py-1.5 rounded-lg text-ss-dim hover:text-ss-ink hover:bg-ss-surface transition-colors"
               title="Mehr">
               <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
@@ -396,7 +396,7 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
             {menuOpen && (
               <div data-menu className="absolute bottom-full mb-2 right-0 bg-white border border-ss-border rounded-xl shadow-xl py-1 min-w-[145px]" style={{ zIndex: 50 }}>
                 <button data-action="edit"
-                  onMouseDown={e => { e.stopPropagation(); onEdit(card); setMenuOpen(false); onSelect(null) }}
+                  onClick={e => { e.stopPropagation(); onEdit(card); setMenuOpen(false); onSelect(null) }}
                   className="w-full text-left px-3 py-2 text-xs text-ss-ink hover:bg-ss-surface transition-colors flex items-center gap-2">
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                     <path d="M8.5 1.5l2 2L4 10H2v-2L8.5 1.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
@@ -405,7 +405,7 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
                 </button>
                 <div className="h-px bg-ss-border/60 mx-2 my-1"/>
                 <button data-action="delete"
-                  onMouseDown={e => { e.stopPropagation(); onDelete(card.id); setMenuOpen(false); onSelect(null) }}
+                  onClick={e => { e.stopPropagation(); onDelete(card.id); setMenuOpen(false); onSelect(null) }}
                   className="w-full text-left px-3 py-2 text-xs text-red-500 hover:bg-red-50 transition-colors flex items-center gap-2">
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                     <path d="M2 3h8M5 3V2h2v1M4 5l.5 5M8 5l-.5 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
