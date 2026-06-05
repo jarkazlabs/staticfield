@@ -193,8 +193,9 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
   const [hovered,     setHovered]     = useState(false)
   const [hoveredSide, setHoveredSide] = useState(null)
   const [menuOpen,    setMenuOpen]    = useState(false)
-  const cardRef    = useRef(null)
-  const contentRef = useRef(null)
+  const cardRef      = useRef(null)
+  const contentRef   = useRef(null)
+  const mouseDownPos = useRef(null)
   const tintStyle  = getTintStyle(card)
   const cardW      = card.width || CARD_W_DEFAULT
   const locked     = card.locked || false
@@ -292,6 +293,7 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
       onMouseMove={handleMouseMove}
       onMouseDown={e => {
         if (e.target.closest('[data-action]')) return
+        mouseDownPos.current = { x: e.clientX, y: e.clientY }
         if (connectingFrom || locked) return
         onDragStart(e, card.id)
       }}
@@ -300,11 +302,17 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
         if (connectingFrom) return
         if (!locked) onTouchStart(e, card.id)
       }}
-      onClick={e => {
+      onMouseUp={e => {
         if (e.target.closest('[data-action]')) return
         if (connectingFrom) return
-        onSelect(selected ? null : card.id)
-        setMenuOpen(false)
+        if (e.button !== 0) return
+        // Alleen selecteren als muis niet meer dan 5px bewogen heeft (geen drag)
+        const down = mouseDownPos.current
+        if (down && Math.abs(e.clientX - down.x) < 5 && Math.abs(e.clientY - down.y) < 5) {
+          onSelect(selected ? null : card.id)
+          setMenuOpen(false)
+        }
+        mouseDownPos.current = null
       }}
     >
       {/* Card Shell */}
