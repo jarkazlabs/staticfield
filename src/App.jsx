@@ -40,7 +40,8 @@ function toPath(page, fieldId) {
   if (page === 'explore')      return `${BASE}/explore`
   if (page === 'fields')       return `${BASE}/fields`
   if (page === 'manifesto')    return `${BASE}/manifesto`
-  if (page === 'field-detail') return `${BASE}/field/${fieldId}`
+  if (page === 'field-detail' && fieldId && fieldId !== 'null') return `${BASE}/field/${fieldId}`
+  if (page === 'field-detail') return `${BASE}/fields` // fallback
   return `${BASE}/`
 }
 
@@ -52,10 +53,11 @@ export default function App() {
 
   // pushState bei Navigation
   function setPage(newPage, fieldId) {
-    const path = toPath(newPage, fieldId ?? activeFieldId)
-    window.history.pushState({ page: newPage, fieldId: fieldId ?? activeFieldId }, '', path)
+    const resolvedId = (fieldId && fieldId !== 'null') ? fieldId : activeFieldId
+    const path = toPath(newPage, resolvedId)
+    window.history.pushState({ page: newPage, fieldId: resolvedId }, '', path)
     setPageState(newPage)
-    if (fieldId !== undefined) setActiveFieldId(fieldId)
+    if (fieldId && fieldId !== 'null') setActiveFieldId(fieldId)
     window.scrollTo(0, 0)
   }
 
