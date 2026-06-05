@@ -15,12 +15,23 @@ const BASE = '/staticfield'
 
 // URL → { page, fieldId }
 function parseUrl() {
-  // GitHub Pages 404-Redirect: /?/fields/b05
   const search = window.location.search
-  if (search.startsWith('?/')) {
-    const path = search.slice(2)
+
+  // GitHub Pages 404-Redirect: /?p=/field/b05
+  if (search.startsWith('?p=')) {
+    const path = decodeURIComponent(search.slice(3)).replace(/^\//, '')
+    // Clean up URL in browser
+    window.history.replaceState(null, '', BASE + '/' + path)
     return parsePath(path)
   }
+
+  // Legacy format: /?/field/b05
+  if (search.startsWith('?/')) {
+    const path = search.slice(2)
+    window.history.replaceState(null, '', BASE + '/' + path)
+    return parsePath(path)
+  }
+
   const path = window.location.pathname.replace(BASE, '').replace(/^\//, '')
   return parsePath(path)
 }
