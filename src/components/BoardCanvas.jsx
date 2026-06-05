@@ -302,18 +302,17 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
         if (connectingFrom) return
         if (!locked) onTouchStart(e, card.id)
       }}
-      onMouseUp={e => {
+      onClick={e => {
         if (e.target.closest('[data-action]')) return
         if (connectingFrom) return
-        if (e.button !== 0) return
-        // Alleen selecteren als muis niet meer dan 5px bewogen heeft (geen drag)
+        // Check dat het geen drag was
         const down = mouseDownPos.current
-        if (down && Math.abs(e.clientX - down.x) < 5 && Math.abs(e.clientY - down.y) < 5) {
-          onSelect(selected ? null : card.id)
-          setMenuOpen(false)
-        }
-        mouseDownPos.current = null
+        if (down && (Math.abs(e.clientX - down.x) > 5 || Math.abs(e.clientY - down.y) > 5)) return
+        e.stopPropagation()
+        onSelect(selected ? null : card.id)
+        setMenuOpen(false)
       }}
+
     >
       {/* Card Shell */}
       <div
@@ -510,7 +509,6 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
   }
 
   function handleDragStart(e, cardId) {
-    e.preventDefault()
     const pos = canvasPos(e.clientX, e.clientY)
     const card = cards.find(c => c.id === cardId)
     if (!card || card.locked) return
