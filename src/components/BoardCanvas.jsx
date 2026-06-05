@@ -189,14 +189,26 @@ function CardContent({ card }) {
 
 // ─── Canvas Card ──────────────────────────────────────────
 
-function CanvasCard({ card, connectingFrom, onDragStart, onTouchStart, onConnectDotDown, onEdit, onDelete, onResize, onLockToggle, onHeightChange }) {
+function CanvasCard({ card, connectingFrom, onDragStart, onTouchStart, onConnectDotDown, onEdit, onDelete, onDuplicate, onResize, onLockToggle, onHeightChange }) {
   const [hovered,     setHovered]     = useState(false)
   const [hoveredSide, setHoveredSide] = useState(null)
+  const [toolbarOpen, setToolbarOpen] = useState(false)
+  const [menuOpen,    setMenuOpen]    = useState(false)
   const cardRef   = useRef(null)
   const contentRef = useRef(null)
   const tintStyle = getTintStyle(card)
   const cardW     = card.width || CARD_W_DEFAULT
   const locked    = card.locked || false
+  const showToolbar = hovered || toolbarOpen
+
+  // Menü schließen bei Klick außerhalb
+  useEffect(() => {
+    if (!menuOpen) return
+    function onOut(e) { if (!e.target.closest('[data-menu]')) setMenuOpen(false) }
+    window.addEventListener('mousedown', onOut)
+    window.addEventListener('touchstart', onOut)
+    return () => { window.removeEventListener('mousedown', onOut); window.removeEventListener('touchstart', onOut) }
+  }, [menuOpen])
 
   // Echte Höhe messen und nach oben melden
   useEffect(() => {
@@ -275,7 +287,7 @@ function CanvasCard({ card, connectingFrom, onDragStart, onTouchStart, onConnect
   return (
     <div
       className="absolute select-none"
-      style={{ left: card.position.x, top: card.position.y, width: cardW, zIndex: hovered ? 10 : 2 }}
+      style={{ left: card.position.x, top: card.position.y, width: cardW, zIndex: (hovered || toolbarOpen) ? 10 : 2 }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => { setHovered(false); setHoveredSide(null) }}
       onMouseMove={handleMouseMove}
@@ -286,8 +298,14 @@ function CanvasCard({ card, connectingFrom, onDragStart, onTouchStart, onConnect
       }}
       onTouchStart={e => {
         if (e.target.closest('[data-action]')) return
-        if (connectingFrom || locked) return
-        onTouchStart(e, card.id)
+        if (connectingFrom) return
+        if (!locked) onTouchStart(e, card.id)
+      }}
+      onClick={e => {
+        if (e.target.closest('[data-action]')) return
+        if (connectingFrom) return
+        setToolbarOpen(v => !v)
+        setMenuOpen(false)
       }}
     >
       {/* Card Shell */}
@@ -300,30 +318,15 @@ function CanvasCard({ card, connectingFrom, onDragStart, onTouchStart, onConnect
             ? 'cursor-default shadow-sm'
             : connectingFrom && connectingFrom !== card.id
               ? 'ring-2 ring-ss-accent/40 cursor-crosshair shadow-lg'
-              : hovered ? 'shadow-xl cursor-grab' : 'shadow-sm cursor-grab'
+              : (hovered || toolbarOpen) ? 'shadow-xl cursor-grab' : 'shadow-sm cursor-grab'
           }
         `}
         style={{ ...tintStyle, ...minHeight }}
       >
-        {/* Toolbar oben */}
+        {/* Type Badge oben */}
         <div className="flex items-center justify-between px-3 pt-2.5 pb-1">
           <TypeBadge type={card.type} />
-          {hovered && !connectingFrom && (
-            <div className="flex items-center gap-1" data-action="buttons">
-              <button data-action="lock" onMouseDown={e=>{e.stopPropagation(); onLockToggle(card.id)}}
-                className={`w-5 h-5 flex items-center justify-center rounded transition-colors text-xs
-                  ${locked ? 'text-red-400' : 'text-ss-ghost/40 hover:text-ss-ghost'}`}
-                title={locked ? 'Entsperren' : 'Sperren'}>
-                {locked ? '🔒' : '🔓'}
-              </button>
-              <button data-action="edit" onMouseDown={e=>{e.stopPropagation(); onEdit(card)}}
-                className="w-5 h-5 flex items-center justify-center rounded text-ss-ghost/50 hover:text-ss-ghost transition-colors text-xs"
-                title="Bearbeiten">✏️</button>
-              <button data-action="delete" onMouseDown={e=>{e.stopPropagation(); onDelete(card.id)}}
-                className="w-5 h-5 flex items-center justify-center rounded text-ss-ghost/50 hover:text-red-400 transition-colors text-xs"
-                title="Löschen">✕</button>
-            </div>
-          )}
+          {locked && <span className="text-2xs text-red-400 mr-1">🔒</span>}
         </div>
 
         {/* Content */}
@@ -345,6 +348,67 @@ function CanvasCard({ card, connectingFrom, onDragStart, onTouchStart, onConnect
           </div>
         )}
       </div>
+
+      {/* ── Bottom Toolbar ── */}
+      {showToolbar && !connectingFrom && (
+        <div data-action="toolbar"
+          className="absolute left-1/2 -translate-x-1/2 flex items-center gap-0.5 bg-white border border-ss-border rounded-xl shadow-lg px-1.5 py-1"
+          style={{ bottom: -42, zIndex: 30, whiteSpace: 'nowrap' }}
+        >
+          {/* Duplicate */}
+          <button data-action="duplicate"
+            onMouseDown={e => { e.stopPropagation(); onDuplicate(card) }}
+            className="flex items-center px-2 py-1.5 rounded-lg text-ss-dim hover:text-ss-ink hover:bg-ss-surface transition-colors"
+            title="Duplizieren">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+              <rect x="4" y="4" width="8" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
+              <path d="M3 9H2a1 1 0 01-1-1V2a1 1 0 011-1h6a1 1 0 011 1v1" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+            </svg>
+          </button>
+          {/* Lock */}
+          <button data-action="lock"
+            onMouseDown={e => { e.stopPropagation(); onLockToggle(card.id) }}
+            className={`flex items-center px-2 py-1.5 rounded-lg transition-colors text-xs ${locked ? 'text-red-400 hover:bg-red-50' : 'text-ss-dim hover:text-ss-ink hover:bg-ss-surface'}`}
+            title={locked ? 'Entsperren' : 'Sperren'}>
+            {locked ? '🔒' : '🔓'}
+          </button>
+          <div className="w-px h-5 bg-ss-border mx-0.5"/>
+          {/* ··· */}
+          <div className="relative" data-menu>
+            <button data-action="menu"
+              onMouseDown={e => { e.stopPropagation(); setMenuOpen(v => !v) }}
+              className="flex items-center px-2 py-1.5 rounded-lg text-ss-dim hover:text-ss-ink hover:bg-ss-surface transition-colors"
+              title="Mehr">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                <circle cx="2.5" cy="6.5" r="1.2" fill="currentColor"/>
+                <circle cx="6.5" cy="6.5" r="1.2" fill="currentColor"/>
+                <circle cx="10.5" cy="6.5" r="1.2" fill="currentColor"/>
+              </svg>
+            </button>
+            {menuOpen && (
+              <div data-menu className="absolute bottom-full mb-2 right-0 bg-white border border-ss-border rounded-xl shadow-xl py-1 min-w-[145px]" style={{ zIndex: 50 }}>
+                <button data-action="edit"
+                  onMouseDown={e => { e.stopPropagation(); onEdit(card); setMenuOpen(false); setToolbarOpen(false) }}
+                  className="w-full text-left px-3 py-2 text-xs text-ss-ink hover:bg-ss-surface transition-colors flex items-center gap-2">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M8.5 1.5l2 2L4 10H2v-2L8.5 1.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
+                  </svg>
+                  Bearbeiten
+                </button>
+                <div className="h-px bg-ss-border/60 mx-2 my-1"/>
+                <button data-action="delete"
+                  onMouseDown={e => { e.stopPropagation(); onDelete(card.id); setMenuOpen(false); setToolbarOpen(false) }}
+                  className="w-full text-left px-3 py-2 text-xs text-red-500 hover:bg-red-50 transition-colors flex items-center gap-2">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M2 3h8M5 3V2h2v1M4 5l.5 5M8 5l-.5 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+                  </svg>
+                  Löschen
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Verbindungspunkte */}
       {visibleDots.map(side => (
@@ -490,6 +554,14 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
     if (card) updateCard(cardId, { locked: !card.locked })
   }
 
+  function handleDuplicate(card) {
+    const { id: _id, boardId: _b, position, ...rest } = card
+    addCard(boardId, card.type, {
+      ...rest,
+      position: { x: (position?.x || 100) + 24, y: (position?.y || 100) + 24 },
+    })
+  }
+
   function handleAddSection() {
     const el = canvasRef.current
     const cx = el.scrollLeft + el.clientWidth  / 2 - 170
@@ -596,6 +668,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
               onConnectDotDown={handleConnectDotDown}
               onEdit={setEditCard}
               onDelete={c => setCardToDelete(cards.find(x => x.id === c) || { id: c, type: 'note', title: '' })}
+              onDuplicate={handleDuplicate}
               onResize={handleResizeCard}
               onLockToggle={handleLockToggle}
               onHeightChange={handleHeightChange}
