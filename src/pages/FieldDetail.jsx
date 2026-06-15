@@ -1,5 +1,6 @@
 // FieldDetail.jsx — Field-Canvas (ehemals BoardDetail)
 import BoardCanvas from '../components/BoardCanvas.jsx'
+import { createFieldBackup, downloadFieldBackup } from '../lib/fieldBackup.js'
 
 function MobileCardList({ cards, store }) {
   const typeLabels = { note:'Note', link:'Link', image:'Image', instagram:'Instagram', chain:'Signal-Chain' }
@@ -47,6 +48,11 @@ export default function FieldDetail({ fieldId, fields, store, setPage }) {
   const connections = store.getBoardConnections(fieldId)
   const sections = store.getBoardSections(fieldId)
 
+  function handleExport() {
+    const backup = createFieldBackup(field, store.cards, store.connections, store.sections)
+    downloadFieldBackup(backup)
+  }
+
   if (!field) return (
     <div className="min-h-screen flex items-center justify-center text-ss-dim text-sm">Field not found.</div>
   )
@@ -62,9 +68,31 @@ export default function FieldDetail({ fieldId, fields, store, setPage }) {
           <h1 className="font-sans font-bold text-lg sm:text-xl text-ss-ink">{field.title}</h1>
           {field.description && <p className="text-xs text-ss-dim mt-0.5 max-w-lg hidden sm:block">{field.description}</p>}
         </div>
-        <div className="text-right text-2xs text-ss-ghost leading-relaxed font-mono mt-1 hidden sm:block">
-          <p>● Dot on card = connect · Click line = disconnect</p>
-          <p>● ✏️ = edit · 🔒 = lock</p>
+        <div className="flex items-center gap-1.5 mt-1">
+          <button
+            onClick={store.undo}
+            disabled={!store.canUndo}
+            title="Undo (⌘/Ctrl + Z)"
+            aria-label="Undo"
+            className="px-2.5 py-1.5 border border-ss-border rounded-lg text-xs text-ss-dim hover:text-ss-ink hover:border-ss-muted disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          >
+            ↶
+          </button>
+          <button
+            onClick={store.redo}
+            disabled={!store.canRedo}
+            title="Redo (⌘/Ctrl + Shift + Z)"
+            aria-label="Redo"
+            className="px-2.5 py-1.5 border border-ss-border rounded-lg text-xs text-ss-dim hover:text-ss-ink hover:border-ss-muted disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          >
+            ↷
+          </button>
+          <button
+            onClick={handleExport}
+            className="px-3 py-1.5 border border-ss-border rounded-lg text-xs font-semibold text-ss-dim hover:text-ss-ink hover:border-ss-muted transition-colors"
+          >
+            Export
+          </button>
         </div>
       </div>
 
@@ -99,6 +127,8 @@ export default function FieldDetail({ fieldId, fields, store, setPage }) {
           moveSection={store.moveSection}
           deleteSection={store.deleteSection}
           lockSection={store.lockSection}
+          beginHistoryGroup={store.beginHistoryGroup}
+          endHistoryGroup={store.endHistoryGroup}
         />
       </div>
     </div>

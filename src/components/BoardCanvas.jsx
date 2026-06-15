@@ -153,7 +153,7 @@ function CardContent({ card }) {
 
 // ─── Canvas Card ──────────────────────────────────────────
 
-function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onTouchStart, onConnectDotDown, onEdit, onDelete, onDuplicate, onResize, onLockToggle, onHeightChange }) {
+function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onTouchStart, onConnectDotDown, onEdit, onDelete, onDuplicate, onResize, onLockToggle, onHeightChange, onInteractionStart, onInteractionEnd }) {
   const [hovered,     setHovered]     = useState(false)
   const [hoveredSide, setHoveredSide] = useState(null)
   const [menuOpen,    setMenuOpen]    = useState(false)
@@ -202,6 +202,7 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
   // Resize: Breite UND Höhe
   function handleResizeMouseDown(e) {
     e.stopPropagation(); e.preventDefault()
+    onInteractionStart()
     const startX = e.clientX, startY = e.clientY
     const startW = cardW
     const startH = contentRef.current?.offsetHeight || CARD_HEIGHT_DEFAULT
@@ -210,7 +211,11 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
       const newH = Math.max(80,  startH + ev.clientY - startY)
       onResize(card.id, newW, newH)
     }
-    function onUp() { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp) }
+    function onUp() {
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('mouseup', onUp)
+      onInteractionEnd()
+    }
     window.addEventListener('mousemove', onMove)
     window.addEventListener('mouseup', onUp)
   }
@@ -218,6 +223,7 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
   function handleResizeTouchStart(e) {
     e.stopPropagation()
     if (e.touches.length !== 1) return
+    onInteractionStart()
     const t0 = e.touches[0]
     const startX = t0.clientX, startY = t0.clientY
     const startW = cardW, startH = contentRef.current?.offsetHeight || CARD_HEIGHT_DEFAULT
@@ -228,7 +234,11 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
         Math.max(80,  startH + ev.touches[0].clientY - startY)
       )
     }
-    function onEnd() { window.removeEventListener('touchmove', onMove); window.removeEventListener('touchend', onEnd) }
+    function onEnd() {
+      window.removeEventListener('touchmove', onMove)
+      window.removeEventListener('touchend', onEnd)
+      onInteractionEnd()
+    }
     window.addEventListener('touchmove', onMove, { passive: false })
     window.addEventListener('touchend', onEnd)
   }
@@ -408,7 +418,7 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
 
 // ─── Hauptkomponente ──────────────────────────────────────
 
-export default function BoardCanvas({ boardId, cards, connections, sections, addCard, updateCard, moveCard, deleteCard, addConnection, deleteConnection, addSection, updateSection, moveSection, deleteSection, lockSection }) {
+export default function BoardCanvas({ boardId, cards, connections, sections, addCard, updateCard, moveCard, deleteCard, addConnection, deleteConnection, addSection, updateSection, moveSection, deleteSection, lockSection, beginHistoryGroup, endHistoryGroup }) {
   const canvasRef        = useRef(null)
   const [dragging,       setDragging]       = useState(null)
   const [connectingFrom, setConnectingFrom] = useState(null)
@@ -458,7 +468,11 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
   }
 
   function handleMouseUp(e) {
-    if (dragging) { setDragging(null); return }
+    if (dragging) {
+      setDragging(null)
+      endHistoryGroup()
+      return
+    }
     if (connectingFrom) {
       const pos = canvasPos(e.clientX, e.clientY)
       const target = cards.find(c => {
@@ -476,6 +490,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
     const pos = canvasPos(e.clientX, e.clientY)
     const card = cards.find(c => c.id === cardId)
     if (!card || card.locked) return
+    beginHistoryGroup()
     setDragging({ cardId, offX: pos.x - card.position.x, offY: pos.y - card.position.y })
   }
 
@@ -483,6 +498,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
     e.preventDefault()
     const sec = sections.find(s => s.id === sectionId)
     if (!sec || sec.locked) return
+    beginHistoryGroup()
     const pos = canvasPos(e.clientX, e.clientY)
     setDragging({ sectionId, offX: pos.x - sec.position.x, offY: pos.y - sec.position.y })
   }
@@ -491,6 +507,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
     if (e.touches.length !== 1) return
     const sec = sections.find(s => s.id === sectionId)
     if (!sec || sec.locked) return
+    beginHistoryGroup()
     const pos = canvasPos(e.touches[0].clientX, e.touches[0].clientY)
     setDragging({ sectionId, offX: pos.x - sec.position.x, offY: pos.y - sec.position.y })
   }
@@ -499,6 +516,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
     if (e.touches.length !== 1) return
     const card = cards.find(c => c.id === cardId)
     if (!card || card.locked) return
+    beginHistoryGroup()
     const pos = canvasPos(e.touches[0].clientX, e.touches[0].clientY)
     setDragging({ cardId, offX: pos.x - card.position.x, offY: pos.y - card.position.y })
   }
@@ -581,9 +599,15 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
         }}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
-        onMouseLeave={() => setDragging(null)}
+        onMouseLeave={() => {
+          if (dragging) endHistoryGroup()
+          setDragging(null)
+        }}
         onTouchMove={handleTouchMove}
-        onTouchEnd={() => setDragging(null)}
+        onTouchEnd={() => {
+          if (dragging) endHistoryGroup()
+          setDragging(null)
+        }}
         onClick={() => { setActiveSection(null); setSelectedCardId(null) }}
       >
         <div className="relative" style={{ width: canvasSize.width, height: canvasSize.height }}>
@@ -598,6 +622,8 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
               onUpdate={updateSection}
               onDelete={deleteSection}
               onLockToggle={lockSection}
+              onInteractionStart={beginHistoryGroup}
+              onInteractionEnd={endHistoryGroup}
             />
           ))}
 
@@ -646,6 +672,8 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
               onResize={handleResizeCard}
               onLockToggle={handleLockToggle}
               onHeightChange={handleHeightChange}
+              onInteractionStart={beginHistoryGroup}
+              onInteractionEnd={endHistoryGroup}
             />
           ))}
 

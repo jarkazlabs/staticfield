@@ -17,7 +17,7 @@ const SECTION_TINTS = [
 const MIN_W = 180
 const MIN_H = 120
 
-export default function CanvasSection({ section, isActive, onActivate, onDragStart, onTouchStart, onUpdate, onDelete, onLockToggle }) {
+export default function CanvasSection({ section, isActive, onActivate, onDragStart, onTouchStart, onUpdate, onDelete, onLockToggle, onInteractionStart, onInteractionEnd }) {
   const [editingLabel, setEditingLabel] = useState(false)
   const [label,        setLabel]        = useState(section.label || 'Section')
   const [showTints,    setShowTints]    = useState(false)
@@ -37,6 +37,7 @@ export default function CanvasSection({ section, isActive, onActivate, onDragSta
   // Resize mouse
   function handleResizeMouseDown(e) {
     e.stopPropagation(); e.preventDefault()
+    onInteractionStart()
     const startX = e.clientX, startY = e.clientY
     const startW = section.width || 340, startH = section.height || 220
     function onMove(ev) {
@@ -45,7 +46,11 @@ export default function CanvasSection({ section, isActive, onActivate, onDragSta
         height: Math.max(MIN_H, startH + ev.clientY - startY),
       })
     }
-    function onUp() { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp) }
+    function onUp() {
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('mouseup', onUp)
+      onInteractionEnd()
+    }
     window.addEventListener('mousemove', onMove)
     window.addEventListener('mouseup', onUp)
   }
@@ -54,6 +59,7 @@ export default function CanvasSection({ section, isActive, onActivate, onDragSta
   function handleResizeTouchStart(e) {
     e.stopPropagation()
     if (e.touches.length !== 1) return
+    onInteractionStart()
     const startX = e.touches[0].clientX, startY = e.touches[0].clientY
     const startW = section.width || 340,  startH = section.height || 220
     function onMove(ev) {
@@ -63,7 +69,11 @@ export default function CanvasSection({ section, isActive, onActivate, onDragSta
         height: Math.max(MIN_H, startH + ev.touches[0].clientY - startY),
       })
     }
-    function onEnd() { window.removeEventListener('touchmove', onMove); window.removeEventListener('touchend', onEnd) }
+    function onEnd() {
+      window.removeEventListener('touchmove', onMove)
+      window.removeEventListener('touchend', onEnd)
+      onInteractionEnd()
+    }
     window.addEventListener('touchmove', onMove, { passive: false })
     window.addEventListener('touchend', onEnd)
   }
