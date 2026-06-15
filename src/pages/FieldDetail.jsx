@@ -70,24 +70,6 @@ export default function FieldDetail({ fieldId, fields, store, setPage }) {
         </div>
         <div className="flex items-center gap-1.5 mt-1">
           <button
-            onClick={store.undo}
-            disabled={!store.canUndo}
-            title="Undo (⌘/Ctrl + Z)"
-            aria-label="Undo"
-            className="px-2.5 py-1.5 border border-ss-border rounded-lg text-xs text-ss-dim hover:text-ss-ink hover:border-ss-muted disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-          >
-            ↶
-          </button>
-          <button
-            onClick={store.redo}
-            disabled={!store.canRedo}
-            title="Redo (⌘/Ctrl + Shift + Z)"
-            aria-label="Redo"
-            className="px-2.5 py-1.5 border border-ss-border rounded-lg text-xs text-ss-dim hover:text-ss-ink hover:border-ss-muted disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-          >
-            ↷
-          </button>
-          <button
             onClick={handleExport}
             className="px-3 py-1.5 border border-ss-border rounded-lg text-xs font-semibold text-ss-dim hover:text-ss-ink hover:border-ss-muted transition-colors"
           >
@@ -127,6 +109,10 @@ export default function FieldDetail({ fieldId, fields, store, setPage }) {
           moveSection={store.moveSection}
           deleteSection={store.deleteSection}
           lockSection={store.lockSection}
+          canUndo={store.canUndo}
+          canRedo={store.canRedo}
+          undo={store.undo}
+          redo={store.redo}
           beginHistoryGroup={store.beginHistoryGroup}
           endHistoryGroup={store.endHistoryGroup}
         />

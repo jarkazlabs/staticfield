@@ -34,6 +34,44 @@ function TypeBadge({ type }) {
   return <span className="font-mono text-xs text-ss-ghost/70 tracking-widest uppercase">{labels[type]||type}</span>
 }
 
+function TapeIcon({ direction }) {
+  const isBack = direction === 'back'
+  return (
+    <svg width="22" height="12" viewBox="0 0 22 12" fill="none" aria-hidden="true" className="flex-shrink-0">
+      {isBack ? (
+        <>
+          <path d="M3 1.5V10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          <path d="M11 2L5 6L11 10V2Z" fill="currentColor"/>
+          <path d="M19 2L13 6L19 10V2Z" fill="currentColor"/>
+        </>
+      ) : (
+        <>
+          <path d="M19 1.5V10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          <path d="M11 2L17 6L11 10V2Z" fill="currentColor"/>
+          <path d="M3 2L9 6L3 10V2Z" fill="currentColor"/>
+        </>
+      )}
+    </svg>
+  )
+}
+
+function HistoryButton({ type, disabled, onClick }) {
+  const isUndo = type === 'undo'
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      title={isUndo ? 'Undo (⌘/Ctrl + Z)' : 'Redo (⌘/Ctrl + Shift + Z)'}
+      aria-label={isUndo ? 'Undo' : 'Redo'}
+      className="flex items-center gap-1.5 px-3 py-1.5 border border-ss-border rounded-lg text-xs font-semibold text-ss-dim hover:text-ss-ink hover:border-ss-muted hover:bg-ss-surface disabled:opacity-35 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-ss-dim disabled:hover:border-ss-border transition-colors"
+    >
+      {isUndo && <TapeIcon direction="back" />}
+      <span>{isUndo ? 'Undo' : 'Redo'}</span>
+      {!isUndo && <TapeIcon direction="forward" />}
+    </button>
+  )
+}
+
 // ─── Note Card mit Expand-Toggle ─────────────────────────
 function NoteCardContent({ title, description }) {
   const [expanded, setExpanded] = useState(false)
@@ -418,7 +456,7 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
 
 // ─── Hauptkomponente ──────────────────────────────────────
 
-export default function BoardCanvas({ boardId, cards, connections, sections, addCard, updateCard, moveCard, deleteCard, addConnection, deleteConnection, addSection, updateSection, moveSection, deleteSection, lockSection, beginHistoryGroup, endHistoryGroup }) {
+export default function BoardCanvas({ boardId, cards, connections, sections, addCard, updateCard, moveCard, deleteCard, addConnection, deleteConnection, addSection, updateSection, moveSection, deleteSection, lockSection, canUndo, canRedo, undo, redo, beginHistoryGroup, endHistoryGroup }) {
   const canvasRef        = useRef(null)
   const [dragging,       setDragging]       = useState(null)
   const [connectingFrom, setConnectingFrom] = useState(null)
@@ -578,6 +616,10 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
           className="flex items-center gap-1.5 px-3 py-1.5 border border-ss-border text-ss-dim text-xs font-semibold rounded-lg hover:border-ss-muted hover:text-ss-ink transition-colors">
           + Section
         </button>
+        <div className="hidden sm:flex items-center gap-1.5 ml-1 pl-2 border-l border-ss-border">
+          <HistoryButton type="undo" disabled={!canUndo} onClick={undo} />
+          <HistoryButton type="redo" disabled={!canRedo} onClick={redo} />
+        </div>
         {connectingFrom && (
           <div className="flex items-center gap-2 px-3 py-1.5 bg-ss-accentBg border border-ss-accent/30 rounded-lg ml-1">
             <div className="w-2 h-2 rounded-full bg-ss-accent animate-pulse" />
