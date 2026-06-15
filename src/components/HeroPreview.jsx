@@ -1,7 +1,5 @@
 // HeroPreview.jsx — Mockup-style: Cards links + rechts der Headline
 
-import AudioPreview from './AudioPreview.jsx'
-
 // Mini-Waveform SVG
 function Waveform({ heights, color = '#1a1814', opacity = 0.7 }) {
   return (

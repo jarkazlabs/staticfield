@@ -1,21 +1,7 @@
 // PatternCard.jsx — Isolierte Pattern Card Komponente
 // Parst Noten-Text und zeigt Dot-Visualisierung
 
-const MAX_STEPS = 8
-
-// Parst "C4 Eb4 G4 — G4" in ein Array von Steps
-// Jeder Step ist entweder eine Note oder eine Pause (—)
-export function parseNotes(input = '') {
-  if (!input.trim()) return []
-  return input
-    .trim()
-    .split(/\s+/)
-    .slice(0, MAX_STEPS)
-    .map(token => {
-      const isPause = token === '—' || token === '-' || token === '_'
-      return { token: isPause ? '—' : token, isPause }
-    })
-}
+import { MAX_STEPS, parseNotes } from '../lib/pattern.js'
 
 // Alle einzigartigen Noten-Namen (ohne Pausen) für die Y-Achse
 function uniqueNotes(steps) {

@@ -1,9 +1,8 @@
 // BoardDetail.jsx — Canvas auf Desktop, Card-Liste auf Mobile
-import { useMemo, useState } from 'react'
 import BoardCanvas from '../components/BoardCanvas.jsx'
 
 // Mobile Card-Listen-Ansicht
-function MobileCardList({ cards, store, boardId }) {
+function MobileCardList({ cards, store }) {
   const typeLabels = { note:'Note', link:'Link', image:'Image', instagram:'Instagram', chain:'Signal-Chain' }
 
   return (
@@ -55,9 +54,9 @@ function MobileCardList({ cards, store, boardId }) {
 
 export default function BoardDetail({ boardId, boards, store, setPage }) {
   const board       = boards.find(b => b.id === boardId)
-  const cards       = useMemo(() => store.getBoardCards(boardId),       [store, boardId])
-  const connections = useMemo(() => store.getBoardConnections(boardId), [store, boardId])
-  const sections    = useMemo(() => store.getBoardSections(boardId),    [store, boardId])
+  const cards = store.getBoardCards(boardId)
+  const connections = store.getBoardConnections(boardId)
+  const sections = store.getBoardSections(boardId)
 
   if (!board) return (
     <div className="min-h-screen flex items-center justify-center text-ss-dim text-sm">Board nicht gefunden.</div>
@@ -92,7 +91,7 @@ export default function BoardDetail({ boardId, boards, store, setPage }) {
           </svg>
           <p className="text-xs text-ss-accent font-medium">Canvas-Ansicht auf Desktop verfügbar. Hier: vereinfachte Liste.</p>
         </div>
-        <MobileCardList cards={cards} store={store} boardId={boardId} />
+        <MobileCardList cards={cards} store={store} />
       </div>
 
       {/* Desktop: Canvas */}

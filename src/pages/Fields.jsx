@@ -4,11 +4,10 @@ import AddBoardModal    from '../components/AddBoardModal.jsx'
 import BoardCollage     from '../components/BoardCollage.jsx'
 import DeleteFieldModal from '../components/DeleteFieldModal.jsx'
 
-export default function Fields({ fields, store, setPage, setActiveFieldId }) {
+export default function Fields({ fields, store, openField }) {
   const [showAddModal,    setShowAddModal]    = useState(false)
   const [fieldToDelete,   setFieldToDelete]   = useState(null) // field-Objekt
 
-  function openField(id) { setActiveFieldId(id); setPage('field-detail') }
   function handleAddField(title, description) {
     const id = store.addBoard(title, description)
     openField(id)

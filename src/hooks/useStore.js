@@ -1,7 +1,7 @@
 // useStore.js — Zentraler State mit localStorage-Persistenz
 // Kein Redux, kein Zustand — nur React useState + localStorage
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { DEMO_BOARDS, DEMO_CARDS, DEMO_CONNECTIONS } from '../data/signals.js'
 
 const LS_BOARDS      = 'ss_boards'

@@ -1,5 +1,4 @@
 // FieldDetail.jsx — Field-Canvas (ehemals BoardDetail)
-import { useMemo } from 'react'
 import BoardCanvas from '../components/BoardCanvas.jsx'
 
 function MobileCardList({ cards, store }) {
@@ -44,9 +43,9 @@ function MobileCardList({ cards, store }) {
 
 export default function FieldDetail({ fieldId, fields, store, setPage }) {
   const field      = fields.find(b => b.id === fieldId)
-  const cards      = useMemo(() => store.getBoardCards(fieldId),       [store, fieldId])
-  const connections= useMemo(() => store.getBoardConnections(fieldId), [store, fieldId])
-  const sections   = useMemo(() => store.getBoardSections(fieldId),    [store, fieldId])
+  const cards = store.getBoardCards(fieldId)
+  const connections = store.getBoardConnections(fieldId)
+  const sections = store.getBoardSections(fieldId)
 
   if (!field) return (
     <div className="min-h-screen flex items-center justify-center text-ss-dim text-sm">Field not found.</div>

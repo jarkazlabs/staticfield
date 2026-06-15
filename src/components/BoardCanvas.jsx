@@ -12,57 +12,19 @@ import CanvasSection     from './CanvasSection.jsx'
 import PedalIcon         from './PedalIcon.jsx'
 import { PatternCardContent } from './PatternCard.jsx'
 import { CARD_TINTS } from '../data/tints.js'
-
-const CARD_W_DEFAULT = 250
-const CARD_H_DEFAULT = 120
+import {
+  CARD_HEIGHT_DEFAULT,
+  CARD_WIDTH_DEFAULT,
+  buildConnectionPath,
+  findBestAnchors,
+  getCanvasSize,
+  getCardAnchors,
+} from '../lib/canvasGeometry.js'
 
 function getTintStyle(card) {
   const t = CARD_TINTS.find(t => t.id === card.tint)
   if (!t || t.id === 'none') return { backgroundColor: '#ffffff', borderColor: '#e8e8e4' }
   return { backgroundColor: t.bg, borderColor: t.border }
-}
-
-function dist(a, b) {
-  return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2)
-}
-
-function getAnchors(card, measuredH) {
-  const w = card.width  || CARD_W_DEFAULT
-  const h = measuredH   || card.height || CARD_H_DEFAULT
-  const x = card.position.x
-  const y = card.position.y
-  return {
-    top:    { x: x + w / 2, y },
-    bottom: { x: x + w / 2, y: y + h },
-    left:   { x,             y: y + h / 2 },
-    right:  { x: x + w,      y: y + h / 2 },
-  }
-}
-
-function bestAnchors(fromCard, toCard, heights) {
-  const fa = getAnchors(fromCard, heights[fromCard.id])
-  const ta = getAnchors(toCard,   heights[toCard.id])
-  let best = null, bestDist = Infinity
-  for (const fk of Object.keys(fa)) {
-    for (const tk of Object.keys(ta)) {
-      const d = dist(fa[fk], ta[tk])
-      if (d < bestDist) { bestDist = d; best = { from: fa[fk], to: ta[tk], fromSide: fk, toSide: tk } }
-    }
-  }
-  return best
-}
-
-function buildPath(f, t, fromSide, toSide) {
-  const tension = Math.max(50, Math.min(Math.abs(t.x - f.x), Math.abs(t.y - f.y)) * 0.5 + 50)
-  const off = {
-    top:    [0, -tension],
-    bottom: [0,  tension],
-    left:   [-tension, 0],
-    right:  [ tension, 0],
-  }
-  const [fox, foy] = off[fromSide] || [tension, 0]
-  const [tox, toy] = off[toSide]   || [-tension, 0]
-  return `M${f.x},${f.y} C${f.x+fox},${f.y+foy} ${t.x+tox},${t.y+toy} ${t.x},${t.y}`
 }
 
 // ─── Type Badge ───────────────────────────────────────────
@@ -75,6 +37,7 @@ function TypeBadge({ type }) {
 // ─── Note Card mit Expand-Toggle ─────────────────────────
 function NoteCardContent({ title, description }) {
   const [expanded, setExpanded] = useState(false)
+  const [expandedHeight, setExpandedHeight] = useState(96)
   const COLLAPSED_H = 96 // px — ca. 5 Zeilen
 
   // Brauchen wir den Toggle überhaupt?
@@ -84,6 +47,7 @@ function NoteCardContent({ title, description }) {
   useEffect(() => {
     if (textRef.current) {
       setOverflows(textRef.current.scrollHeight > COLLAPSED_H + 4)
+      setExpandedHeight(textRef.current.scrollHeight)
     }
   }, [description])
 
@@ -95,7 +59,7 @@ function NoteCardContent({ title, description }) {
           <div
             ref={textRef}
             className="text-xs text-ss-dim leading-relaxed transition-all duration-300 overflow-hidden"
-            style={{ maxHeight: expanded ? textRef.current?.scrollHeight + 'px' : COLLAPSED_H + 'px' }}
+            style={{ maxHeight: expanded ? `${expandedHeight}px` : `${COLLAPSED_H}px` }}
           >
             {description}
           </div>
@@ -197,7 +161,7 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
   const contentRef   = useRef(null)
   const mouseDownPos = useRef(null)
   const tintStyle  = getTintStyle(card)
-  const cardW      = card.width || CARD_W_DEFAULT
+  const cardW      = card.width || CARD_WIDTH_DEFAULT
   const locked     = card.locked || false
 
   // Menü schließen bei Klick außerhalb
@@ -219,7 +183,7 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
     })
     ro.observe(contentRef.current)
     return () => ro.disconnect()
-  }, [card.id])
+  }, [card.id, onHeightChange])
 
   function detectSide(e) {
     if (!cardRef.current) return 'right'
@@ -240,7 +204,7 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
     e.stopPropagation(); e.preventDefault()
     const startX = e.clientX, startY = e.clientY
     const startW = cardW
-    const startH = contentRef.current?.offsetHeight || CARD_H_DEFAULT
+    const startH = contentRef.current?.offsetHeight || CARD_HEIGHT_DEFAULT
     function onMove(ev) {
       const newW = Math.max(180, startW + ev.clientX - startX)
       const newH = Math.max(80,  startH + ev.clientY - startY)
@@ -256,7 +220,7 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
     if (e.touches.length !== 1) return
     const t0 = e.touches[0]
     const startX = t0.clientX, startY = t0.clientY
-    const startW = cardW, startH = contentRef.current?.offsetHeight || CARD_H_DEFAULT
+    const startW = cardW, startH = contentRef.current?.offsetHeight || CARD_HEIGHT_DEFAULT
     function onMove(ev) {
       if (ev.touches.length !== 1) return; ev.preventDefault()
       onResize(card.id,
@@ -461,8 +425,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
     setCardHeights(prev => prev[cardId] === h ? prev : { ...prev, [cardId]: h })
   }, [])
 
-  const CANVAS_W = Math.max(1600, ...cards.map(c => c.position.x + (c.width||CARD_W_DEFAULT) + 200), 100)
-  const CANVAS_H = Math.max(1000, ...cards.map(c => c.position.y + (cardHeights[c.id]||300) + 200), 100)
+  const canvasSize = getCanvasSize(cards, cardHeights)
 
   function canvasPos(clientX, clientY) {
     const rect = canvasRef.current.getBoundingClientRect()
@@ -475,7 +438,8 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
   function anchorPoint(cardId, side) {
     const c = cards.find(c => c.id === cardId)
     if (!c) return { x:0, y:0 }
-    return getAnchors(c, cardHeights[cardId])[side] || getAnchors(c, cardHeights[cardId]).right
+    const anchors = getCardAnchors(c, cardHeights[cardId])
+    return anchors[side] || anchors.right
   }
 
   function handleMouseMove(e) {
@@ -498,9 +462,9 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
     if (connectingFrom) {
       const pos = canvasPos(e.clientX, e.clientY)
       const target = cards.find(c => {
-        const h = cardHeights[c.id] || CARD_H_DEFAULT
+        const h = cardHeights[c.id] || CARD_HEIGHT_DEFAULT
         return c.id !== connectingFrom.cardId &&
-          pos.x >= c.position.x && pos.x <= c.position.x + (c.width||CARD_W_DEFAULT) &&
+          pos.x >= c.position.x && pos.x <= c.position.x + (c.width||CARD_WIDTH_DEFAULT) &&
           pos.y >= c.position.y && pos.y <= c.position.y + h
       })
       if (target) addConnection(connectingFrom.cardId, target.id)
@@ -622,7 +586,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
         onTouchEnd={() => setDragging(null)}
         onClick={() => { setActiveSection(null); setSelectedCardId(null) }}
       >
-        <div className="relative" style={{ width: CANVAS_W, height: CANVAS_H }}>
+        <div className="relative" style={{ width: canvasSize.width, height: canvasSize.height }}>
 
           {/* Sections */}
           {sections.map(section => (
@@ -638,7 +602,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
           ))}
 
           {/* SVG Linien */}
-          <svg className="absolute inset-0 pointer-events-none" width={CANVAS_W} height={CANVAS_H} style={{zIndex:1}}>
+          <svg className="absolute inset-0 pointer-events-none" width={canvasSize.width} height={canvasSize.height} style={{zIndex:1}}>
             <defs>
               <marker id="dot-end" markerWidth="4" markerHeight="4" refX="2" refY="2">
                 <circle cx="2" cy="2" r="1.5" fill="#c0c0b8"/>
@@ -648,10 +612,10 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
               const fc = cards.find(c => c.id === cn.from)
               const tc = cards.find(c => c.id === cn.to)
               if (!fc || !tc) return null
-              const pts = bestAnchors(fc, tc, cardHeights)
+              const pts = findBestAnchors(fc, tc, cardHeights)
               if (!pts) return null
               const { from: f, to: t, fromSide, toSide } = pts
-              const path = buildPath(f, t, fromSide, toSide)
+              const path = buildConnectionPath(f, t, fromSide, toSide)
               return (
                 <g key={cn.id}>
                   <path d={path} stroke="transparent" strokeWidth="12" fill="none"

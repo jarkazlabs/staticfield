@@ -328,7 +328,7 @@ function AppPreview() {
 
 // ─── MAIN LANDING ─────────────────────────────────────────
 
-export default function Landing({ setPage, setActiveFieldId, store }) {
+export default function Landing({ setPage, openField }) {
   const [activeTag, setActiveTag] = useState('All')
 
   const filtered = REAL_FIELDS.filter(f => activeTag === 'All' || f.category === activeTag)
@@ -371,7 +371,7 @@ export default function Landing({ setPage, setActiveFieldId, store }) {
                   className="flex items-center gap-2 px-5 py-2.5 bg-ss-ink text-white text-sm font-semibold rounded-lg hover:bg-ss-dim transition-colors">
                   Start your field →
                 </button>
-                <button onClick={() => { setActiveFieldId('b01'); setPage('field-detail') }}
+                <button onClick={() => openField('b01')}
                   className="text-sm text-ss-dim hover:text-ss-ink transition-colors underline underline-offset-4 decoration-ss-border">
                   Explore demo field
                 </button>
