@@ -4,6 +4,7 @@
 
 import { useState, useEffect } from 'react'
 import Nav         from './components/Nav.jsx'
+import Footer      from './components/Footer.jsx'
 import Landing     from './pages/Landing.jsx'
 import Explore     from './pages/Explore.jsx'
 import Fields      from './pages/Fields.jsx'
@@ -91,6 +92,7 @@ export default function App() {
     <div className="bg-ss-bg min-h-screen text-ss-ink">
       <Nav page={page} setPage={setPage} />
       <main>{renderPage()}</main>
+      {page !== 'field-detail' && <Footer setPage={setPage} />}
     </div>
   )
 }

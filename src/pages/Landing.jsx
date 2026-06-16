@@ -499,21 +499,6 @@ export default function Landing({ setPage, openField }) {
         </div>
       </section>
 
-      {/* ══════════ FOOTER ══════════ */}
-      <footer className="border-t border-ss-border px-4 sm:px-6 py-6 sm:py-8">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <p className="text-xs text-ss-ghost/60">© 2026 JARKAZ Labs</p>
-            <p className="text-xs text-ss-ghost/40 mt-0.5">All rights reserved.</p>
-          </div>
-          <div className="flex gap-5">
-            {['Twitter','Instagram','Mastodon'].map(l => (
-              <span key={l} className="text-xs text-ss-ghost/50 hover:text-ss-dim cursor-pointer transition-colors">{l}</span>
-            ))}
-          </div>
-        </div>
-      </footer>
-
     </div>
   )
 }
