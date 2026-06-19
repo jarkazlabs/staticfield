@@ -3,14 +3,14 @@ export default function Footer({ setPage }) {
   const links = ['Impressum', 'Privacy', 'Terms']
 
   return (
-    <footer className="border-t border-ss-accent/20 bg-ss-accentBg px-4 sm:px-6 py-8 sm:py-10">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-8">
+    <footer className="min-h-[100px] bg-ss-ink px-4 sm:px-6 py-8 text-white">
+      <div className="max-w-7xl mx-auto min-h-[36px] flex flex-col md:flex-row md:items-end justify-between gap-8">
         <div className="max-w-md">
-          <p className="font-mono text-2xs text-ss-accent uppercase tracking-widest mb-3">staticfield</p>
-          <p className="font-sans text-lg sm:text-xl font-semibold text-ss-ink leading-snug">
+          <p className="font-mono text-2xs text-white/55 uppercase tracking-widest mb-3">staticfield</p>
+          <p className="font-sans text-lg sm:text-xl font-semibold text-white leading-snug">
             A quiet place for signals, sketches and evolving fields.
           </p>
-          <p className="text-xs text-ss-dim mt-4">© {year} JARKAZ Labs. All rights reserved.</p>
+          <p className="text-xs text-white/55 mt-4">© {year} JARKAZ Labs. All rights reserved.</p>
         </div>
 
         <div className="flex flex-col sm:items-end gap-4">
@@ -18,7 +18,7 @@ export default function Footer({ setPage }) {
             {links.map(link => (
               <span
                 key={link}
-                className="px-3 py-1.5 rounded-lg border border-ss-accent/20 bg-white/55 text-xs font-medium text-ss-dim"
+                className="px-3 py-1.5 rounded-lg border border-white/15 bg-white/10 text-xs font-medium text-white/70"
               >
                 {link}
               </span>
@@ -27,7 +27,7 @@ export default function Footer({ setPage }) {
           <button
             type="button"
             onClick={() => setPage('manifesto')}
-            className="self-start sm:self-auto text-xs text-ss-accent hover:text-ss-ink transition-colors underline underline-offset-4 decoration-ss-accent/30"
+            className="self-start sm:self-auto text-xs text-white/70 hover:text-white transition-colors underline underline-offset-4 decoration-white/25"
           >
             Read the manifesto
           </button>
