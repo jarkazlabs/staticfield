@@ -155,7 +155,7 @@ function buildChain(items) {
   }, [])
 }
 
-function EditableCardContent({ card, onUpdate }) {
+function EditableCardContent({ card, focused, onUpdate }) {
   const update = updates => onUpdate(card.id, updates)
   const chainItems = card.chain ? card.chain.filter(item => item !== '→') : ['']
   const editableChainItems = chainItems[chainItems.length - 1] === '' ? chainItems : [...chainItems, '']
@@ -227,6 +227,7 @@ function EditableCardContent({ card, onUpdate }) {
             autoFocus
             className="font-mono text-2xs text-ss-accent"
           />
+          {card.type === 'youtube' && card.url && <YouTubePreview card={card} focused={focused} />}
           <InlineInput
             value={card.title}
             placeholder={card.type === 'youtube' ? 'Video title...' : 'Link title...'}
@@ -643,7 +644,7 @@ function CanvasCard({ card, connectingFrom, focused, dimmed, editing, onFocus, o
         {/* Content */}
         <div ref={contentRef} className="px-3 pb-3 flex-1">
           {editing
-            ? <EditableCardContent card={card} onUpdate={onUpdate} />
+            ? <EditableCardContent card={card} focused={focused} onUpdate={onUpdate} />
             : <CardContent card={card} focused={focused} />}
         </div>
 
@@ -721,7 +722,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
   const [dragging,       setDragging]       = useState(null)
   const [connectingFrom, setConnectingFrom] = useState(null)
   const [connectLine,    setConnectLine]    = useState(null)
-  const [signalMenuOpen, setSignalMenuOpen] = useState(false)
+  const [signalMenuAnchor, setSignalMenuAnchor] = useState(null)
   const [activeSection,  setActiveSection]  = useState(null)
   const [focusedSignalId, setFocusedSignalId] = useState(null)
   const [editingSignalId, setEditingSignalId] = useState(null)
@@ -856,7 +857,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
     const id = addCard(boardId, type, data)
     setFocusedSignalId(id)
     setEditingSignalId(id)
-    setSignalMenuOpen(false)
+    setSignalMenuAnchor(null)
   }
 
   useEffect(() => {
@@ -866,7 +867,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
         setConnectLine(null)
         setFocusedSignalId(null)
         setEditingSignalId(null)
-        setSignalMenuOpen(false)
+        setSignalMenuAnchor(null)
         setSignalToDelete(null)
       }
     }
@@ -880,11 +881,11 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
       {/* Toolbar */}
       <div className="bg-white border-b border-ss-border px-5 py-2.5 flex items-center gap-2.5 flex-shrink-0">
         <div className="relative">
-          <button onClick={() => setSignalMenuOpen(open => !open)}
+          <button onClick={() => setSignalMenuAnchor(anchor => anchor === 'toolbar' ? null : 'toolbar')}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-ss-ink text-white text-xs font-semibold rounded-lg hover:bg-ss-dim transition-colors">
             Patch Signal
           </button>
-          {signalMenuOpen && <SignalMenu onSelect={patchSignal} />}
+          {signalMenuAnchor === 'toolbar' && <SignalMenu onSelect={patchSignal} />}
         </div>
         <button onClick={handleAddSection}
           className="flex items-center gap-1.5 px-3 py-1.5 border border-ss-border text-ss-dim text-xs font-semibold rounded-lg hover:border-ss-muted hover:text-ss-ink transition-colors">
@@ -928,7 +929,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
           setActiveSection(null)
           setFocusedSignalId(null)
           setEditingSignalId(null)
-          setSignalMenuOpen(false)
+          setSignalMenuAnchor(null)
         }}
       >
         <div className="relative" style={{ width: canvasSize.width, height: canvasSize.height }}>
@@ -1011,11 +1012,11 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
               <p className="text-ss-ghost/60 text-sm">Empty field.</p>
               <div className="relative">
-                <button onClick={() => setSignalMenuOpen(open => !open)}
+                <button onClick={() => setSignalMenuAnchor(anchor => anchor === 'empty' ? null : 'empty')}
                   className="px-4 py-2 border border-ss-border rounded-lg text-sm text-ss-dim hover:border-ss-muted hover:text-ss-ink transition-all">
                   Patch first signal
                 </button>
-                {signalMenuOpen && <SignalMenu align="center" onSelect={patchSignal} />}
+                {signalMenuAnchor === 'empty' && <SignalMenu align="center" onSelect={patchSignal} />}
               </div>
             </div>
           )}
