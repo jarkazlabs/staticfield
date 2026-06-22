@@ -5,8 +5,6 @@
 // - UX-Verbesserungen
 
 import { useRef, useState, useEffect, useCallback } from 'react'
-import EditCardModal     from './EditCardModal.jsx'
-import DeleteCardModal   from './DeleteCardModal.jsx'
 import CanvasSection     from './CanvasSection.jsx'
 import PedalIcon         from './PedalIcon.jsx'
 import SignalMenu        from './SignalMenu.jsx'
@@ -72,6 +70,32 @@ function HistoryButton({ type, disabled, onClick }) {
   )
 }
 
+function InlineInput({ value = '', placeholder, onChange, className = '', multiline = false, rows = 2, autoFocus = false }) {
+  const sharedProps = {
+    'data-action': 'inline-edit',
+    value,
+    placeholder,
+    autoFocus,
+    onChange: e => onChange(e.target.value),
+    onMouseDown: e => e.stopPropagation(),
+    onClick: e => e.stopPropagation(),
+    onDoubleClick: e => e.stopPropagation(),
+    className: `w-full border-0 bg-transparent p-0 text-ss-ink placeholder-ss-ghost/55 focus:outline-none focus:ring-0 ${className}`,
+  }
+
+  if (multiline) {
+    return (
+      <textarea
+        {...sharedProps}
+        rows={rows}
+        className={`${sharedProps.className} resize-none leading-relaxed`}
+      />
+    )
+  }
+
+  return <input {...sharedProps} />
+}
+
 // ─── Note Card mit Expand-Toggle ─────────────────────────
 function NoteCardContent({ title, description }) {
   const [expanded, setExpanded] = useState(false)
@@ -91,7 +115,7 @@ function NoteCardContent({ title, description }) {
 
   return (
     <div className="flex flex-col gap-1.5">
-      <p className="font-sans font-semibold text-sm text-ss-ink leading-snug">{title}</p>
+      <p className="font-sans font-semibold text-sm text-ss-ink leading-snug">{title || 'Note Signal'}</p>
       {description && (
         <div className="relative">
           <div
@@ -120,13 +144,239 @@ function NoteCardContent({ title, description }) {
 
 // ─── Card Content ─────────────────────────────────────────
 
+function buildChain(items) {
+  const filled = items.map(item => item.trim()).filter(Boolean)
+  return filled.reduce((acc, item, i) => {
+    acc.push(item)
+    if (i < filled.length - 1) acc.push('→')
+    return acc
+  }, [])
+}
+
+function EditableCardContent({ card, onUpdate }) {
+  const update = updates => onUpdate(card.id, updates)
+  const chainItems = card.chain ? card.chain.filter(item => item !== '→') : ['']
+  const editableChainItems = chainItems[chainItems.length - 1] === '' ? chainItems : [...chainItems, '']
+
+  switch (card.type) {
+    case 'note':
+      return (
+        <div className="flex flex-col gap-2">
+          <InlineInput
+            value={card.title}
+            placeholder="Untitled note"
+            onChange={title => update({ title })}
+            autoFocus
+            className="font-sans text-sm font-semibold leading-snug"
+          />
+          <InlineInput
+            value={card.description}
+            placeholder="Write inside the signal..."
+            onChange={description => update({ description })}
+            multiline
+            rows={5}
+            className="text-xs text-ss-dim"
+          />
+        </div>
+      )
+
+    case 'image':
+      return (
+        <div className="flex flex-col gap-2">
+          {card.imageUrl && <div className="w-full aspect-video overflow-hidden rounded-md"><img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover"/></div>}
+          <InlineInput
+            value={card.imageUrl}
+            placeholder="Paste image URL..."
+            onChange={imageUrl => update({ imageUrl })}
+            autoFocus
+            className="font-mono text-2xs text-ss-accent"
+          />
+          <InlineInput
+            value={card.title}
+            placeholder="Image title..."
+            onChange={title => update({ title })}
+            className="font-sans text-sm font-semibold leading-snug"
+          />
+          <InlineInput
+            value={card.description}
+            placeholder="What does this image signal?"
+            onChange={description => update({ description })}
+            multiline
+            rows={2}
+            className="text-xs text-ss-dim"
+          />
+        </div>
+      )
+
+    case 'link':
+    case 'youtube':
+      return (
+        <div className="flex flex-col gap-2">
+          {card.type === 'youtube' && (
+            <div className="flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-red-500" />
+              <span className="font-mono text-2xs text-ss-ghost">YouTube</span>
+            </div>
+          )}
+          <InlineInput
+            value={card.url}
+            placeholder={card.type === 'youtube' ? 'Paste YouTube URL...' : 'Paste link...'}
+            onChange={url => update({ url })}
+            autoFocus
+            className="font-mono text-2xs text-ss-accent"
+          />
+          <InlineInput
+            value={card.title}
+            placeholder={card.type === 'youtube' ? 'Video title...' : 'Link title...'}
+            onChange={title => update({ title })}
+            className="font-sans text-sm font-semibold leading-snug"
+          />
+          <InlineInput
+            value={card.description}
+            placeholder="Add a note..."
+            onChange={description => update({ description })}
+            multiline
+            rows={2}
+            className="text-xs text-ss-dim"
+          />
+        </div>
+      )
+
+    case 'instagram':
+      return (
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm">📸</span>
+            <span className="font-mono text-2xs text-ss-ghost">Instagram</span>
+          </div>
+          <InlineInput
+            value={card.url}
+            placeholder="Paste Instagram URL..."
+            onChange={url => update({ url })}
+            autoFocus
+            className="font-mono text-2xs text-ss-accent"
+          />
+          <InlineInput
+            value={card.title}
+            placeholder="Signal title..."
+            onChange={title => update({ title })}
+            className="font-sans text-sm font-semibold leading-snug"
+          />
+        </div>
+      )
+
+    case 'chain':
+      return (
+        <div className="flex flex-col gap-2.5">
+          <InlineInput
+            value={card.title}
+            placeholder="Signal Chain"
+            onChange={title => update({ title })}
+            autoFocus
+            className="font-sans text-sm font-semibold leading-snug"
+          />
+          <div className="flex flex-col gap-1.5 rounded-lg border border-ss-border/60 bg-white/35 p-2">
+            {editableChainItems.map((item, index) => (
+              <div key={index} className="flex items-center gap-2">
+                {index > 0 && <span className="text-ss-ghost/50 text-xs">→</span>}
+                <PedalIcon size={15} color="#9e9890" />
+                <InlineInput
+                  value={item}
+                  placeholder={index === 0 ? 'First node...' : 'Next node...'}
+                  onChange={value => {
+                    const next = [...editableChainItems]
+                    next[index] = value
+                    update({ chain: buildChain(next) })
+                  }}
+                  className="font-mono text-2xs"
+                />
+              </div>
+            ))}
+            <button
+              data-action="inline-edit"
+              type="button"
+              onMouseDown={e => e.stopPropagation()}
+              onClick={e => {
+                e.stopPropagation()
+                update({ chain: buildChain([...chainItems, 'Node']) })
+              }}
+              className="mt-1 text-left font-mono text-2xs text-ss-ghost hover:text-ss-accent transition-colors"
+            >
+              + add node
+            </button>
+          </div>
+          <InlineInput
+            value={card.description}
+            placeholder="How does this chain move?"
+            onChange={description => update({ description })}
+            multiline
+            rows={2}
+            className="text-xs text-ss-dim"
+          />
+        </div>
+      )
+
+    case 'pattern':
+      return (
+        <div className="flex flex-col gap-2">
+          <InlineInput
+            value={card.title}
+            placeholder="Pattern title..."
+            onChange={title => update({ title })}
+            autoFocus
+            className="font-sans text-sm font-semibold leading-snug"
+          />
+          <InlineInput
+            value={card.notes}
+            placeholder="C4 Eb4 G4 — G4 C5"
+            onChange={notes => update({ notes })}
+            className="font-mono text-2xs text-ss-dim rounded-lg bg-ss-surface/60 px-2.5 py-2"
+          />
+          <div className="flex gap-2">
+            <InlineInput
+              value={card.bpm}
+              placeholder="bpm"
+              onChange={bpm => update({ bpm })}
+              className="font-mono text-2xs text-ss-ghost"
+            />
+            <InlineInput
+              value={card.scale}
+              placeholder="scale"
+              onChange={scale => update({ scale })}
+              className="font-mono text-2xs text-ss-ghost"
+            />
+          </div>
+          <InlineInput
+            value={card.description}
+            placeholder="Phrase note..."
+            onChange={description => update({ description })}
+            multiline
+            rows={2}
+            className="text-xs text-ss-dim"
+          />
+        </div>
+      )
+
+    default:
+      return (
+        <InlineInput
+          value={card.title}
+          placeholder="Signal title..."
+          onChange={title => update({ title })}
+          autoFocus
+          className="font-sans text-sm font-semibold leading-snug"
+        />
+      )
+  }
+}
+
 function CardContent({ card }) {
   switch (card.type) {
 
     case 'image':
       return <div className="flex flex-col gap-2">
         {card.imageUrl && <div className="w-full aspect-video overflow-hidden rounded-md"><img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover"/></div>}
-        <p className="font-sans font-semibold text-sm text-ss-ink leading-snug">{card.title}</p>
+        <p className="font-sans font-semibold text-sm text-ss-ink leading-snug">{card.title || 'Image Signal'}</p>
         {card.description && <p className="text-xs text-ss-dim leading-relaxed">{card.description}</p>}
       </div>
 
@@ -143,7 +393,7 @@ function CardContent({ card }) {
           </div>
         )}
         {card.imageUrl && <div className="w-full aspect-video overflow-hidden rounded-md"><img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover opacity-90"/></div>}
-        <p className="font-sans font-semibold text-sm text-ss-ink leading-snug">{card.title}</p>
+        <p className="font-sans font-semibold text-sm text-ss-ink leading-snug">{card.title || (card.type === 'youtube' ? 'YouTube Signal' : 'Link Signal')}</p>
         {card.description && <p className="text-xs text-ss-dim leading-relaxed">{card.description}</p>}
         {card.url && <a href={card.url} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()}
           className="inline-flex items-center gap-1 font-mono text-2xs text-ss-accent hover:text-ss-ink transition-colors truncate">
@@ -157,7 +407,7 @@ function CardContent({ card }) {
           <span className="text-sm">📸</span>
           <span className="font-mono text-2xs text-ss-ghost">Instagram</span>
         </div>
-        <p className="font-sans font-semibold text-sm text-ss-ink leading-snug">{card.title}</p>
+        <p className="font-sans font-semibold text-sm text-ss-ink leading-snug">{card.title || 'Instagram Signal'}</p>
         {card.url && <a href={card.url} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()}
           className="font-mono text-2xs text-ss-accent hover:underline truncate">
           ↗ {card.url.replace('https://www.instagram.com/','instagram.com/')}
@@ -192,31 +442,21 @@ function CardContent({ card }) {
       return <PatternCardContent card={card} />
 
     default:
-      return <p className="text-sm text-ss-ink">{card.title}</p>
+      return <p className="text-sm text-ss-ink">{card.title || 'Signal'}</p>
   }
 }
 
 // ─── Canvas Card ──────────────────────────────────────────
 
-function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onTouchStart, onConnectDotDown, onEdit, onDelete, onDuplicate, onResize, onLockToggle, onHeightChange, onInteractionStart, onInteractionEnd }) {
+function CanvasCard({ card, connectingFrom, focused, dimmed, editing, onFocus, onEditStart, onDragStart, onTouchStart, onConnectDotDown, onDelete, onDuplicate, onResize, onHeightChange, onInteractionStart, onInteractionEnd, onUpdate }) {
   const [hovered,     setHovered]     = useState(false)
   const [hoveredSide, setHoveredSide] = useState(null)
-  const [menuOpen,    setMenuOpen]    = useState(false)
   const cardRef      = useRef(null)
   const contentRef   = useRef(null)
   const mouseDownPos = useRef(null)
   const tintStyle  = getTintStyle(card)
   const cardW      = card.width || CARD_WIDTH_DEFAULT
   const locked     = card.locked || false
-
-  // Menü schließen bei Klick außerhalb
-  useEffect(() => {
-    if (!menuOpen) return
-    function onOut(e) { if (!e.target.closest('[data-menu]')) setMenuOpen(false) }
-    window.addEventListener('mousedown', onOut)
-    window.addEventListener('touchstart', onOut)
-    return () => { window.removeEventListener('mousedown', onOut); window.removeEventListener('touchstart', onOut) }
-  }, [menuOpen])
 
   // Echte Höhe messen und nach oben melden
   useEffect(() => {
@@ -298,7 +538,7 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
   // Dots alleen bij hover en niet selected (zodat toolbar en dots nooit tegelijk)
   const visibleDots = connectingFrom
     ? (connectingFrom === card.id ? Object.keys(dotsConfig) : [])
-    : (!selected && hovered && hoveredSide ? [hoveredSide] : [])
+    : ((hovered || focused) && hoveredSide ? [hoveredSide] : [])
 
   // Minimale Höhe falls card.height gesetzt
   const minHeight = card.height ? { minHeight: card.height } : {}
@@ -306,7 +546,16 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
   return (
     <div
       className="absolute select-none"
-      style={{ left: card.position.x, top: card.position.y, width: cardW, zIndex: (selected || hovered) ? 10 : 2 }}
+      style={{
+        left: card.position.x,
+        top: card.position.y,
+        width: cardW,
+        zIndex: (focused || hovered) ? 20 : 2,
+        opacity: dimmed ? 0.38 : 1,
+        transform: focused ? 'scale(1.06)' : 'scale(1)',
+        transformOrigin: 'center center',
+        transition: 'opacity 180ms ease, transform 180ms ease',
+      }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => { setHovered(false); setHoveredSide(null) }}
       onMouseMove={handleMouseMove}
@@ -328,8 +577,13 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
         const down = mouseDownPos.current
         if (down && (Math.abs(e.clientX - down.x) > 5 || Math.abs(e.clientY - down.y) > 5)) return
         e.stopPropagation()
-        onSelect(selected ? null : card.id)
-        setMenuOpen(false)
+        onFocus(card.id)
+      }}
+      onDoubleClick={e => {
+        if (e.target.closest('[data-action]')) return
+        e.stopPropagation()
+        onFocus(card.id)
+        onEditStart(card.id)
       }}
 
     >
@@ -343,8 +597,8 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
             ? 'cursor-default shadow-sm'
             : connectingFrom && connectingFrom !== card.id
               ? 'ring-2 ring-ss-accent/40 cursor-crosshair shadow-lg'
-              : selected
-                ? 'ring-2 ring-ss-ink/20 shadow-xl cursor-grab'
+              : focused
+                ? 'ring-2 ring-ss-ink/20 shadow-2xl cursor-grab'
                 : hovered ? 'shadow-lg cursor-grab' : 'shadow-sm cursor-grab'
           }
         `}
@@ -358,11 +612,13 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
 
         {/* Content */}
         <div ref={contentRef} className="px-3 pb-3 flex-1">
-          <CardContent card={card} />
+          {editing
+            ? <EditableCardContent card={card} onUpdate={onUpdate} />
+            : <CardContent card={card} />}
         </div>
 
         {/* Resize Handle */}
-        {(hovered || selected) && !locked && (
+        {(hovered || focused) && !locked && (
           <div data-action="resize"
             className="absolute bottom-0 right-0 w-6 h-6 cursor-se-resize flex items-end justify-end p-1.5 opacity-60 hover:opacity-100 transition-opacity"
             onMouseDown={handleResizeMouseDown}
@@ -376,8 +632,8 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
         )}
       </div>
 
-      {/* ── Bottom Toolbar — alleen bij selected ── */}
-      {selected && !connectingFrom && (
+      {/* ── Focus Controls ── */}
+      {focused && !connectingFrom && (
         <div data-action="toolbar"
           className="absolute left-1/2 -translate-x-1/2 flex items-center gap-0.5 bg-white border border-ss-border rounded-xl shadow-lg px-1.5 py-1"
           style={{ bottom: -42, zIndex: 30, whiteSpace: 'nowrap' }}
@@ -392,48 +648,15 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
               <path d="M3 9H2a1 1 0 01-1-1V2a1 1 0 011-1h6a1 1 0 011 1v1" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
             </svg>
           </button>
-          {/* Lock */}
-          <button data-action="lock"
-            onClick={e => { e.stopPropagation(); onLockToggle(card.id) }}
-            className={`flex items-center px-2 py-1.5 rounded-lg transition-colors text-xs ${locked ? 'text-red-400 hover:bg-red-50' : 'text-ss-dim hover:text-ss-ink hover:bg-ss-surface'}`}
-            title={locked ? 'Unlock signal' : 'Lock signal'}>
-            {locked ? '🔒' : '🔓'}
-          </button>
           <div className="w-px h-5 bg-ss-border mx-0.5"/>
-          {/* ··· */}
-          <div className="relative" data-menu>
-            <button data-action="menu"
-              onClick={e => { e.stopPropagation(); setMenuOpen(v => !v) }}
-              className="flex items-center px-2 py-1.5 rounded-lg text-ss-dim hover:text-ss-ink hover:bg-ss-surface transition-colors"
-              title="Signal actions">
-              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                <circle cx="2.5" cy="6.5" r="1.2" fill="currentColor"/>
-                <circle cx="6.5" cy="6.5" r="1.2" fill="currentColor"/>
-                <circle cx="10.5" cy="6.5" r="1.2" fill="currentColor"/>
-              </svg>
-            </button>
-            {menuOpen && (
-              <div data-menu className="absolute bottom-full mb-2 right-0 bg-white border border-ss-border rounded-xl shadow-xl py-1 min-w-[145px]" style={{ zIndex: 50 }}>
-                <button data-action="edit"
-                  onClick={e => { e.stopPropagation(); onEdit(card); setMenuOpen(false); onSelect(null) }}
-                  className="w-full text-left px-3 py-2 text-xs text-ss-ink hover:bg-ss-surface transition-colors flex items-center gap-2">
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                    <path d="M8.5 1.5l2 2L4 10H2v-2L8.5 1.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
-                  </svg>
-                  Refine Signal
-                </button>
-                <div className="h-px bg-ss-border/60 mx-2 my-1"/>
-                <button data-action="delete"
-                  onClick={e => { e.stopPropagation(); onDelete(card.id); setMenuOpen(false); onSelect(null) }}
-                  className="w-full text-left px-3 py-2 text-xs text-red-500 hover:bg-red-50 transition-colors flex items-center gap-2">
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                    <path d="M2 3h8M5 3V2h2v1M4 5l.5 5M8 5l-.5 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-                  </svg>
-                  Remove Signal
-                </button>
-              </div>
-            )}
-          </div>
+          <button data-action="delete"
+            onClick={e => { e.stopPropagation(); onDelete(card.id) }}
+            className="flex items-center px-2 py-1.5 rounded-lg text-red-500 hover:bg-red-50 transition-colors"
+            title="Delete signal">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+              <path d="M2 3.2h9M5 3.2V2h3v1.2M4.2 5l.4 5.2M8.8 5l-.4 5.2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+            </svg>
+          </button>
         </div>
       )}
 
@@ -469,10 +692,9 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
   const [connectingFrom, setConnectingFrom] = useState(null)
   const [connectLine,    setConnectLine]    = useState(null)
   const [signalMenuOpen, setSignalMenuOpen] = useState(false)
-  const [editCard,       setEditCard]       = useState(null)
-  const [cardToDelete,   setCardToDelete]   = useState(null)
   const [activeSection,  setActiveSection]  = useState(null)
-  const [selectedCardId, setSelectedCardId] = useState(null)
+  const [focusedSignalId, setFocusedSignalId] = useState(null)
+  const [editingSignalId, setEditingSignalId] = useState(null)
   // Echte gemessene Höhen der Cards
   const [cardHeights,    setCardHeights]    = useState({})
 
@@ -584,11 +806,6 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
     updateCard(cardId, { width: newW, height: newH })
   }
 
-  function handleLockToggle(cardId) {
-    const card = cards.find(c => c.id === cardId)
-    if (card) updateCard(cardId, { locked: !card.locked })
-  }
-
   function handleDuplicate(card) {
     const { id: _id, boardId: _b, position, ...rest } = card
     addCard(boardId, card.type, {
@@ -605,12 +822,22 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
   }
 
   function patchSignal(type, data) {
-    addCard(boardId, type, data)
+    const id = addCard(boardId, type, data)
+    setFocusedSignalId(id)
+    setEditingSignalId(id)
     setSignalMenuOpen(false)
   }
 
   useEffect(() => {
-    function onKey(e) { if (e.key === 'Escape') { setConnectingFrom(null); setConnectLine(null) } }
+    function onKey(e) {
+      if (e.key === 'Escape') {
+        setConnectingFrom(null)
+        setConnectLine(null)
+        setFocusedSignalId(null)
+        setEditingSignalId(null)
+        setSignalMenuOpen(false)
+      }
+    }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [])
@@ -665,7 +892,12 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
           if (dragging) endHistoryGroup()
           setDragging(null)
         }}
-        onClick={() => { setActiveSection(null); setSelectedCardId(null); setSignalMenuOpen(false) }}
+        onClick={() => {
+          setActiveSection(null)
+          setFocusedSignalId(null)
+          setEditingSignalId(null)
+          setSignalMenuOpen(false)
+        }}
       >
         <div className="relative" style={{ width: canvasSize.width, height: canvasSize.height }}>
 
@@ -714,23 +946,36 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
             )}
           </svg>
 
+          {focusedSignalId && (
+            <div
+              className="absolute inset-0 bg-ss-ink/[0.045] transition-opacity duration-200 pointer-events-none"
+              style={{ zIndex: 5 }}
+            />
+          )}
+
           {/* Signals */}
           {cards.map(card => (
             <CanvasCard key={card.id} card={card}
               connectingFrom={connectingFrom?.cardId}
-              selected={selectedCardId === card.id}
-              onSelect={setSelectedCardId}
+              focused={focusedSignalId === card.id}
+              dimmed={!!focusedSignalId && focusedSignalId !== card.id}
+              editing={editingSignalId === card.id}
+              onFocus={setFocusedSignalId}
+              onEditStart={setEditingSignalId}
               onDragStart={handleDragStart}
               onTouchStart={handleTouchStart}
               onConnectDotDown={handleConnectDotDown}
-              onEdit={setEditCard}
-              onDelete={c => setCardToDelete(cards.find(x => x.id === c) || { id: c, type: 'note', title: '' })}
+              onDelete={id => {
+                deleteCard(id)
+                if (focusedSignalId === id) setFocusedSignalId(null)
+                if (editingSignalId === id) setEditingSignalId(null)
+              }}
               onDuplicate={handleDuplicate}
               onResize={handleResizeCard}
-              onLockToggle={handleLockToggle}
               onHeightChange={handleHeightChange}
               onInteractionStart={beginHistoryGroup}
               onInteractionEnd={endHistoryGroup}
+              onUpdate={updateCard}
             />
           ))}
 
@@ -749,8 +994,6 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
         </div>
       </div>
 
-      {editCard    && <EditCardModal card={editCard} onSave={(id,data)=>{updateCard(id,data);setEditCard(null)}} onClose={()=>setEditCard(null)} />}
-      {cardToDelete && <DeleteCardModal card={cardToDelete} onConfirm={() => { deleteCard(cardToDelete.id); setCardToDelete(null) }} onClose={() => setCardToDelete(null)} />}
     </div>
   )
 }

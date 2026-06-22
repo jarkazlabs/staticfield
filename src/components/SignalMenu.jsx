@@ -8,13 +8,13 @@ const SIGNAL_TYPES = [
 ]
 
 function defaultsFor(type) {
-  if (type === 'note') return { title: 'Untitled note', description: '', tint: 'paper' }
-  if (type === 'link') return { title: 'Link Signal', url: '', description: '' }
-  if (type === 'image') return { title: 'Image Signal', description: '' }
-  if (type === 'pattern') return { title: 'Pattern Signal', notes: '', bpm: '', scale: '', description: '' }
-  if (type === 'chain') return { title: 'Signal Chain', chain: ['Source', '→', 'Space'], tint: 'sage' }
-  if (type === 'youtube') return { title: 'YouTube Signal', url: '', description: '' }
-  return { title: 'Signal' }
+  if (type === 'note') return { title: '', description: '', tint: 'paper' }
+  if (type === 'link') return { title: '', url: '', description: '' }
+  if (type === 'image') return { title: '', imageUrl: '', description: '' }
+  if (type === 'pattern') return { title: '', notes: '', bpm: '', scale: '', description: '' }
+  if (type === 'chain') return { title: 'Signal Chain', chain: [''], tint: 'sage' }
+  if (type === 'youtube') return { title: '', url: '', description: '' }
+  return { title: '' }
 }
 
 export default function SignalMenu({ align = 'left', onSelect }) {
