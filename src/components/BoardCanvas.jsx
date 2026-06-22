@@ -6,10 +6,12 @@
 
 import { useRef, useState, useEffect, useCallback } from 'react'
 import CanvasSection     from './CanvasSection.jsx'
+import DeleteCardModal   from './DeleteCardModal.jsx'
 import PedalIcon         from './PedalIcon.jsx'
 import SignalMenu        from './SignalMenu.jsx'
 import { PatternCardContent } from './PatternCard.jsx'
 import { CARD_TINTS } from '../data/tints.js'
+import { getYouTubeEmbedUrl } from '../lib/youtube.js'
 import {
   CARD_HEIGHT_DEFAULT,
   CARD_WIDTH_DEFAULT,
@@ -370,7 +372,34 @@ function EditableCardContent({ card, onUpdate }) {
   }
 }
 
-function CardContent({ card }) {
+function YouTubePreview({ card, focused }) {
+  const embedUrl = focused ? getYouTubeEmbedUrl(card.url, { autoplay: true }) : null
+
+  if (focused && embedUrl) {
+    return (
+      <div className="aspect-video w-full overflow-hidden rounded-lg border border-ss-border bg-black shadow-inner">
+        <iframe
+          data-action="youtube-preview"
+          title={card.title || 'YouTube Signal preview'}
+          src={embedUrl}
+          className="h-full w-full"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+        />
+      </div>
+    )
+  }
+
+  return (
+    <div className="aspect-video w-full rounded-lg border border-ss-border/70 bg-ss-surface/80 flex items-center justify-center">
+      <div className="h-10 w-10 rounded-full border border-red-400/40 bg-white/70 flex items-center justify-center text-red-500 shadow-sm">
+        <span className="ml-0.5 text-xs">▶</span>
+      </div>
+    </div>
+  )
+}
+
+function CardContent({ card, focused }) {
   switch (card.type) {
 
     case 'image':
@@ -392,6 +421,7 @@ function CardContent({ card }) {
             <span className="font-mono text-2xs text-ss-ghost">YouTube</span>
           </div>
         )}
+        {card.type === 'youtube' && card.url && <YouTubePreview card={card} focused={focused} />}
         {card.imageUrl && <div className="w-full aspect-video overflow-hidden rounded-md"><img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover opacity-90"/></div>}
         <p className="font-sans font-semibold text-sm text-ss-ink leading-snug">{card.title || (card.type === 'youtube' ? 'YouTube Signal' : 'Link Signal')}</p>
         {card.description && <p className="text-xs text-ss-dim leading-relaxed">{card.description}</p>}
@@ -614,7 +644,7 @@ function CanvasCard({ card, connectingFrom, focused, dimmed, editing, onFocus, o
         <div ref={contentRef} className="px-3 pb-3 flex-1">
           {editing
             ? <EditableCardContent card={card} onUpdate={onUpdate} />
-            : <CardContent card={card} />}
+            : <CardContent card={card} focused={focused} />}
         </div>
 
         {/* Resize Handle */}
@@ -695,6 +725,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
   const [activeSection,  setActiveSection]  = useState(null)
   const [focusedSignalId, setFocusedSignalId] = useState(null)
   const [editingSignalId, setEditingSignalId] = useState(null)
+  const [signalToDelete, setSignalToDelete] = useState(null)
   // Echte gemessene Höhen der Cards
   const [cardHeights,    setCardHeights]    = useState({})
 
@@ -836,6 +867,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
         setFocusedSignalId(null)
         setEditingSignalId(null)
         setSignalMenuOpen(false)
+        setSignalToDelete(null)
       }
     }
     window.addEventListener('keydown', onKey)
@@ -965,11 +997,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
               onDragStart={handleDragStart}
               onTouchStart={handleTouchStart}
               onConnectDotDown={handleConnectDotDown}
-              onDelete={id => {
-                deleteCard(id)
-                if (focusedSignalId === id) setFocusedSignalId(null)
-                if (editingSignalId === id) setEditingSignalId(null)
-              }}
+              onDelete={id => setSignalToDelete(cards.find(card => card.id === id) || null)}
               onDuplicate={handleDuplicate}
               onResize={handleResizeCard}
               onHeightChange={handleHeightChange}
@@ -993,6 +1021,19 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
           )}
         </div>
       </div>
+
+      {signalToDelete && (
+        <DeleteCardModal
+          card={signalToDelete}
+          onClose={() => setSignalToDelete(null)}
+          onConfirm={() => {
+            deleteCard(signalToDelete.id)
+            if (focusedSignalId === signalToDelete.id) setFocusedSignalId(null)
+            if (editingSignalId === signalToDelete.id) setEditingSignalId(null)
+            setSignalToDelete(null)
+          }}
+        />
+      )}
 
     </div>
   )

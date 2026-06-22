@@ -1,8 +1,11 @@
 // BoardDetail.jsx — Canvas auf Desktop, Card-Liste auf Mobile
+import { useState } from 'react'
 import BoardCanvas from '../components/BoardCanvas.jsx'
+import DeleteCardModal from '../components/DeleteCardModal.jsx'
 
 // Mobile Card-Listen-Ansicht
 function MobileCardList({ cards, store }) {
+  const [signalToDelete, setSignalToDelete] = useState(null)
   const typeLabels = {
     note:'Note Signal',
     link:'Link Signal',
@@ -29,7 +32,7 @@ function MobileCardList({ cards, store }) {
                 {typeLabels[card.type] || card.type}
               </span>
               <button
-                onClick={() => store.deleteCard(card.id)}
+                onClick={() => setSignalToDelete(card)}
                 className="text-ss-ghost/40 hover:text-red-400 text-xs transition-colors">✕</button>
             </div>
             {card.imageUrl && (
@@ -56,6 +59,16 @@ function MobileCardList({ cards, store }) {
           </div>
         ))}
       </div>
+      {signalToDelete && (
+        <DeleteCardModal
+          card={signalToDelete}
+          onClose={() => setSignalToDelete(null)}
+          onConfirm={() => {
+            store.deleteCard(signalToDelete.id)
+            setSignalToDelete(null)
+          }}
+        />
+      )}
     </div>
   )
 }

@@ -1,8 +1,11 @@
 // FieldDetail.jsx — Field-Canvas (ehemals BoardDetail)
+import { useState } from 'react'
 import BoardCanvas from '../components/BoardCanvas.jsx'
+import DeleteCardModal from '../components/DeleteCardModal.jsx'
 import { createFieldBackup, downloadFieldBackup } from '../lib/fieldBackup.js'
 
 function MobileCardList({ cards, store }) {
+  const [signalToDelete, setSignalToDelete] = useState(null)
   const typeLabels = {
     note:'Note Signal',
     link:'Link Signal',
@@ -27,7 +30,7 @@ function MobileCardList({ cards, store }) {
               <span className="font-mono text-2xs text-ss-ghost uppercase tracking-widest">
                 {typeLabels[card.type] || card.type}
               </span>
-              <button onClick={() => store.deleteCard(card.id)}
+              <button onClick={() => setSignalToDelete(card)}
                 className="text-ss-ghost/40 hover:text-red-400 text-xs transition-colors">✕</button>
             </div>
             {card.imageUrl && (
@@ -46,6 +49,16 @@ function MobileCardList({ cards, store }) {
           </div>
         ))}
       </div>
+      {signalToDelete && (
+        <DeleteCardModal
+          card={signalToDelete}
+          onClose={() => setSignalToDelete(null)}
+          onConfirm={() => {
+            store.deleteCard(signalToDelete.id)
+            setSignalToDelete(null)
+          }}
+        />
+      )}
     </div>
   )
 }
