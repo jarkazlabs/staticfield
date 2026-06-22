@@ -5,11 +5,11 @@
 // - UX-Verbesserungen
 
 import { useRef, useState, useEffect, useCallback } from 'react'
-import AddCardModal      from './AddCardModal.jsx'
 import EditCardModal     from './EditCardModal.jsx'
 import DeleteCardModal   from './DeleteCardModal.jsx'
 import CanvasSection     from './CanvasSection.jsx'
 import PedalIcon         from './PedalIcon.jsx'
+import SignalMenu        from './SignalMenu.jsx'
 import { PatternCardContent } from './PatternCard.jsx'
 import { CARD_TINTS } from '../data/tints.js'
 import {
@@ -30,7 +30,7 @@ function getTintStyle(card) {
 // ─── Type Badge ───────────────────────────────────────────
 
 function TypeBadge({ type }) {
-  const labels = { note:'Note', link:'Link', image:'Image', instagram:'Instagram', chain:'Signal-Chain', pattern:'Pattern' }
+  const labels = { note:'Note Signal', link:'Link Signal', image:'Image Signal', instagram:'Instagram Signal', chain:'Signal Chain', pattern:'Pattern Signal', youtube:'YouTube Signal' }
   return <span className="font-mono text-xs text-ss-ghost/70 tracking-widest uppercase">{labels[type]||type}</span>
 }
 
@@ -109,7 +109,7 @@ function NoteCardContent({ title, description }) {
               className="mt-1.5 flex items-center gap-1 font-mono text-2xs text-ss-ghost/60 hover:text-ss-accent transition-colors"
             >
               <span>{expanded ? '↑' : '↓'}</span>
-              <span>{expanded ? 'weniger' : 'mehr'}</span>
+              <span>{expanded ? 'less' : 'more'}</span>
             </button>
           )}
         </div>
@@ -134,7 +134,14 @@ function CardContent({ card }) {
       return <NoteCardContent title={card.title} description={card.description} />
 
     case 'link':
+    case 'youtube':
       return <div className="flex flex-col gap-2">
+        {card.type === 'youtube' && (
+          <div className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-red-500" />
+            <span className="font-mono text-2xs text-ss-ghost">YouTube</span>
+          </div>
+        )}
         {card.imageUrl && <div className="w-full aspect-video overflow-hidden rounded-md"><img src={card.imageUrl} alt={card.title} className="w-full h-full object-cover opacity-90"/></div>}
         <p className="font-sans font-semibold text-sm text-ss-ink leading-snug">{card.title}</p>
         {card.description && <p className="text-xs text-ss-dim leading-relaxed">{card.description}</p>}
@@ -175,7 +182,7 @@ function CardContent({ card }) {
                 </span>
               ))}
             </div>
-          : <p className="text-xs text-ss-ghost/50 italic">Noch keine Geräte hinzugefügt</p>
+          : <p className="text-xs text-ss-ghost/50 italic">No nodes patched yet</p>
         }
         {card.description && <p className="text-xs text-ss-dim leading-relaxed">{card.description}</p>}
       </div>
@@ -360,7 +367,7 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
             className="absolute bottom-0 right-0 w-6 h-6 cursor-se-resize flex items-end justify-end p-1.5 opacity-60 hover:opacity-100 transition-opacity"
             onMouseDown={handleResizeMouseDown}
             onTouchStart={handleResizeTouchStart}
-            title="Größe ändern"
+            title="Resize signal"
           >
             <svg width="9" height="9" viewBox="0 0 9 9">
               <path d="M9 0 L9 9 L0 9 Z" fill="#c8c8c2"/>
@@ -379,7 +386,7 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
           <button data-action="duplicate"
             onClick={e => { e.stopPropagation(); onDuplicate(card) }}
             className="flex items-center px-2 py-1.5 rounded-lg text-ss-dim hover:text-ss-ink hover:bg-ss-surface transition-colors"
-            title="Duplizieren">
+            title="Duplicate signal">
             <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
               <rect x="4" y="4" width="8" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
               <path d="M3 9H2a1 1 0 01-1-1V2a1 1 0 011-1h6a1 1 0 011 1v1" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
@@ -389,7 +396,7 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
           <button data-action="lock"
             onClick={e => { e.stopPropagation(); onLockToggle(card.id) }}
             className={`flex items-center px-2 py-1.5 rounded-lg transition-colors text-xs ${locked ? 'text-red-400 hover:bg-red-50' : 'text-ss-dim hover:text-ss-ink hover:bg-ss-surface'}`}
-            title={locked ? 'Entsperren' : 'Sperren'}>
+            title={locked ? 'Unlock signal' : 'Lock signal'}>
             {locked ? '🔒' : '🔓'}
           </button>
           <div className="w-px h-5 bg-ss-border mx-0.5"/>
@@ -398,7 +405,7 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
             <button data-action="menu"
               onClick={e => { e.stopPropagation(); setMenuOpen(v => !v) }}
               className="flex items-center px-2 py-1.5 rounded-lg text-ss-dim hover:text-ss-ink hover:bg-ss-surface transition-colors"
-              title="Mehr">
+              title="Signal actions">
               <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
                 <circle cx="2.5" cy="6.5" r="1.2" fill="currentColor"/>
                 <circle cx="6.5" cy="6.5" r="1.2" fill="currentColor"/>
@@ -413,7 +420,7 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                     <path d="M8.5 1.5l2 2L4 10H2v-2L8.5 1.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
                   </svg>
-                  Bearbeiten
+                  Refine Signal
                 </button>
                 <div className="h-px bg-ss-border/60 mx-2 my-1"/>
                 <button data-action="delete"
@@ -422,7 +429,7 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                     <path d="M2 3h8M5 3V2h2v1M4 5l.5 5M8 5l-.5 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
                   </svg>
-                  Löschen
+                  Remove Signal
                 </button>
               </div>
             )}
@@ -440,7 +447,7 @@ function CanvasCard({ card, connectingFrom, selected, onSelect, onDragStart, onT
             boxShadow: '0 0 0 2.5px white, 0 2px 4px rgba(0,0,0,0.1)',
           }}
           onMouseDown={e=>{e.stopPropagation(); e.preventDefault(); onConnectDotDown(card.id, side)}}
-          title="Verbindung ziehen"
+          title="Patch connection"
         >
           <span style={{fontSize:7, color:'white', fontWeight:800, lineHeight:1}}>+</span>
         </div>
@@ -461,7 +468,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
   const [dragging,       setDragging]       = useState(null)
   const [connectingFrom, setConnectingFrom] = useState(null)
   const [connectLine,    setConnectLine]    = useState(null)
-  const [showAddModal,   setShowAddModal]   = useState(false)
+  const [signalMenuOpen, setSignalMenuOpen] = useState(false)
   const [editCard,       setEditCard]       = useState(null)
   const [cardToDelete,   setCardToDelete]   = useState(null)
   const [activeSection,  setActiveSection]  = useState(null)
@@ -597,6 +604,11 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
     addSection(boardId, { x: cx, y: cy })
   }
 
+  function patchSignal(type, data) {
+    addCard(boardId, type, data)
+    setSignalMenuOpen(false)
+  }
+
   useEffect(() => {
     function onKey(e) { if (e.key === 'Escape') { setConnectingFrom(null); setConnectLine(null) } }
     window.addEventListener('keydown', onKey)
@@ -608,13 +620,16 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
 
       {/* Toolbar */}
       <div className="bg-white border-b border-ss-border px-5 py-2.5 flex items-center gap-2.5 flex-shrink-0">
-        <button onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-ss-ink text-white text-xs font-semibold rounded-lg hover:bg-ss-dim transition-colors">
-          + Signal
-        </button>
+        <div className="relative">
+          <button onClick={() => setSignalMenuOpen(open => !open)}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-ss-ink text-white text-xs font-semibold rounded-lg hover:bg-ss-dim transition-colors">
+            Patch Signal
+          </button>
+          {signalMenuOpen && <SignalMenu onSelect={patchSignal} />}
+        </div>
         <button onClick={handleAddSection}
           className="flex items-center gap-1.5 px-3 py-1.5 border border-ss-border text-ss-dim text-xs font-semibold rounded-lg hover:border-ss-muted hover:text-ss-ink transition-colors">
-          + Section
+          Add Field Area
         </button>
         <div className="hidden sm:flex items-center gap-1.5 ml-1 pl-2 border-l border-ss-border">
           <HistoryButton type="undo" disabled={!canUndo} onClick={undo} />
@@ -623,7 +638,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
         {connectingFrom && (
           <div className="flex items-center gap-2 px-3 py-1.5 bg-ss-accentBg border border-ss-accent/30 rounded-lg ml-1">
             <div className="w-2 h-2 rounded-full bg-ss-accent animate-pulse" />
-            <span className="text-xs text-ss-accent font-medium">Auf Ziel-Card loslassen — ESC abbr.</span>
+            <span className="text-xs text-ss-accent font-medium">Release on target signal — ESC cancels</span>
           </div>
         )}
         <span className="ml-auto text-2xs text-ss-ghost hidden sm:block font-mono">{cards.length} signals · click line to disconnect</span>
@@ -650,7 +665,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
           if (dragging) endHistoryGroup()
           setDragging(null)
         }}
-        onClick={() => { setActiveSection(null); setSelectedCardId(null) }}
+        onClick={() => { setActiveSection(null); setSelectedCardId(null); setSignalMenuOpen(false) }}
       >
         <div className="relative" style={{ width: canvasSize.width, height: canvasSize.height }}>
 
@@ -699,7 +714,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
             )}
           </svg>
 
-          {/* Cards */}
+          {/* Signals */}
           {cards.map(card => (
             <CanvasCard key={card.id} card={card}
               connectingFrom={connectingFrom?.cardId}
@@ -722,16 +737,18 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
           {cards.length === 0 && sections.length === 0 && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
               <p className="text-ss-ghost/60 text-sm">Empty field.</p>
-              <button onClick={() => setShowAddModal(true)}
-                className="px-4 py-2 border border-ss-border rounded-lg text-sm text-ss-dim hover:border-ss-muted hover:text-ss-ink transition-all">
-                + Add first signal
-              </button>
+              <div className="relative">
+                <button onClick={() => setSignalMenuOpen(open => !open)}
+                  className="px-4 py-2 border border-ss-border rounded-lg text-sm text-ss-dim hover:border-ss-muted hover:text-ss-ink transition-all">
+                  Patch first signal
+                </button>
+                {signalMenuOpen && <SignalMenu align="center" onSelect={patchSignal} />}
+              </div>
             </div>
           )}
         </div>
       </div>
 
-      {showAddModal && <AddCardModal onAdd={(type,data)=>addCard(boardId,type,data)} onClose={()=>setShowAddModal(false)} />}
       {editCard    && <EditCardModal card={editCard} onSave={(id,data)=>{updateCard(id,data);setEditCard(null)}} onClose={()=>setEditCard(null)} />}
       {cardToDelete && <DeleteCardModal card={cardToDelete} onConfirm={() => { deleteCard(cardToDelete.id); setCardToDelete(null) }} onClose={() => setCardToDelete(null)} />}
     </div>

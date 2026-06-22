@@ -1,9 +1,10 @@
-// EditCardModal.jsx — Card bearbeiten + Farbe wählen (Note & Chain)
+// EditCardModal.jsx — Signal verfeinern + Farbe wählen (Note & Chain)
 import { useState, useRef } from 'react'
 import { CARD_TINTS } from '../data/tints.js'
 import { PatternForm } from './PatternCard.jsx'
 
 const TINTABLE = ['note', 'chain']
+const URL_TYPES = ['link', 'instagram', 'youtube']
 
 export default function EditCardModal({ card, onSave, onClose }) {
   const [title,       setTitle]  = useState(card.title || '')
@@ -43,7 +44,7 @@ export default function EditCardModal({ card, onSave, onClose }) {
     }
     const updates = { title, description }
     if (TINTABLE.includes(card.type)) updates.tint = tint
-    if (card.type === 'link' || card.type === 'instagram') updates.url = url
+    if (URL_TYPES.includes(card.type)) updates.url = url
     if (card.type === 'link' || card.type === 'image') updates.imageUrl = imageData
     if (card.type === 'chain') {
       const filled = chainItems.filter(Boolean)
@@ -67,8 +68,8 @@ export default function EditCardModal({ card, onSave, onClose }) {
         <div className="flex items-center justify-between px-5 py-4 border-b border-ss-border sticky top-0 rounded-t-xl"
           style={{ backgroundColor: canTint ? (CARD_TINTS.find(t => t.id === tint)?.bg || '#ffffff') : '#ffffff' }}>
           <h2 className="font-sans font-semibold text-ss-ink text-sm">
-            Signal bearbeiten
-            <span className="ml-2 font-mono text-2xs text-ss-ghost uppercase">{card.type}</span>
+            Refine Signal
+            <span className="ml-2 font-mono text-2xs text-ss-ghost uppercase">{card.type} signal</span>
           </h2>
           <button onClick={onClose} className="text-ss-ghost hover:text-ss-ink text-lg leading-none">×</button>
         </div>
@@ -85,7 +86,7 @@ export default function EditCardModal({ card, onSave, onClose }) {
           )}
 
           {/* Beschreibung */}
-          {(card.type === 'note' || card.type === 'link' || card.type === 'chain') && (
+          {(card.type === 'note' || card.type === 'link' || card.type === 'chain' || card.type === 'youtube') && (
             <div>
               <label className="text-xs font-semibold text-ss-dim uppercase tracking-wide block mb-1.5">
                 {card.type === 'note' ? 'Text' : 'Notiz'}
@@ -97,7 +98,7 @@ export default function EditCardModal({ card, onSave, onClose }) {
           )}
 
           {/* URL */}
-          {(card.type === 'link' || card.type === 'instagram') && (
+          {URL_TYPES.includes(card.type) && (
             <div>
               <label className="text-xs font-semibold text-ss-dim uppercase tracking-wide block mb-1.5">URL</label>
               <input value={url} onChange={e => setUrl(e.target.value)}
@@ -145,7 +146,7 @@ export default function EditCardModal({ card, onSave, onClose }) {
           {/* Chain Editor */}
           {card.type === 'chain' && (
             <div>
-              <label className="text-xs font-semibold text-ss-dim uppercase tracking-wide block mb-1.5">Signal-Chain</label>
+              <label className="text-xs font-semibold text-ss-dim uppercase tracking-wide block mb-1.5">Signal Chain</label>
               <div className="flex items-center flex-wrap gap-1.5 p-3 rounded-lg border border-ss-border mb-3 bg-white/40">
                 {chainItems.filter(Boolean).map((item, i, arr) => (
                   <span key={i} className="flex items-center gap-1">
@@ -161,7 +162,7 @@ export default function EditCardModal({ card, onSave, onClose }) {
                     {i > 0 && <span className="text-ss-ghost text-sm font-mono flex-shrink-0">→</span>}
                     {i === 0 && <span className="opacity-0 text-sm font-mono flex-shrink-0">→</span>}
                     <input value={item} onChange={e => updateChainItem(i, e.target.value)}
-                      placeholder={`Gerät / Effekt ${i + 1}`}
+                      placeholder={`Node / effect ${i + 1}`}
                       className="flex-1 border border-ss-border rounded-lg px-3 py-2 text-sm text-ss-ink focus:outline-none focus:border-ss-ink bg-white/60" />
                     {chainItems.length > 2 && (
                       <button onClick={() => removeChainItem(i)} className="text-ss-ghost hover:text-red-400 text-xs flex-shrink-0">✕</button>
@@ -171,7 +172,7 @@ export default function EditCardModal({ card, onSave, onClose }) {
               </div>
               <button onClick={addChainItem}
                 className="mt-3 flex items-center gap-1.5 text-xs text-ss-dim hover:text-ss-ink transition-colors border border-dashed border-ss-border rounded-lg px-3 py-2 w-full justify-center hover:border-ss-muted bg-white/30">
-                + Gerät / Effekt hinzufügen
+                + Add node / effect
               </button>
             </div>
           )}
@@ -183,7 +184,7 @@ export default function EditCardModal({ card, onSave, onClose }) {
 
           <button onClick={handleSave}
             className="w-full py-2.5 bg-ss-ink text-white text-sm font-semibold rounded-lg hover:bg-ss-dim transition-colors mt-1">
-            Speichern
+            Keep Signal
           </button>
 
           {/* Farbe ganz unten */}

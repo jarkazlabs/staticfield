@@ -5,8 +5,8 @@ export default function DeleteCardModal({ card, onConfirm, onClose }) {
   const [step, setStep] = useState(1)
 
   const typeLabels = {
-    note: 'Note', link: 'Link', image: 'Image',
-    instagram: 'Instagram', chain: 'Signal-Chain', pattern: 'Pattern'
+    note: 'Note Signal', link: 'Link Signal', image: 'Image Signal',
+    instagram: 'Instagram Signal', chain: 'Signal Chain', pattern: 'Pattern Signal', youtube: 'YouTube Signal'
   }
   const label = typeLabels[card.type] || 'Signal'
   const title = card.title || label
@@ -27,16 +27,16 @@ export default function DeleteCardModal({ card, onConfirm, onClose }) {
 
           {step === 1 ? (
             <>
-              <h2 className="font-sans font-bold text-sm text-ss-ink mb-1">Signal löschen?</h2>
+              <h2 className="font-sans font-bold text-sm text-ss-ink mb-1">Remove signal?</h2>
               <p className="text-xs text-ss-dim leading-relaxed">
-                <span className="font-semibold text-ss-ink">„{title}"</span> wird gelöscht.
+                <span className="font-semibold text-ss-ink">"{title}"</span> will leave this field.
               </p>
             </>
           ) : (
             <>
-              <h2 className="font-sans font-bold text-sm text-ss-ink mb-1">Bist du sicher?</h2>
+              <h2 className="font-sans font-bold text-sm text-ss-ink mb-1">Let it go?</h2>
               <p className="text-xs text-ss-dim leading-relaxed">
-                Das Signal wird unwiderruflich entfernt. Verbindungen gehen ebenfalls verloren.
+                The signal and its connections will be removed from the field.
               </p>
             </>
           )}
@@ -45,17 +45,17 @@ export default function DeleteCardModal({ card, onConfirm, onClose }) {
         <div className="px-5 pb-5 flex gap-2">
           <button onClick={onClose}
             className="flex-1 py-2 border border-ss-border text-ss-dim text-xs font-semibold rounded-lg hover:border-ss-muted hover:text-ss-ink transition-colors">
-            Abbrechen
+            Cancel
           </button>
           {step === 1 ? (
             <button onClick={() => setStep(2)}
               className="flex-1 py-2 bg-red-500 text-white text-xs font-semibold rounded-lg hover:bg-red-600 transition-colors">
-              Ja
+              Continue
             </button>
           ) : (
             <button onClick={onConfirm}
               className="flex-1 py-2 bg-red-500 text-white text-xs font-semibold rounded-lg hover:bg-red-600 transition-colors">
-              Ja, löschen
+              Remove
             </button>
           )}
         </div>

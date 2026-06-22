@@ -28,25 +28,25 @@ export default function DeleteFieldModal({ field, onConfirm, onClose }) {
           {step === 1 ? (
             <>
               <h2 className="font-sans font-bold text-base text-ss-ink mb-1">
-                Field löschen?
+                Remove field?
               </h2>
               <p className="text-sm text-ss-dim leading-relaxed">
-                Du bist dabei, das Field{' '}
-                <span className="font-semibold text-ss-ink">„{field.title}"</span>{' '}
-                zu löschen. Alle Signals und Verbindungen gehen verloren.
+                You are about to remove{' '}
+                <span className="font-semibold text-ss-ink">"{field.title}"</span>{' '}
+                from your space. Its signals and connections will leave with it.
               </p>
             </>
           ) : (
             <>
               <h2 className="font-sans font-bold text-base text-ss-ink mb-1">
-                Namen bestätigen
+                Confirm the field name
               </h2>
               <p className="text-sm text-ss-dim leading-relaxed">
-                Tippe{' '}
+                Type{' '}
                 <span className="font-mono font-semibold text-ss-ink bg-ss-surface px-1.5 py-0.5 rounded">
                   {field.title}
                 </span>{' '}
-                ein um das Löschen zu bestätigen.
+                to confirm.
               </p>
             </>
           )}
@@ -72,14 +72,14 @@ export default function DeleteFieldModal({ field, onConfirm, onClose }) {
           <button onClick={onClose}
             className="flex-1 py-2.5 border border-ss-border text-ss-dim text-sm font-semibold rounded-lg
               hover:border-ss-muted hover:text-ss-ink transition-colors">
-            Abbrechen
+            Cancel
           </button>
 
           {step === 1 ? (
             <button onClick={() => setStep(2)}
               className="flex-1 py-2.5 bg-red-500 text-white text-sm font-semibold rounded-lg
                 hover:bg-red-600 transition-colors">
-              Ja, löschen
+              Continue
             </button>
           ) : (
             <button
@@ -87,7 +87,7 @@ export default function DeleteFieldModal({ field, onConfirm, onClose }) {
               disabled={!nameMatches}
               className="flex-1 py-2.5 bg-red-500 text-white text-sm font-semibold rounded-lg
                 hover:bg-red-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
-              Endgültig löschen
+              Remove field
             </button>
           )}
         </div>

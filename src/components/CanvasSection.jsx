@@ -19,7 +19,7 @@ const MIN_H = 120
 
 export default function CanvasSection({ section, isActive, onActivate, onDragStart, onTouchStart, onUpdate, onDelete, onLockToggle, onInteractionStart, onInteractionEnd }) {
   const [editingLabel, setEditingLabel] = useState(false)
-  const [label,        setLabel]        = useState(section.label || 'Section')
+  const [label,        setLabel]        = useState(section.label || 'Field Area')
   const [showTints,    setShowTints]    = useState(false)
 
   const tint   = SECTION_TINTS.find(t => t.id === (section.tint || 'none')) || SECTION_TINTS[0]
@@ -101,7 +101,7 @@ export default function CanvasSection({ section, isActive, onActivate, onDragSta
             className="absolute bottom-0 right-0 w-7 h-7 cursor-se-resize flex items-end justify-end p-1.5 opacity-0 group-hover/section:opacity-100 transition-opacity"
             onMouseDown={handleResizeMouseDown}
             onTouchStart={handleResizeTouchStart}
-            title="Größe ändern"
+            title="Resize field area"
           >
             <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
               <path d="M10 0 L10 10 L0 10 Z" fill={tint.border || '#d4d4ce'} />
@@ -154,7 +154,7 @@ export default function CanvasSection({ section, isActive, onActivate, onDragSta
               ${isActive ? 'bg-white border-ss-border text-ss-ink' : 'bg-white/80 border-ss-border/60 text-ss-dim hover:text-ss-ink'}
               ${!locked ? 'cursor-default' : 'cursor-default'}`}
             onDoubleClick={e => { if(!locked){ e.stopPropagation(); setEditingLabel(true) } }}
-            title={locked ? "Gesperrt" : "Doppelklick zum Umbenennen"}
+            title={locked ? "Locked" : "Double-click to rename"}
           >
             {label}
           </span>
@@ -167,7 +167,7 @@ export default function CanvasSection({ section, isActive, onActivate, onDragSta
               onClick={e => { e.stopPropagation(); setShowTints(s => !s) }}
               className="w-3.5 h-3.5 rounded-full border border-ss-border/60 hover:border-ss-muted transition-colors"
               style={{ backgroundColor: tint.bg === 'transparent' ? '#f5f2ed' : tint.bg.replace('0.6','1') }}
-              title="Farbe"
+              title="Tone"
             />
             {showTints && (
               <div className="absolute top-6 left-0 bg-white border border-ss-border rounded-lg shadow-lg p-2 flex gap-1.5 z-50"
@@ -187,7 +187,7 @@ export default function CanvasSection({ section, isActive, onActivate, onDragSta
         <button
           onClick={handleLockToggle}
           className={`text-xs transition-colors ${locked ? 'text-red-400' : 'text-ss-ghost/40 hover:text-ss-ghost'}`}
-          title={locked ? 'Entsperren' : 'Sperren'}
+          title={locked ? 'Unlock field area' : 'Lock field area'}
         >
           {locked ? '🔒' : '🔓'}
         </button>
@@ -197,7 +197,7 @@ export default function CanvasSection({ section, isActive, onActivate, onDragSta
           <button
             onClick={e => { e.stopPropagation(); onDelete(section.id) }}
             className="text-ss-ghost/40 hover:text-red-400 transition-colors text-xs"
-            title="Section löschen"
+            title="Remove field area"
           >✕</button>
         )}
       </div>

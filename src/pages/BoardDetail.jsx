@@ -3,15 +3,23 @@ import BoardCanvas from '../components/BoardCanvas.jsx'
 
 // Mobile Card-Listen-Ansicht
 function MobileCardList({ cards, store }) {
-  const typeLabels = { note:'Note', link:'Link', image:'Image', instagram:'Instagram', chain:'Signal-Chain' }
+  const typeLabels = {
+    note:'Note Signal',
+    link:'Link Signal',
+    image:'Image Signal',
+    instagram:'Instagram Signal',
+    chain:'Signal Chain',
+    pattern:'Pattern Signal',
+    youtube:'YouTube Signal',
+  }
 
   return (
     <div className="flex-1 overflow-auto px-4 py-4">
       <div className="flex flex-col gap-3 pb-20">
         {cards.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <p className="text-ss-ghost text-sm mb-3">Noch keine Signals.</p>
-            <p className="text-xs text-ss-ghost/60">Öffne den Canvas auf einem größeren Bildschirm um Signals hinzuzufügen.</p>
+            <p className="text-ss-ghost text-sm mb-3">No signals yet.</p>
+            <p className="text-xs text-ss-ghost/60">Open this field on desktop to patch signals.</p>
           </div>
         )}
         {cards.map(card => (
@@ -59,7 +67,7 @@ export default function BoardDetail({ boardId, boards, store, setPage }) {
   const sections = store.getBoardSections(boardId)
 
   if (!board) return (
-    <div className="min-h-screen flex items-center justify-center text-ss-dim text-sm">Board nicht gefunden.</div>
+    <div className="min-h-screen flex items-center justify-center text-ss-dim text-sm">Field not found.</div>
   )
 
   return (
@@ -70,13 +78,13 @@ export default function BoardDetail({ boardId, boards, store, setPage }) {
         <div>
           <button onClick={() => setPage('boards')}
             className="text-xs text-ss-ghost hover:text-ss-dim transition-colors mb-1.5 flex items-center gap-1.5">
-            ← Boards
+            ← Fields
           </button>
           <h1 className="font-sans font-bold text-lg sm:text-xl text-ss-ink">{board.title}</h1>
           {board.description && <p className="text-xs text-ss-dim mt-0.5 max-w-lg hidden sm:block">{board.description}</p>}
         </div>
         <div className="text-right text-2xs text-ss-ghost leading-relaxed font-mono mt-1 hidden sm:block">
-          <p>● Punkt an Card = verbinden</p>
+          <p>● Signal dot = patch connection</p>
           <p>● Linie = trennen · ✏️ = bearbeiten</p>
         </div>
       </div>

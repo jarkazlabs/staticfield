@@ -23,7 +23,7 @@ export const discoverySections = [
   },
   {
     id: 'latenight',
-    label: 'Late Night Boards',
+    label: 'Late Night Fields',
     description: 'Sessions after midnight.',
   },
   {

@@ -1,7 +1,7 @@
 // AddBoardModal.jsx — Neues Field/Board erstellen
 import { useState } from 'react'
 
-export default function AddBoardModal({ onAdd, onClose, label = 'Board' }) {
+export default function AddBoardModal({ onAdd, onClose, label = 'Field' }) {
   const [title, setTitle] = useState('')
   const [description, setDesc] = useState('')
 
@@ -36,7 +36,7 @@ export default function AddBoardModal({ onAdd, onClose, label = 'Board' }) {
           </div>
           <button onClick={handleSubmit} disabled={!title.trim()}
             className="w-full py-2.5 bg-ss-ink text-white text-sm font-semibold rounded-lg hover:bg-ss-dim transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
-            Create {label}
+            Begin {label}
           </button>
         </div>
       </div>

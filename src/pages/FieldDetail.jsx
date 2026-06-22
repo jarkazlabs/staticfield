@@ -3,7 +3,15 @@ import BoardCanvas from '../components/BoardCanvas.jsx'
 import { createFieldBackup, downloadFieldBackup } from '../lib/fieldBackup.js'
 
 function MobileCardList({ cards, store }) {
-  const typeLabels = { note:'Note', link:'Link', image:'Image', instagram:'Instagram', chain:'Signal-Chain' }
+  const typeLabels = {
+    note:'Note Signal',
+    link:'Link Signal',
+    image:'Image Signal',
+    instagram:'Instagram Signal',
+    chain:'Signal Chain',
+    pattern:'Pattern Signal',
+    youtube:'YouTube Signal',
+  }
   return (
     <div className="flex-1 overflow-auto px-4 py-4">
       <div className="flex flex-col gap-3 pb-20">
