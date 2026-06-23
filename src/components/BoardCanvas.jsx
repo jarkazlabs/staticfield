@@ -72,6 +72,35 @@ function HistoryButton({ type, disabled, onClick }) {
   )
 }
 
+function SignalTintSwatches({ value, onChange }) {
+  return (
+    <div className="flex items-center gap-1 px-1" aria-label="Signal tone">
+      {CARD_TINTS.map(tint => (
+        <button
+          key={tint.id}
+          data-action="tint"
+          type="button"
+          onClick={e => {
+            e.stopPropagation()
+            onChange(tint.id)
+          }}
+          className={`h-4 w-4 rounded-full border transition-all ${
+            (value || 'none') === tint.id
+              ? 'border-ss-ink scale-110'
+              : 'border-ss-border hover:border-ss-muted hover:scale-105'
+          }`}
+          style={{
+            backgroundColor: tint.bg,
+            borderStyle: tint.id === 'none' ? 'dashed' : 'solid',
+          }}
+          title={tint.label}
+          aria-label={tint.label}
+        />
+      ))}
+    </div>
+  )
+}
+
 function InlineInput({ value = '', placeholder, onChange, className = '', multiline = false, rows = 2, autoFocus = false }) {
   const sharedProps = {
     'data-action': 'inline-edit',
@@ -704,6 +733,11 @@ function CanvasCard({ card, connectingFrom, focused, editing, onFocus, onEditSta
               <path d="M3 9H2a1 1 0 01-1-1V2a1 1 0 011-1h6a1 1 0 011 1v1" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
             </svg>
           </button>
+          <div className="w-px h-5 bg-ss-border mx-0.5"/>
+          <SignalTintSwatches
+            value={card.tint || 'none'}
+            onChange={tint => onUpdate(card.id, { tint })}
+          />
           <div className="w-px h-5 bg-ss-border mx-0.5"/>
           <button data-action="delete"
             onClick={e => { e.stopPropagation(); onDelete(card.id) }}

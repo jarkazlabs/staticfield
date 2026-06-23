@@ -19,7 +19,8 @@ const MIN_H = 120
 
 export default function CanvasSection({ section, isActive, onActivate, onDragStart, onTouchStart, onUpdate, onDelete, onLockToggle, onInteractionStart, onInteractionEnd }) {
   const [editingLabel, setEditingLabel] = useState(false)
-  const [label,        setLabel]        = useState(section.label || 'Field Area')
+  const defaultLabel = !section.label || section.label === 'Section' ? 'Field Area' : section.label
+  const [label,        setLabel]        = useState(defaultLabel)
   const [showTints,    setShowTints]    = useState(false)
 
   const tint   = SECTION_TINTS.find(t => t.id === (section.tint || 'none')) || SECTION_TINTS[0]

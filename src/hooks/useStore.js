@@ -250,7 +250,7 @@ export function useStore() {
     const section = {
       id: `s${uid()}`,
       boardId,
-      label: 'Section',
+      label: 'Field Area',
       position: position || { x: 100 + Math.random() * 200, y: 100 + Math.random() * 100 },
       width: 340,
       height: 220,
