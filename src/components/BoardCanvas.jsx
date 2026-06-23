@@ -72,31 +72,63 @@ function HistoryButton({ type, disabled, onClick }) {
   )
 }
 
-function SignalTintSwatches({ value, onChange }) {
+function SignalTintControl({ value, onChange }) {
+  const [open, setOpen] = useState(false)
+  const activeTint = CARD_TINTS.find(tint => tint.id === (value || 'none')) || CARD_TINTS[0]
+
   return (
-    <div className="flex items-center gap-1 px-1" aria-label="Signal tone">
-      {CARD_TINTS.map(tint => (
-        <button
-          key={tint.id}
-          data-action="tint"
-          type="button"
-          onClick={e => {
-            e.stopPropagation()
-            onChange(tint.id)
-          }}
-          className={`h-4 w-4 rounded-full border transition-all ${
-            (value || 'none') === tint.id
-              ? 'border-ss-ink scale-110'
-              : 'border-ss-border hover:border-ss-muted hover:scale-105'
-          }`}
+    <div className="relative flex items-center" data-action="tint">
+      <button
+        data-action="tint"
+        type="button"
+        onClick={e => {
+          e.stopPropagation()
+          setOpen(isOpen => !isOpen)
+        }}
+        className="group flex items-center justify-center px-2 py-1.5 rounded-lg text-ss-dim hover:text-ss-ink hover:bg-ss-surface transition-colors"
+        title="Signal tone"
+        aria-label="Signal tone"
+      >
+        <span
+          className="h-4 w-4 rounded-full border border-ss-border transition-all duration-150 group-hover:scale-110 group-hover:border-ss-muted group-hover:shadow-sm"
           style={{
-            backgroundColor: tint.bg,
-            borderStyle: tint.id === 'none' ? 'dashed' : 'solid',
+            backgroundColor: activeTint.bg,
+            borderStyle: activeTint.id === 'none' ? 'dashed' : 'solid',
           }}
-          title={tint.label}
-          aria-label={tint.label}
         />
-      ))}
+      </button>
+      {open && (
+        <div
+          className="absolute left-1/2 top-full z-40 mt-2 -translate-x-1/2 rounded-xl border border-ss-border bg-white px-2 py-2 shadow-lg"
+          onClick={e => e.stopPropagation()}
+        >
+          <div className="flex items-center gap-1.5">
+            {CARD_TINTS.map(tint => (
+              <button
+                key={tint.id}
+                data-action="tint"
+                type="button"
+                onClick={e => {
+                  e.stopPropagation()
+                  onChange(tint.id)
+                  setOpen(false)
+                }}
+                className={`h-5 w-5 rounded-full border-2 transition-all ${
+                  (value || 'none') === tint.id
+                    ? 'border-ss-ink scale-110'
+                    : 'border-ss-border hover:border-ss-muted hover:scale-105'
+                }`}
+                style={{
+                  backgroundColor: tint.bg,
+                  borderStyle: tint.id === 'none' ? 'dashed' : 'solid',
+                }}
+                title={tint.label}
+                aria-label={tint.label}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -734,7 +766,7 @@ function CanvasCard({ card, connectingFrom, focused, editing, onFocus, onEditSta
             </svg>
           </button>
           <div className="w-px h-5 bg-ss-border mx-0.5"/>
-          <SignalTintSwatches
+          <SignalTintControl
             value={card.tint || 'none'}
             onChange={tint => onUpdate(card.id, { tint })}
           />

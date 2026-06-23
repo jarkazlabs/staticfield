@@ -109,13 +109,6 @@ export default function CanvasSection({ section, isActive, onActivate, onDragSta
             </svg>
           </div>
         )}
-
-        {/* Größe-Anzeige */}
-        <div className="absolute bottom-2 left-3 opacity-0 group-hover/section:opacity-100 transition-opacity pointer-events-none">
-          <span className="font-mono text-2xs text-ss-ghost/40">
-            {Math.round(section.width||340)} × {Math.round(section.height||220)}
-          </span>
-        </div>
       </div>
 
       {/* Label-Leiste — außerhalb des Rahmens oben */}
