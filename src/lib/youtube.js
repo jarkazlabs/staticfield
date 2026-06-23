@@ -46,3 +46,10 @@ export function getYouTubeEmbedUrl(url, { autoplay = false } = {}) {
 
   return `https://www.youtube-nocookie.com/embed/${id}?${params.toString()}`
 }
+
+export function getYouTubeThumbnailUrl(url) {
+  const id = getYouTubeVideoId(url)
+  if (!id) return null
+
+  return `https://img.youtube.com/vi/${id}/hqdefault.jpg`
+}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getYouTubeEmbedUrl, getYouTubeVideoId } from './youtube.js'
+import { getYouTubeEmbedUrl, getYouTubeThumbnailUrl, getYouTubeVideoId } from './youtube.js'
 
 describe('youtube helpers', () => {
   it('extracts ids from common YouTube URLs', () => {
@@ -17,8 +17,15 @@ describe('youtube helpers', () => {
     expect(embed).toContain('mute=1')
   })
 
+  it('builds a stable thumbnail URL', () => {
+    expect(getYouTubeThumbnailUrl('https://youtu.be/dQw4w9WgXcQ')).toBe(
+      'https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg'
+    )
+  })
+
   it('ignores unsupported URLs', () => {
     expect(getYouTubeVideoId('https://example.com/watch?v=dQw4w9WgXcQ')).toBe(null)
     expect(getYouTubeEmbedUrl('')).toBe(null)
+    expect(getYouTubeThumbnailUrl('')).toBe(null)
   })
 })

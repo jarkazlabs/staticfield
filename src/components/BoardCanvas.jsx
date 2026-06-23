@@ -11,7 +11,7 @@ import PedalIcon         from './PedalIcon.jsx'
 import SignalMenu        from './SignalMenu.jsx'
 import { PatternCardContent } from './PatternCard.jsx'
 import { CARD_TINTS } from '../data/tints.js'
-import { getYouTubeEmbedUrl } from '../lib/youtube.js'
+import { getYouTubeEmbedUrl, getYouTubeThumbnailUrl } from '../lib/youtube.js'
 import {
   CARD_HEIGHT_DEFAULT,
   CARD_WIDTH_DEFAULT,
@@ -375,6 +375,7 @@ function EditableCardContent({ card, focused, onUpdate }) {
 
 function YouTubePreview({ card, focused }) {
   const embedUrl = focused ? getYouTubeEmbedUrl(card.url, { autoplay: true }) : null
+  const thumbnailUrl = getYouTubeThumbnailUrl(card.url)
 
   if (focused && embedUrl) {
     return (
@@ -387,6 +388,25 @@ function YouTubePreview({ card, focused }) {
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
         />
+      </div>
+    )
+  }
+
+  if (thumbnailUrl) {
+    return (
+      <div className="group relative aspect-video w-full overflow-hidden rounded-lg border border-ss-border/80 bg-black">
+        <img
+          src={thumbnailUrl}
+          alt={card.title || 'YouTube video thumbnail'}
+          className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.015]"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-black/10" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="h-10 w-10 rounded-full border border-white/55 bg-black/35 flex items-center justify-center text-white shadow-sm backdrop-blur-[1px]">
+            <span className="ml-0.5 text-xs">▶</span>
+          </div>
+        </div>
       </div>
     )
   }
@@ -479,7 +499,7 @@ function CardContent({ card, focused }) {
 
 // ─── Canvas Card ──────────────────────────────────────────
 
-function CanvasCard({ card, connectingFrom, focused, dimmed, editing, onFocus, onEditStart, onDragStart, onTouchStart, onConnectDotDown, onDelete, onDuplicate, onResize, onHeightChange, onInteractionStart, onInteractionEnd, onUpdate }) {
+function CanvasCard({ card, connectingFrom, focused, editing, onFocus, onEditStart, onDragStart, onTouchStart, onConnectDotDown, onDelete, onDuplicate, onResize, onHeightChange, onInteractionStart, onInteractionEnd, onUpdate }) {
   const [hovered,     setHovered]     = useState(false)
   const [hoveredSide, setHoveredSide] = useState(null)
   const cardRef      = useRef(null)
@@ -582,10 +602,9 @@ function CanvasCard({ card, connectingFrom, focused, dimmed, editing, onFocus, o
         top: card.position.y,
         width: cardW,
         zIndex: (focused || hovered) ? 20 : 2,
-        opacity: dimmed ? 0.38 : 1,
-        transform: focused ? 'scale(1.06)' : 'scale(1)',
+        transform: focused ? 'scale(1.03)' : 'scale(1)',
         transformOrigin: 'center center',
-        transition: 'opacity 180ms ease, transform 180ms ease',
+        transition: 'transform 180ms ease',
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => { setHovered(false); setHoveredSide(null) }}
@@ -629,11 +648,17 @@ function CanvasCard({ card, connectingFrom, focused, dimmed, editing, onFocus, o
             : connectingFrom && connectingFrom !== card.id
               ? 'ring-2 ring-ss-accent/40 cursor-crosshair shadow-lg'
               : focused
-                ? 'ring-2 ring-ss-ink/20 shadow-2xl cursor-grab'
+                ? 'ring-1 ring-ss-ink/15 cursor-grab'
                 : hovered ? 'shadow-lg cursor-grab' : 'shadow-sm cursor-grab'
           }
         `}
-        style={{ ...tintStyle, ...minHeight }}
+        style={{
+          ...tintStyle,
+          ...minHeight,
+          boxShadow: focused ? '0 8px 24px rgba(0,0,0,0.12)' : undefined,
+          filter: focused ? 'contrast(1.02)' : undefined,
+          transition: 'box-shadow 180ms ease, filter 180ms ease',
+        }}
       >
         {/* Type Badge oben */}
         <div className="flex items-center justify-between px-3 pt-2.5 pb-1">
@@ -979,19 +1004,11 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
             )}
           </svg>
 
-          {focusedSignalId && (
-            <div
-              className="absolute inset-0 bg-ss-ink/[0.045] transition-opacity duration-200 pointer-events-none"
-              style={{ zIndex: 5 }}
-            />
-          )}
-
           {/* Signals */}
           {cards.map(card => (
             <CanvasCard key={card.id} card={card}
               connectingFrom={connectingFrom?.cardId}
               focused={focusedSignalId === card.id}
-              dimmed={!!focusedSignalId && focusedSignalId !== card.id}
               editing={editingSignalId === card.id}
               onFocus={setFocusedSignalId}
               onEditStart={setEditingSignalId}
