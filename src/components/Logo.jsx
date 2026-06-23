@@ -8,7 +8,7 @@ export default function Logo({ size = 'md' }) {
   return (
     <img
       src="/staticfield/staticfield-logo.svg"
-      alt="staticfield"
+      alt="Staticfield"
       width={w}
       height={h}
       style={{ display: 'block' }}

@@ -28,7 +28,7 @@ export default function About() {
             },
             {
               heading: 'How it works',
-              body: 'You open fields for specific territories. Inside each field, you patch signals — images, audio, gear notes, links, signal chains, and written notes — and draw connections between them.',
+              body: 'You open fields for specific territories. Inside each field, you add signals - images, audio, gear notes, links, signal chains, and written notes - and draw connections between them.',
             },
             {
               heading: 'What it is not',

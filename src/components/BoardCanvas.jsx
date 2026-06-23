@@ -974,7 +974,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
         <div className="relative">
           <button onClick={() => setSignalMenuAnchor(anchor => anchor === 'toolbar' ? null : 'toolbar')}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-ss-ink text-white text-xs font-semibold rounded-lg hover:bg-ss-dim transition-colors">
-            Patch Signal
+            Add Signal
           </button>
           {signalMenuAnchor === 'toolbar' && <SignalMenu onSelect={patchSignal} />}
         </div>

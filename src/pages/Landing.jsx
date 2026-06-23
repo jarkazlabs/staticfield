@@ -200,6 +200,30 @@ const FEATURES = [
   },
 ]
 
+const EARLY_STORIES = [
+  {
+    quote: 'Staticfield became the place where unfinished sounds could stay alive. I collect field recordings, patch notes and references without forcing them into a project too early.',
+    name: 'Mara V.',
+    role: 'Ambient artist',
+    initials: 'MV',
+    tone: '#eef1e8',
+  },
+  {
+    quote: 'I use it between modular sessions. A cable idea, a YouTube reference, a small text note - they can sit together until the next patch starts making sense.',
+    name: 'Jonas K.',
+    role: 'Modular musician',
+    initials: 'JK',
+    tone: '#f5eee8',
+  },
+  {
+    quote: 'It feels less like managing files and more like returning to a room of clues. The connections help me remember why something mattered in the first place.',
+    name: 'Lea R.',
+    role: 'Sound collector',
+    initials: 'LR',
+    tone: '#eef0f4',
+  },
+]
+
 // ─── REAL FIELDS DATA ─────────────────────────────────────
 
 const FILTER_TAGS = ['All','Ambient','Modular','Field Recording','Sound Design','Textures','Research']
@@ -264,7 +288,7 @@ function AppPreview() {
       <div className="bg-[#e8e8e4] border-b border-ss-border/60 px-3 flex items-end gap-1 pt-1.5">
         <div className="bg-white border border-b-0 border-ss-border rounded-t-md px-3 py-1.5 flex items-center gap-2 min-w-0">
           <div className="w-3 h-3 rounded-full bg-ss-accent/60 flex-shrink-0"/>
-          <span className="font-sans text-2xs text-ss-ink truncate">Coastal Textures — staticfield</span>
+          <span className="font-sans text-2xs text-ss-ink truncate">Coastal Textures - Staticfield</span>
           <span className="text-ss-ghost/40 text-2xs flex-shrink-0 ml-1">×</span>
         </div>
         <div className="px-3 py-1.5 flex items-center">
@@ -384,6 +408,37 @@ export default function Landing({ setPage, openField }) {
               </div>
             ))}
           </div>
+
+          <div className="mt-14 sm:mt-16 grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+            {EARLY_STORIES.map(story => (
+              <article
+                key={story.name}
+                className="rounded-xl border border-ss-border bg-[#f5f2ed] px-6 py-6 sm:px-7 sm:py-7"
+              >
+                <div className="mb-8">
+                  <div
+                    className="mb-8 flex h-10 w-10 items-center justify-center rounded-full border border-ss-border text-xs font-semibold text-ss-dim"
+                    style={{ backgroundColor: story.tone }}
+                  >
+                    {story.initials}
+                  </div>
+                  <p className="text-base text-ss-ink leading-relaxed">
+                    "{story.quote}"
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div
+                    className="h-9 w-9 rounded-full border border-ss-border"
+                    style={{ backgroundColor: story.tone }}
+                  />
+                  <div>
+                    <p className="text-sm font-semibold text-ss-ink">{story.name}</p>
+                    <p className="text-xs text-ss-dim">{story.role}</p>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -451,7 +506,7 @@ export default function Landing({ setPage, openField }) {
                 Everything you need.<br/>Nothing you don't.
               </h2>
               <p className="text-sm text-ss-dim leading-relaxed mb-8">
-                staticfield is a minimal workspace<br/>
+                Staticfield is a minimal workspace<br/>
                 for collecting, connecting<br/>
                 and evolving your ideas.
               </p>

@@ -6,7 +6,7 @@ export default function Footer({ setPage }) {
     <footer className="min-h-[100px] bg-ss-ink px-4 sm:px-6 py-8 text-white">
       <div className="max-w-7xl mx-auto min-h-[36px] flex flex-col md:flex-row md:items-end justify-between gap-8">
         <div className="max-w-md">
-          <p className="font-mono text-2xs text-white/55 uppercase tracking-widest mb-3">staticfield</p>
+          <p className="font-mono text-2xs text-white/55 uppercase tracking-widest mb-3">Staticfield</p>
           <p className="font-sans text-lg sm:text-xl font-semibold text-white leading-snug">
             A quiet place for signals, sketches and evolving fields.
           </p>

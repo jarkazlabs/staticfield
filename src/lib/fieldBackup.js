@@ -27,8 +27,8 @@ export function createFieldBackup(field, cards, connections, sections, exportedA
 }
 
 export function validateFieldBackup(value) {
-  if (!isObject(value)) throw new Error('The selected file is not a valid staticfield backup.')
-  if (value.format !== BACKUP_FORMAT) throw new Error('This file is not a staticfield backup.')
+  if (!isObject(value)) throw new Error('The selected file is not a valid Staticfield backup.')
+  if (value.format !== BACKUP_FORMAT) throw new Error('This file is not a Staticfield backup.')
   if (value.version !== BACKUP_VERSION) {
     throw new Error(`Backup version ${value.version ?? 'unknown'} is not supported.`)
   }
@@ -116,4 +116,3 @@ export function downloadFieldBackup(backup) {
   link.click()
   URL.revokeObjectURL(url)
 }
-

@@ -22,7 +22,7 @@ export default function Boards({ boards, store, setPage, setActiveBoardId }) {
               <div className="w-1.5 h-1.5 rounded-full bg-ss-accent" />
               <span className="text-2xs text-ss-ghost tracking-widest uppercase font-sans">Fields</span>
             </div>
-            <h1 className="font-sans font-bold text-3xl sm:text-5xl text-ss-ink">Signal Fields</h1>
+            <h1 className="font-sans font-bold text-3xl sm:text-5xl text-ss-ink">Fields</h1>
             <p className="text-sm text-ss-dim mt-2 max-w-md">Focused spaces. Sonic territories. Signal studies.</p>
           </div>
           <button onClick={() => setShowModal(true)}
