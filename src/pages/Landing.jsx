@@ -219,18 +219,6 @@ const REAL_FIELDS = [
     img: 'https://images.unsplash.com/photo-1477601263568-180e2c6d046e?w=500&q=70' },
 ]
 
-// ─── AVATAR CLUSTER ───────────────────────────────────────
-
-function AvatarCluster() {
-  return (
-    <div className="flex -space-x-2">
-      {['#c8b89a','#b8a88a','#d4c4b0','#bfaf9c','#a89880'].map((c, i) => (
-        <div key={i} className="w-7 h-7 rounded-full border-2 border-ss-bg" style={{ backgroundColor: c }}/>
-      ))}
-    </div>
-  )
-}
-
 // ─── APP PREVIEW — Browser Chrome ────────────────────────
 
 function AppPreview() {
@@ -354,15 +342,11 @@ export default function Landing({ setPage, openField }) {
                 into ideas.
               </h1>
 
-              <p className="text-base sm:text-lg text-ss-dim leading-relaxed mb-3 max-w-sm animate-slide-up opacity-0"
+              <p className="text-base sm:text-lg text-ss-dim leading-relaxed mb-8 max-w-md animate-slide-up opacity-0"
                 style={{ animationFillMode: 'forwards', animationDelay: '0.1s' }}>
-                Collect inspiration. Connect thoughts.<br/>
-                Develop ideas over time.
-              </p>
-
-              <p className="text-xs text-ss-ghost/70 leading-relaxed mb-8 max-w-sm animate-slide-up opacity-0"
-                style={{ animationFillMode: 'forwards', animationDelay: '0.13s' }}>
-                With staticfield, your discoveries become part of an evolving creative field.
+                Collect sounds, patches, links and references.<br/>
+                Connect them. Develop ideas over time.<br/>
+                <span className="block mt-3">For modular musicians, ambient artists and curious collectors.</span>
               </p>
 
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-8 animate-slide-up opacity-0"
@@ -375,14 +359,6 @@ export default function Landing({ setPage, openField }) {
                   className="text-sm text-ss-dim hover:text-ss-ink transition-colors underline underline-offset-4 decoration-ss-border">
                   Explore demo field
                 </button>
-              </div>
-
-              <div className="flex items-center gap-3 animate-fade-in opacity-0"
-                style={{ animationFillMode: 'forwards', animationDelay: '0.22s' }}>
-                <AvatarCluster />
-                <p className="text-xs text-ss-dim leading-snug">
-                  Join 8,657 creators building<br/>and exploring their fields.
-                </p>
               </div>
             </div>
 
@@ -397,14 +373,14 @@ export default function Landing({ setPage, openField }) {
       {/* ══════════ FEATURE STRIP ══════════ */}
       <section className="border-t border-ss-border py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8 sm:gap-10">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-9 sm:gap-12">
             {FEATURES.map((f, i) => (
-              <div key={i} className="flex flex-col gap-3">
-                <div className="w-9 h-9 rounded-lg border border-ss-border flex items-center justify-center text-ss-dim">
+              <div key={i} className="flex flex-col gap-3.5">
+                <div className="w-11 h-11 rounded-lg border border-ss-border flex items-center justify-center text-ss-dim [&_svg]:w-6 [&_svg]:h-6">
                   {f.icon}
                 </div>
-                <h3 className="font-sans font-semibold text-sm text-ss-ink">{f.title}</h3>
-                <p className="text-xs text-ss-dim leading-relaxed whitespace-pre-line">{f.desc}</p>
+                <h3 className="font-sans font-semibold text-base text-ss-ink">{f.title}</h3>
+                <p className="text-sm text-ss-dim leading-relaxed whitespace-pre-line">{f.desc}</p>
               </div>
             ))}
           </div>
