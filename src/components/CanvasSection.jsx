@@ -26,8 +26,8 @@ export default function CanvasSection({ section, isActive, onActivate, onDragSta
   const tint   = SECTION_TINTS.find(t => t.id === (section.tint || 'none')) || SECTION_TINTS[0]
   const locked = section.locked || false
 
-  // Z-index: aktiv = 15 (über Cards), inaktiv = 0 (unter Cards)
-  const zIndex = isActive ? 15 : 0
+  // Active areas sit above focused or hovered signals so their controls stay reachable.
+  const zIndex = isActive ? 35 : 0
 
   function commitLabel() { setEditingLabel(false); onUpdate(section.id, { label }) }
 

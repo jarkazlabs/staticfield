@@ -941,7 +941,18 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
     const el = canvasRef.current
     const cx = el.scrollLeft + el.clientWidth  / 2 - 170
     const cy = el.scrollTop  + el.clientHeight / 2 - 110
-    addSection(boardId, { x: cx, y: cy })
+    const sectionId = addSection(boardId, { x: cx, y: cy })
+    setActiveSection(sectionId)
+    setFocusedSignalId(null)
+    setEditingSignalId(null)
+    setSignalMenuAnchor(null)
+  }
+
+  function focusSection(sectionId) {
+    setActiveSection(sectionId)
+    setFocusedSignalId(null)
+    setEditingSignalId(null)
+    setSignalMenuAnchor(null)
   }
 
   function patchSignal(type, data) {
@@ -1029,7 +1040,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
           {sections.map(section => (
             <CanvasSection key={section.id} section={section}
               isActive={activeSection === section.id}
-              onActivate={() => setActiveSection(section.id)}
+              onActivate={() => focusSection(section.id)}
               onDragStart={handleSectionDragStart}
               onTouchStart={handleSectionTouchStart}
               onUpdate={updateSection}

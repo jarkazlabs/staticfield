@@ -258,6 +258,7 @@ export function useStore() {
       locked: false,
     }
     change(state => ({ ...state, sections: [...state.sections, section] }))
+    return section.id
   }, [change])
 
   const updateSection = useCallback((sectionId, updates) => {
