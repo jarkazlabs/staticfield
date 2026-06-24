@@ -80,19 +80,19 @@ export default function FieldDetail({ fieldId, fields, store, setPage }) {
 
   return (
     <div className="h-screen bg-ss-bg pt-14 flex flex-col overflow-hidden">
-      <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-ss-border bg-white flex items-start justify-between flex-shrink-0">
+      <div className="px-4 sm:px-6 py-5 sm:py-6 border-b border-ss-border bg-white flex items-start justify-between flex-shrink-0">
         <div>
           <button onClick={() => setPage('fields')}
-            className="text-xs text-ss-ghost hover:text-ss-dim transition-colors mb-1.5 flex items-center gap-1.5">
+            className="text-sm text-ss-ghost hover:text-ss-dim transition-colors mb-2 flex items-center gap-1.5">
             ← Fields
           </button>
-          <h1 className="font-sans font-bold text-lg sm:text-xl text-ss-ink">{field.title}</h1>
-          {field.description && <p className="text-xs text-ss-dim mt-0.5 max-w-lg hidden sm:block">{field.description}</p>}
+          <h1 className="font-sans font-bold text-2xl sm:text-3xl text-ss-ink leading-tight">{field.title}</h1>
+          {field.description && <p className="text-sm sm:text-base text-ss-dim mt-2 max-w-xl hidden sm:block">{field.description}</p>}
         </div>
         <div className="flex items-center gap-1.5 mt-1">
           <button
             onClick={handleExport}
-            className="px-3 py-1.5 border border-ss-border rounded-lg text-xs font-semibold text-ss-dim hover:text-ss-ink hover:border-ss-muted transition-colors"
+            className="px-4 py-2.5 border border-ss-border rounded-lg text-sm font-semibold text-ss-dim hover:text-ss-ink hover:border-ss-muted transition-colors"
           >
             Export
           </button>

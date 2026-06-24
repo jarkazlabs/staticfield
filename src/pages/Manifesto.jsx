@@ -5,7 +5,6 @@ export default function Manifesto({ setPage }) {
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-20">
 
         <div className="mb-12">
-          <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-4">Manifesto</p>
           <h1 className="font-sans font-bold text-4xl sm:text-5xl text-ss-ink leading-tight mb-6">
             Why Staticfield exists.
           </h1>

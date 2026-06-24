@@ -60,12 +60,8 @@ export default function Fields({ fields, store, openField }) {
 
         <div className="pt-10 sm:pt-14 pb-8 border-b border-ss-border flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-1.5 h-1.5 rounded-full bg-ss-accent" />
-              <span className="text-2xs text-ss-ghost tracking-widest uppercase font-sans">Your Fields</span>
-            </div>
             <h1 className="font-sans font-bold text-3xl sm:text-5xl text-ss-ink">Fields</h1>
-            <p className="text-sm text-ss-dim mt-2 max-w-md">Focused spaces. Sonic territories. Signal studies.</p>
+            <p className="text-base text-ss-dim mt-2 max-w-md">Focused spaces. Sonic territories. Signal studies.</p>
           </div>
           <div className="flex items-center gap-2 self-start sm:self-auto">
             <input

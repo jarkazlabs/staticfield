@@ -31,7 +31,7 @@ function getTintStyle(card) {
 
 function TypeBadge({ type }) {
   const labels = { note:'Note Signal', link:'Link Signal', image:'Image Signal', instagram:'Instagram Signal', chain:'Signal Chain', pattern:'Pattern Signal', youtube:'YouTube Signal' }
-  return <span className="font-mono text-xs text-ss-ghost/70 tracking-widest uppercase">{labels[type]||type}</span>
+  return <span className="font-sans text-[0.68rem] font-semibold text-ss-ghost/75 uppercase">{labels[type]||type}</span>
 }
 
 function TapeIcon({ direction }) {
@@ -1003,7 +1003,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
             <span className="text-xs text-ss-accent font-medium">Release on target signal — ESC cancels</span>
           </div>
         )}
-        <span className="ml-auto text-2xs text-ss-ghost hidden sm:block font-mono">{cards.length} signals · click line to disconnect</span>
+        <span className="ml-auto hidden sm:block font-sans text-xs font-medium text-ss-ghost">{cards.length} signals · click line to disconnect</span>
       </div>
 
       {/* Canvas */}

@@ -148,10 +148,10 @@ export default function BoardCollage({ board, boardCards = [], onClick, onDelete
             <span key={t} className="font-mono text-2xs text-ss-ghost">#{t}</span>
           ))}
         </div>
-        <h3 className={`font-sans font-semibold text-base text-ss-ink leading-tight transition-colors duration-200 ${hovered ? 'text-ss-accent' : ''}`}>
+        <h3 className={`font-sans font-semibold text-xl text-ss-ink leading-tight transition-colors duration-200 ${hovered ? 'text-ss-accent' : ''}`}>
           {board.title}
         </h3>
-        <p className="text-xs text-ss-dim line-clamp-1 mt-0.5">{board.description}</p>
+        <p className="text-sm text-ss-dim line-clamp-1 mt-0.5">{board.description}</p>
         <div className="flex items-center justify-between mt-1.5">
           <span className="text-xs text-ss-ghost">by {board.author}</span>
           {!board.isDemo && onDelete && (
