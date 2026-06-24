@@ -3,169 +3,111 @@
 
 import { useState } from 'react'
 
-// ─── HERO FIELD VISUALIZATION ─────────────────────────────
-// Alle Cards sofort sichtbar. Nur sanftes Float.
-//
-// Exakte Card-Dimensionen:
-// IMAGE:   left:30,  top:30,  w:195, h:155  → right=225, centerY=108  bottom=185
-// NOTE:    left:268, top:60,  w:178, h:95   → left=268,  centerY=108  bottom=155, right=446
-// LINK:    left:268, top:228, w:195, h:120  → left=268,  centerY=288  top=228
-// CHAIN:   left:18,  top:228, w:205, h:90   → right=223, centerY=273  top=228
-// PHOTO:   right:15→left:470,top:30,w:155,h:210 → left=470,centerY=135 bottom=240
-// YOUTUBE: right:15→left:460,top:328,w:185,h:160→ top=328, centerX=552
-// PATTERN: left:30,  top:430, w:170, h:110  → right=200, centerY=485
-// SYNTH:   left:258, top:440, w:175, h:90   → left=258,  centerY=485
-
 function ConnectedField() {
   return (
-    <div className="relative w-full select-none" style={{ height: 530 }}>
+    <div className="relative mx-auto w-full max-w-[760px] select-none lg:h-[620px] h-[520px]">
+      <div className="absolute inset-0 rounded-[28px] bg-[#fbf7ef]/60 opacity-80 blur-3xl" />
+      <div className="absolute -bottom-10 right-3 h-40 w-64 rotate-[-8deg] overflow-hidden rounded-xl border border-white/70 bg-white/45 p-2 shadow-[0_18px_50px_rgba(88,68,45,0.18)]">
+        <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=520&q=70" alt="" className="h-full w-full rounded-lg object-cover opacity-80" />
+      </div>
+      <div className="absolute right-0 top-28 hidden h-52 w-36 rotate-[4deg] border border-[#d8d0c4] bg-[#f6efe3] p-4 shadow-[0_16px_38px_rgba(88,68,45,0.14)] sm:block">
+        <p className="font-mono text-xs leading-relaxed text-ss-dim">slow<br/>evolving<br/>textures<br/>+ space</p>
+      </div>
 
-      <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 5 }}>
-
-        {/* IMAGE right-center → NOTE left-center
-            IMAGE: left:30, top:30, w:195, h≈155 → right=225, centerY=30+77=107
-            NOTE:  left:268, top:60, w:178, h≈95  → left=268, centerY=60+47=107 */}
-        <path d="M 225,107 C 246,107 247,107 268,107"
-          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
-        <circle cx="225" cy="107" r="2.5" fill="#c8c8c0"/>
-        <circle cx="268" cy="107" r="2.5" fill="#c8c8c0"/>
-
-        {/* NOTE bottom-center → LINK top-center
-            NOTE bottom: 60+95=155, centerX=268+89=357
-            LINK top: 228, centerX=268+97=365 */}
-        <path d="M 357,155 C 357,191 365,210 365,228"
-          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
-        <circle cx="357" cy="155" r="2.5" fill="#c8c8c0"/>
-        <circle cx="365" cy="228" r="2.5" fill="#c8c8c0"/>
-
-        {/* CHAIN right-center → LINK left-center
-            CHAIN: left:18, top:228, w:205, h≈90 → right=223, centerY=228+45=273
-            LINK:  left:268, top:228, h≈120      → left=268, centerY=228+60=288 */}
-        <path d="M 223,273 C 245,273 246,288 268,288"
-          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
-        <circle cx="223" cy="273" r="2.5" fill="#c8c8c0"/>
-        <circle cx="268" cy="288" r="2.5" fill="#c8c8c0"/>
-
-        {/* NOTE right-center → PHOTO left-center
-            NOTE:  right=446, centerY=107
-            PHOTO: left:490, top:55, w:155, h≈185 → left=490, centerY=55+92=147 */}
-        <path d="M 446,107 C 468,107 468,147 490,147"
-          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
-        <circle cx="446" cy="107" r="2.5" fill="#c8c8c0"/>
-        <circle cx="490" cy="147" r="2.5" fill="#c8c8c0"/>
-
-        {/* PHOTO bottom-center → YOUTUBE top-center
-            PHOTO: left:490, top:55, h≈185 → bottom=240, centerX=490+77=567
-            YOUTUBE: left:470, top:360, w:185 → top=360, centerX=470+92=562 */}
-        <path d="M 567,240 C 567,300 562,330 562,360"
-          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
-        <circle cx="567" cy="240" r="2.5" fill="#c8c8c0"/>
-        <circle cx="562" cy="360" r="2.5" fill="#c8c8c0"/>
-
-        {/* PATTERN right-center → SYNTH left-center
-            PATTERN: left:30, top:390, w:170, h≈100 → right=200, centerY=390+50=440
-            SYNTH:   left:258, top:400, w:175, h≈80  → left=258, centerY=400+40=440 */}
-        <path d="M 200,440 C 229,440 229,440 258,440"
-          stroke="#c8c8c0" strokeWidth="1.5" fill="none" strokeDasharray="4 5"/>
-        <circle cx="200" cy="440" r="2.5" fill="#c8c8c0"/>
-        <circle cx="258" cy="440" r="2.5" fill="#c8c8c0"/>
-
+      <svg className="absolute inset-0 h-full w-full pointer-events-none" viewBox="0 0 760 620" style={{ zIndex: 5 }}>
+        {[
+          'M 238 122 C 292 108 308 129 346 150',
+          'M 435 172 C 482 182 500 212 526 252',
+          'M 368 244 C 322 268 292 286 248 302',
+          'M 381 284 C 416 340 432 376 476 416',
+          'M 252 406 C 315 421 355 430 433 430',
+          'M 574 338 C 548 376 535 398 512 416',
+          'M 318 172 C 282 204 247 225 194 247',
+        ].map((path, index) => (
+          <path key={path} d={path} className="living-line" style={{ animationDelay: `${0.2 + index * 0.08}s` }} />
+        ))}
+        {[238,122,346,150,435,172,526,252,248,302,381,284,476,416,252,406,433,430,574,338,512,416,194,247].reduce((dots, value, index, arr) => {
+          if (index % 2 === 0) dots.push([value, arr[index + 1]])
+          return dots
+        }, []).map(([cx, cy], index) => (
+          <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r="3" className="living-dot" style={{ animationDelay: `${0.45 + index * 0.05}s` }} />
+        ))}
       </svg>
 
-      {/* IMAGE — left:30, top:30, w:195 */}
-      <div className="absolute" style={{ left: 30, top: 30, width: 195, zIndex: 3 }}>
-        <div className="bg-white rounded-xl border border-ss-border shadow-md overflow-hidden field-float" style={{ animationDelay: '0s' }}>
-          <div className="w-full aspect-video overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=75" alt="" className="w-full h-full object-cover"/>
-          </div>
-          <div className="px-3 py-2.5">
-            <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Image</p>
-            <p className="font-sans font-semibold text-xs text-ss-ink">Fog Layer, 04:17</p>
+      <div className="living-card absolute left-[4%] top-[6%] w-[225px] rotate-[-2deg]" style={{ zIndex: 9, animationDelay: '0s' }}>
+        <div className="overflow-hidden rounded-xl border border-ss-border bg-white shadow-[0_16px_38px_rgba(58,45,32,0.16)]">
+          <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=520&q=75" alt="" className="h-28 w-full object-cover" />
+          <div className="px-3.5 py-3">
+            <p className="mb-1 font-mono text-2xs uppercase tracking-widest text-ss-ghost">Image Signal</p>
+            <p className="text-sm font-semibold text-ss-ink">Morning layers</p>
+            <p className="mt-0.5 text-xs text-ss-dim">Alps, 06:47</p>
           </div>
         </div>
       </div>
 
-      {/* NOTE — left:268, top:60, w:178 */}
-      <div className="absolute" style={{ left: 268, top: 60, width: 178, zIndex: 4 }}>
-        <div className="rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ backgroundColor: '#faf7f0', animationDelay: '1s' }}>
-          <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-2">Note</p>
-          <p className="font-mono text-sm text-ss-ink leading-relaxed">leave more<br/>silence</p>
+      <div className="living-card absolute left-[40%] top-[10%] w-[165px] rotate-[-1deg]" style={{ zIndex: 11, animationDelay: '0.9s' }}>
+        <div className="rounded-xl border border-ss-border bg-[#fbf6eb] px-4 py-4 shadow-[0_12px_28px_rgba(58,45,32,0.13)]">
+          <p className="mb-3 font-mono text-2xs uppercase tracking-widest text-ss-ghost">Note Signal</p>
+          <p className="font-mono text-sm leading-relaxed text-ss-ink">leave more<br/>silence</p>
         </div>
       </div>
 
-      {/* LINK — left:268, top:228, w:195 */}
-      <div className="absolute" style={{ left: 268, top: 228, width: 195, zIndex: 3 }}>
-        <div className="bg-white rounded-xl border border-ss-border shadow-md p-3.5 field-float" style={{ animationDelay: '1.5s' }}>
-          <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Link</p>
-          <p className="font-sans font-semibold text-xs text-ss-ink mb-1.5">ModWiggler Thread</p>
-          <p className="font-mono text-2xs text-ss-dim mb-2">Designing with space — minimal patches</p>
-          <span className="font-mono text-2xs text-ss-accent">↗ modwiggler.com</span>
+      <div className="living-card absolute left-[67%] top-[8%] w-[190px] rotate-[3deg]" style={{ zIndex: 8, animationDelay: '0.5s' }}>
+        <div className="overflow-hidden rounded-xl border border-ss-border bg-white shadow-[0_16px_34px_rgba(58,45,32,0.15)]">
+          <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=420&q=70" alt="" className="h-28 w-full object-cover" />
+          <div className="px-3.5 py-3">
+            <p className="text-sm font-semibold text-ss-ink">Studio corner</p>
+            <p className="mt-0.5 font-mono text-2xs uppercase tracking-widest text-ss-ghost">Image Signal</p>
+          </div>
         </div>
       </div>
 
-      {/* SIGNAL CHAIN — left:18, top:228, w:205 */}
-      <div className="absolute" style={{ left: 18, top: 228, width: 205, zIndex: 3 }}>
-        <div className="rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ backgroundColor: '#faf6e8', animationDelay: '2s' }}>
-          <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Signal Chain</p>
-          <p className="font-sans font-semibold text-xs text-ss-ink mb-2">Delay → Filter → Reverb</p>
-          <div className="flex items-center gap-1.5">
-            {['Delay','Filter','Reverb'].map((item, i, arr) => (
-              <span key={i} className="flex items-center gap-1.5">
-                <span className="font-mono text-2xs text-ss-ink bg-white border border-ss-border/60 px-1.5 py-0.5 rounded-md">{item}</span>
-                {i < arr.length-1 && <span className="text-ss-ghost/50 text-2xs">→</span>}
-              </span>
+      <div className="living-card absolute left-[18%] top-[34%] w-[215px] rotate-[1deg]" style={{ zIndex: 10, animationDelay: '1.6s' }}>
+        <div className="rounded-xl border border-ss-border bg-[#faf3df] p-4 shadow-[0_14px_32px_rgba(58,45,32,0.13)]">
+          <p className="mb-2 font-mono text-2xs uppercase tracking-widest text-ss-ghost">Signal Chain</p>
+          <p className="mb-3 text-sm font-semibold text-ss-ink">Delay / Filter / Reverb</p>
+          <div className="flex flex-wrap gap-1.5">
+            {['Delay','Filter','Reverb'].map(item => (
+              <span key={item} className="rounded-md border border-ss-border bg-white/85 px-2 py-1 font-mono text-2xs text-ss-ink">{item}</span>
             ))}
           </div>
         </div>
       </div>
 
-      {/* PHOTO — left:490, top:55, w:155 → centerX=567, centerY=147, bottom=240 */}
-      <div className="absolute" style={{ left: 490, top: 55, width: 155, zIndex: 2 }}>
-        <div className="bg-white rounded-xl border border-ss-border shadow-sm overflow-hidden field-float" style={{ animationDelay: '0.5s' }}>
-          <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=300&q=75" alt="" className="w-full aspect-square object-cover"/>
-          <div className="px-2.5 py-2">
-            <p className="font-mono text-2xs text-ss-ghost">Studio corner</p>
-          </div>
+      <div className="living-card absolute left-[48%] top-[31%] w-[220px] rotate-[-1deg]" style={{ zIndex: 12, animationDelay: '1.1s' }}>
+        <div className="rounded-xl border border-ss-border bg-white p-4 shadow-[0_16px_38px_rgba(58,45,32,0.16)]">
+          <p className="mb-2 font-mono text-2xs uppercase tracking-widest text-ss-ghost">Link Signal</p>
+          <p className="mb-1.5 text-sm font-semibold text-ss-ink">ModWiggler Thread</p>
+          <p className="mb-3 font-mono text-2xs leading-relaxed text-ss-dim">Designing with space - minimal patches</p>
+          <span className="font-mono text-2xs text-ss-accent">modwiggler.com</span>
         </div>
       </div>
 
-      {/* YOUTUBE — left:470, top:360, w:185 — klar unter PHOTO, kein Overlap mit SYNTH */}
-      <div className="absolute" style={{ left: 470, top: 360, width: 185, zIndex: 3 }}>
-        <div className="bg-white rounded-xl border border-ss-border shadow-md overflow-hidden field-float" style={{ animationDelay: '2.5s' }}>
-          <div className="w-full aspect-video bg-ss-ink relative overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=300&q=70" alt="" className="w-full h-full object-cover opacity-60"/>
+      <div className="living-card absolute left-[6%] top-[58%] w-[190px] rotate-[-1deg]" style={{ zIndex: 9, animationDelay: '2.4s' }}>
+        <div className="rounded-xl border border-ss-border bg-white p-4 shadow-[0_14px_30px_rgba(58,45,32,0.12)]">
+          <p className="mb-2 font-mono text-2xs uppercase tracking-widest text-ss-ghost">Pattern Signal</p>
+          <p className="mb-2 text-sm font-semibold text-ss-ink">Ambient Idea 01</p>
+          <div className="rounded-md border border-ss-border/60 bg-ss-surface/70 px-2 py-2 font-mono text-2xs text-ss-dim">C4 - Eb4 - G4</div>
+          <p className="mt-2 font-mono text-2xs text-ss-ghost">72 bpm</p>
+        </div>
+      </div>
+
+      <div className="living-card absolute left-[43%] top-[64%] w-[215px] rotate-[2deg]" style={{ zIndex: 10, animationDelay: '2s' }}>
+        <div className="overflow-hidden rounded-xl border border-ss-border bg-white shadow-[0_16px_38px_rgba(58,45,32,0.16)]">
+          <div className="relative aspect-video bg-ss-ink">
+            <img src="https://images.unsplash.com/photo-1493246507139-91e8fad9978e?w=420&q=70" alt="" className="h-full w-full object-cover opacity-70" />
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-7 h-7 rounded-full bg-white/90 flex items-center justify-center shadow">
-                <span className="text-ss-ink text-xs ml-0.5">▶</span>
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-md">
+                <span className="ml-0.5 text-sm text-ss-ink">▶</span>
               </div>
             </div>
           </div>
-          <div className="px-3 py-2.5">
-            <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">YouTube</p>
-            <p className="font-sans font-semibold text-xs text-ss-ink leading-tight">Making an ambient patch</p>
+          <div className="px-3.5 py-3">
+            <p className="mb-1 font-mono text-2xs uppercase tracking-widest text-ss-ghost">YouTube Signal</p>
+            <p className="text-sm font-semibold text-ss-ink">Making an ambient patch</p>
           </div>
         </div>
       </div>
-
-      {/* PATTERN — left:30, top:390, w:170 */}
-      <div className="absolute" style={{ left: 30, top: 390, width: 170, zIndex: 3 }}>
-        <div className="bg-white rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ animationDelay: '3s' }}>
-          <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Pattern</p>
-          <p className="font-sans font-semibold text-xs text-ss-ink mb-1.5">Ambient Idea 01</p>
-          <div className="font-mono text-2xs text-ss-dim bg-ss-surface/60 rounded px-2 py-1.5 border border-ss-border/40">C4 — Eb4 — G4</div>
-          <p className="font-mono text-2xs text-ss-ghost/50 mt-1">72 bpm</p>
-        </div>
-      </div>
-
-      {/* SYNTH PATCH — left:258, top:400, w:175 */}
-      <div className="absolute" style={{ left: 258, top: 400, width: 175, zIndex: 3 }}>
-        <div className="rounded-xl border border-ss-border shadow-sm p-3.5 field-float" style={{ backgroundColor: '#eef1e8', animationDelay: '2s' }}>
-          <p className="font-mono text-2xs text-ss-ghost uppercase tracking-widest mb-1">Synth Patch</p>
-          <p className="font-sans font-semibold text-xs text-ss-ink mb-2">Atmos Drift</p>
-          <span className="font-mono text-2xs text-ss-dim border border-ss-border/50 bg-white/60 px-2 py-0.5 rounded-md">Mutable Instruments</span>
-        </div>
-      </div>
-
     </div>
   )
 }
@@ -176,7 +118,7 @@ const FEATURES = [
   {
     icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.4"/><rect x="11" y="2" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.4"/><rect x="2" y="11" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.4"/><rect x="11" y="11" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.4"/></svg>,
     title: 'Collect anything',
-    desc: 'Save sounds, images,\nlinks, notes and more.',
+    desc: 'Save images,\nlinks, notes and more.',
   },
   {
     icon: <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="4" cy="10" r="2.5" stroke="currentColor" strokeWidth="1.4"/><circle cx="16" cy="4" r="2.5" stroke="currentColor" strokeWidth="1.4"/><circle cx="16" cy="16" r="2.5" stroke="currentColor" strokeWidth="1.4"/><line x1="6.5" y1="9" x2="13.5" y2="5.5" stroke="currentColor" strokeWidth="1.4"/><line x1="6.5" y1="11" x2="13.5" y2="14.5" stroke="currentColor" strokeWidth="1.4"/></svg>,
@@ -202,7 +144,7 @@ const FEATURES = [
 
 const EARLY_STORIES = [
   {
-    quote: 'Staticfield became the place where unfinished sounds could stay alive. I collect field recordings, patch notes and references without forcing them into a project too early.',
+    quote: 'Staticfield became the place where unfinished sounds could stay alive. I collect patch notes, images and references without forcing them into a project too early.',
     name: 'Mara V.',
     role: 'Ambient artist',
     initials: 'MV',
@@ -226,7 +168,7 @@ const EARLY_STORIES = [
 
 // ─── REAL FIELDS DATA ─────────────────────────────────────
 
-const FILTER_TAGS = ['All','Ambient','Modular','Field Recording','Sound Design','Textures','Research']
+const FILTER_TAGS = ['All','Ambient','Modular','References','Sound Design','Textures','Research']
 
 const REAL_FIELDS = [
   { id: 1, title: 'Distant Memories',        creator: 'Alex R.',    category: 'Ambient',
@@ -235,7 +177,7 @@ const REAL_FIELDS = [
     img: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=500&q=70' },
   { id: 3, title: 'Modular Ideas',            creator: 'Jonas T.',   category: 'Modular',
     img: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=500&q=70' },
-  { id: 4, title: 'Forest Sessions',          creator: 'Lea S.',     category: 'Field Recording',
+  { id: 4, title: 'Forest Sessions',          creator: 'Lea S.',     category: 'References',
     img: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=500&q=70' },
   { id: 5, title: 'Tape Texture Studies',     creator: 'Omar F.',    category: 'Textures',
     img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&q=70' },
@@ -247,7 +189,7 @@ const REAL_FIELDS = [
 
 function AppPreview() {
   const cards = [
-    { type: 'Field Recording', title: 'Rain on metal roof.wav', hasWave: true, left: 30, top: 20, w: 175 },
+    { type: 'Image Signal', title: 'Rain texture reference', hasWave: true, left: 30, top: 20, w: 175 },
     { type: 'Note',            title: 'structure is freedom',                  left: 225, top: 10, w: 148 },
     { type: 'Signal Chain',    title: 'Delay → Reverb',                        left: 30,  top: 158, w: 158 },
     { type: 'Image',           title: 'Brutalist textures', hasImg: true,      left: 200, top: 118, w: 132 },
@@ -349,14 +291,24 @@ export default function Landing({ setPage, openField }) {
     <div className="min-h-screen bg-ss-bg">
 
       {/* ══════════ HERO ══════════ */}
-      <section className="pt-14 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-16 sm:pt-20 pb-8">
-          <div className="flex flex-col lg:flex-row lg:items-start lg:gap-10 xl:gap-16">
+      <section className="relative overflow-hidden pt-14 bg-[#f8f2e8]">
+        <div className="absolute inset-0 opacity-70">
+          <img
+            src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1800&q=80"
+            alt=""
+            className="h-full w-full object-cover opacity-20"
+          />
+        </div>
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(250,247,242,0.98)_0%,rgba(250,247,242,0.92)_31%,rgba(250,247,242,0.64)_58%,rgba(250,247,242,0.38)_100%)]" />
+        <div className="absolute left-0 bottom-0 h-52 w-80 bg-[#e5d4ba]/40 blur-3xl" />
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-14 sm:pt-20 pb-10">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:gap-8 xl:gap-12 min-h-[700px]">
 
             {/* LEFT */}
-            <div className="lg:w-[44%] flex-shrink-0 z-10 relative pt-4">
+            <div className="lg:w-[39%] flex-shrink-0 z-10 relative pt-4 lg:pt-0">
 
-              <h1 className="font-sans leading-[1.04] mb-6 animate-slide-up opacity-0"
+              <h1 className="font-sans leading-[1.04] mb-6 animate-slide-up"
                 style={{ fontWeight: 800, fontSize: 'clamp(2.8rem, 5.5vw, 5rem)',
                   animationFillMode: 'forwards', animationDelay: '0.04s' }}>
                 Patch <span style={{
@@ -366,14 +318,14 @@ export default function Landing({ setPage, openField }) {
                 into ideas.
               </h1>
 
-              <p className="text-base sm:text-lg text-ss-dim leading-relaxed mb-8 max-w-md animate-slide-up opacity-0"
+              <p className="text-base sm:text-lg text-[#6f5842] leading-relaxed mb-8 max-w-md animate-slide-up"
                 style={{ animationFillMode: 'forwards', animationDelay: '0.1s' }}>
                 Collect sounds, patches, links and references.<br/>
                 Connect them. Develop ideas over time.<br/>
                 <span className="block mt-3">For modular musicians, ambient artists and curious collectors.</span>
               </p>
 
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-8 animate-slide-up opacity-0"
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-8 animate-slide-up"
                 style={{ animationFillMode: 'forwards', animationDelay: '0.16s' }}>
                 <button onClick={() => setPage('fields')}
                   className="flex items-center gap-2 px-5 py-2.5 bg-ss-ink text-white text-sm font-semibold rounded-lg hover:bg-ss-dim transition-colors">
@@ -387,7 +339,7 @@ export default function Landing({ setPage, openField }) {
             </div>
 
             {/* RIGHT — Field visualization, desktop only */}
-            <div className="hidden lg:block flex-1 relative">
+            <div className="mt-8 lg:mt-0 lg:block flex-1 relative">
               <ConnectedField />
             </div>
           </div>
