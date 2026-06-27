@@ -27,6 +27,41 @@ function getTintStyle(card) {
   return { backgroundColor: t.bg, borderColor: t.border }
 }
 
+function getImageFileFromTransfer(transfer) {
+  if (!transfer) return null
+  const files = Array.from(transfer.files || [])
+  const directFile = files.find(file => file.type?.startsWith('image/'))
+  if (directFile) return directFile
+
+  const items = Array.from(transfer.items || [])
+  const imageItem = items.find(item => item.type?.startsWith('image/'))
+  return imageItem?.getAsFile() || null
+}
+
+function resizeImageFile(file, maxSize = 1600) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onerror = () => reject(new Error('Could not read image.'))
+    reader.onload = () => {
+      const img = new Image()
+      img.onerror = () => reject(new Error('Could not load image.'))
+      img.onload = () => {
+        const scale = Math.min(1, maxSize / Math.max(img.width, img.height))
+        const width = Math.max(1, Math.round(img.width * scale))
+        const height = Math.max(1, Math.round(img.height * scale))
+        const canvas = document.createElement('canvas')
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(img, 0, 0, width, height)
+        resolve(canvas.toDataURL('image/jpeg', 0.86))
+      }
+      img.src = reader.result
+    }
+    reader.readAsDataURL(file)
+  })
+}
+
 // ─── Type Badge ───────────────────────────────────────────
 
 function TypeBadge({ type }) {
@@ -160,10 +195,10 @@ function InlineInput({ value = '', placeholder, onChange, className = '', multil
 }
 
 // ─── Note Card mit Expand-Toggle ─────────────────────────
-function NoteCardContent({ title, description }) {
+function NoteCardContent({ title, description, imageUrl, focused }) {
   const [expanded, setExpanded] = useState(false)
-  const [expandedHeight, setExpandedHeight] = useState(96)
-  const COLLAPSED_H = 96 // px — ca. 5 Zeilen
+  const [expandedHeight, setExpandedHeight] = useState(120)
+  const COLLAPSED_H = 120 // px — ca. 6 Zeilen
 
   // Brauchen wir den Toggle überhaupt?
   const textRef = useRef(null)
@@ -178,18 +213,23 @@ function NoteCardContent({ title, description }) {
 
   return (
     <div className="flex flex-col gap-1.5">
+      {imageUrl && (
+        <div className="mb-1 aspect-video w-full overflow-hidden rounded-md border border-ss-border/70 bg-ss-surface">
+          <img src={imageUrl} alt={title || 'Note Signal image'} className="h-full w-full object-cover" />
+        </div>
+      )}
       <p className="font-sans font-semibold text-sm text-ss-ink leading-snug">{title || 'Note Signal'}</p>
       {description && (
         <div className="relative">
           <div
             ref={textRef}
-            className="text-xs text-ss-dim leading-relaxed transition-all duration-300 overflow-hidden"
-            style={{ maxHeight: expanded ? `${expandedHeight}px` : `${COLLAPSED_H}px` }}
+            className="text-xs text-ss-dim leading-relaxed transition-all duration-300 overflow-hidden break-words [overflow-wrap:anywhere]"
+            style={{ maxHeight: (focused || expanded) ? `${expandedHeight}px` : `${COLLAPSED_H}px` }}
           >
             {description}
           </div>
           {/* Toggle-Button — nur wenn Text überläuft */}
-          {overflows && (
+          {overflows && !focused && (
             <button
               data-action="expand"
               onMouseDown={e => { e.stopPropagation(); setExpanded(v => !v) }}
@@ -225,6 +265,11 @@ function EditableCardContent({ card, focused, onUpdate }) {
     case 'note':
       return (
         <div className="flex flex-col gap-2">
+          {card.imageUrl && (
+            <div className="aspect-video w-full overflow-hidden rounded-md border border-ss-border/70 bg-ss-surface">
+              <img src={card.imageUrl} alt={card.title || 'Note Signal image'} className="h-full w-full object-cover" />
+            </div>
+          )}
           <InlineInput
             value={card.title}
             placeholder="Untitled note"
@@ -237,8 +282,8 @@ function EditableCardContent({ card, focused, onUpdate }) {
             placeholder="Write inside the signal..."
             onChange={description => update({ description })}
             multiline
-            rows={5}
-            className="text-xs text-ss-dim"
+            rows={8}
+            className="min-h-[120px] text-xs text-ss-dim"
           />
         </div>
       )
@@ -492,7 +537,7 @@ function CardContent({ card, focused }) {
       </div>
 
     case 'note':
-      return <NoteCardContent title={card.title} description={card.description} />
+      return <NoteCardContent title={card.title} description={card.description} imageUrl={card.imageUrl} focused={focused} />
 
     case 'link':
     case 'youtube':
@@ -560,9 +605,10 @@ function CardContent({ card, focused }) {
 
 // ─── Canvas Card ──────────────────────────────────────────
 
-function CanvasCard({ card, connectingFrom, focused, editing, onFocus, onEditStart, onDragStart, onTouchStart, onConnectDotDown, onDelete, onDuplicate, onResize, onHeightChange, onInteractionStart, onInteractionEnd, onUpdate }) {
+function CanvasCard({ card, connectingFrom, focused, editing, onFocus, onEditStart, onDragStart, onTouchStart, onConnectDotDown, onDelete, onDuplicate, onResize, onHeightChange, onInteractionStart, onInteractionEnd, onUpdate, onImageDrop }) {
   const [hovered,     setHovered]     = useState(false)
   const [hoveredSide, setHoveredSide] = useState(null)
+  const [imageOver,   setImageOver]   = useState(false)
   const cardRef      = useRef(null)
   const contentRef   = useRef(null)
   const mouseDownPos = useRef(null)
@@ -655,6 +701,22 @@ function CanvasCard({ card, connectingFrom, focused, editing, onFocus, onEditSta
   // Minimale Höhe falls card.height gesetzt
   const minHeight = card.height ? { minHeight: card.height } : {}
 
+  function handleDragOver(e) {
+    if (!getImageFileFromTransfer(e.dataTransfer)) return
+    e.preventDefault()
+    e.stopPropagation()
+    setImageOver(true)
+  }
+
+  async function handleDrop(e) {
+    const file = getImageFileFromTransfer(e.dataTransfer)
+    if (!file) return
+    e.preventDefault()
+    e.stopPropagation()
+    setImageOver(false)
+    await onImageDrop(card.id, file)
+  }
+
   return (
     <div
       className="absolute select-none"
@@ -670,6 +732,12 @@ function CanvasCard({ card, connectingFrom, focused, editing, onFocus, onEditSta
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => { setHovered(false); setHoveredSide(null) }}
       onMouseMove={handleMouseMove}
+      onDragEnter={handleDragOver}
+      onDragOver={handleDragOver}
+      onDragLeave={e => {
+        if (!e.currentTarget.contains(e.relatedTarget)) setImageOver(false)
+      }}
+      onDrop={handleDrop}
       onMouseDown={e => {
         if (e.target.closest('[data-action]')) return
         mouseDownPos.current = { x: e.clientX, y: e.clientY }
@@ -721,6 +789,13 @@ function CanvasCard({ card, connectingFrom, focused, editing, onFocus, onEditSta
           transition: 'box-shadow 180ms ease, filter 180ms ease',
         }}
       >
+        {imageOver && (
+          <div className="pointer-events-none absolute inset-0 z-40 flex items-center justify-center rounded-xl border border-ss-accent/50 bg-white/70 backdrop-blur-[1px]">
+            <span className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-ss-accent shadow-sm">
+              Drop image
+            </span>
+          </div>
+        )}
         {/* Type Badge oben */}
         <div className="flex items-center justify-between px-3 pt-2.5 pb-1">
           <TypeBadge type={card.type} />
@@ -962,6 +1037,29 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
     setSignalMenuAnchor(null)
   }
 
+  const attachImageToSignal = useCallback(async (cardId, file) => {
+    const imageUrl = await resizeImageFile(file)
+    const card = cards.find(card => card.id === cardId)
+    updateCard(cardId, {
+      imageUrl,
+      ...(card?.type === 'image' && !card.title ? { title: file.name?.replace(/\.[^.]+$/, '') || 'Image Signal' } : {}),
+    })
+    setFocusedSignalId(cardId)
+  }, [cards, updateCard])
+
+  const createImageSignalAt = useCallback(async (file, position) => {
+    const imageUrl = await resizeImageFile(file)
+    const id = addCard(boardId, 'image', {
+      title: file.name?.replace(/\.[^.]+$/, '') || 'Image Signal',
+      description: '',
+      imageUrl,
+      position,
+    })
+    setFocusedSignalId(id)
+    setEditingSignalId(id)
+    setSignalMenuAnchor(null)
+  }, [addCard, boardId])
+
   useEffect(() => {
     function onKey(e) {
       if (e.key === 'Escape') {
@@ -976,6 +1074,30 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [])
+
+  useEffect(() => {
+    async function onPaste(e) {
+      const file = getImageFileFromTransfer(e.clipboardData)
+      if (!file) return
+
+      e.preventDefault()
+      const focusedCard = cards.find(card => card.id === focusedSignalId)
+      if (focusedCard) {
+        await attachImageToSignal(focusedCard.id, file)
+        return
+      }
+
+      const el = canvasRef.current
+      if (!el) return
+      await createImageSignalAt(file, {
+        x: el.scrollLeft + el.clientWidth / 2 - CARD_WIDTH_DEFAULT / 2,
+        y: el.scrollTop + el.clientHeight / 2 - CARD_HEIGHT_DEFAULT / 2,
+      })
+    }
+
+    window.addEventListener('paste', onPaste)
+    return () => window.removeEventListener('paste', onPaste)
+  }, [attachImageToSignal, cards, createImageSignalAt, focusedSignalId])
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
@@ -1032,6 +1154,17 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
           setFocusedSignalId(null)
           setEditingSignalId(null)
           setSignalMenuAnchor(null)
+        }}
+        onDragOver={e => {
+          if (!getImageFileFromTransfer(e.dataTransfer)) return
+          e.preventDefault()
+        }}
+        onDrop={async e => {
+          const file = getImageFileFromTransfer(e.dataTransfer)
+          if (!file) return
+          e.preventDefault()
+          const pos = canvasPos(e.clientX, e.clientY)
+          await createImageSignalAt(file, { x: Math.max(0, pos.x - CARD_WIDTH_DEFAULT / 2), y: Math.max(0, pos.y - 80) })
         }}
       >
         <div className="relative" style={{ width: canvasSize.width, height: canvasSize.height }}>
@@ -1099,6 +1232,7 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
               onInteractionStart={beginHistoryGroup}
               onInteractionEnd={endHistoryGroup}
               onUpdate={updateCard}
+              onImageDrop={attachImageToSignal}
             />
           ))}
 
