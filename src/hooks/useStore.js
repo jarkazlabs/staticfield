@@ -9,6 +9,7 @@ const STORAGE_KEYS = {
   sections: 'ss_sections',
 }
 const HISTORY_LIMIT = 60
+const NEW_DEMO_BOARD_IDS = new Set(['b06'])
 
 function load(key, fallback) {
   try {
@@ -34,11 +35,24 @@ function uid() {
   return Math.random().toString(36).slice(2, 14)
 }
 
+function mergeById(current, additions) {
+  const ids = new Set(current.map(item => item.id))
+  return [...current, ...additions.filter(item => !ids.has(item.id))]
+}
+
 function initialState() {
+  const boards = load(STORAGE_KEYS.boards, DEMO_BOARDS)
+  const cards = load(STORAGE_KEYS.cards, DEMO_CARDS)
+  const demoBoardIds = NEW_DEMO_BOARD_IDS
+  const demoCardIds = new Set(DEMO_CARDS.filter(card => demoBoardIds.has(card.boardId)).map(card => card.id))
+
   return {
-    boards: load(STORAGE_KEYS.boards, DEMO_BOARDS),
-    cards: load(STORAGE_KEYS.cards, DEMO_CARDS),
-    connections: load(STORAGE_KEYS.connections, DEMO_CONNECTIONS),
+    boards: mergeById(boards, DEMO_BOARDS.filter(board => demoBoardIds.has(board.id))),
+    cards: mergeById(cards, DEMO_CARDS.filter(card => demoBoardIds.has(card.boardId))),
+    connections: mergeById(
+      load(STORAGE_KEYS.connections, DEMO_CONNECTIONS),
+      DEMO_CONNECTIONS.filter(connection => demoCardIds.has(connection.from) || demoCardIds.has(connection.to))
+    ),
     sections: load(STORAGE_KEYS.sections, []),
   }
 }

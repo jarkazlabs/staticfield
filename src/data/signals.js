@@ -42,6 +42,14 @@ export const DEMO_BOARDS = [
     imageUrl: 'https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?w=800&q=75',
     followers: 41, isDemo: true,
   },
+  {
+    id: 'b06', title: 'EP-133 K.O. II OS Notes',
+    description: 'A living research field for the Teenage Engineering EP-133 K.O. II update: article notes, official references, test ideas and patch directions.',
+    tags: ['teenage-engineering', 'sampler', 'ko-ii', 'workflow'],
+    author: 'jarkazmusic',
+    imageUrl: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800&q=75',
+    followers: 29, isDemo: true,
+  },
 ]
 
 export const DEMO_CARDS = [
@@ -159,6 +167,92 @@ export const DEMO_CARDS = [
     tags: ['melody', 'ambient'],
     position: { x: 720, y: 750 },
   },
+
+  // ── b06: EP-133 K.O. II OS Notes ──────────────────────
+
+  {
+    id: 'ko01', type: 'note', boardId: 'b06',
+    title: 'Update signal',
+    description: 'Amazona reports that the EP-133 K.O. II update turns the sampler into a more flexible studio sketchpad: USB audio, longer sample handling, new sample modes, reverse playback, autochop, arpeggiator and sequencer workflow improvements.\n\nStaticfield use: collect the feature list, connect it to real test patches, then return after a session and refine what actually matters.',
+    tint: 'sage',
+    tags: ['article-notes', 'os-update'],
+    position: { x: 80, y: 80 },
+  },
+  {
+    id: 'ko02', type: 'link', boardId: 'b06',
+    title: 'Amazona: EP-133 K.O. II OS update',
+    description: 'Source article for the update notes. Good as the first reference in the field.',
+    url: 'https://www.amazona.de/teenage-engineering-ep-133-k-o-ii-os-2-0/',
+    tags: ['article', 'source'],
+    position: { x: 430, y: 60 },
+  },
+  {
+    id: 'ko03', type: 'link', boardId: 'b06',
+    title: 'Teenage Engineering: what’s new',
+    description: 'Official guide page for EP-133 changes and feature behavior.',
+    url: 'https://teenage.engineering/guides/ep-133/whats-new',
+    tags: ['official', 'manual'],
+    position: { x: 760, y: 90 },
+  },
+  {
+    id: 'ko04', type: 'chain', boardId: 'b06',
+    title: 'Research chain',
+    description: 'A useful way to turn a news article into something playable.',
+    chain: ['Article', '→', 'Feature notes', '→', 'Session tests', '→', 'Patch ideas'],
+    tint: 'amber',
+    tags: ['workflow', 'signal-chain'],
+    position: { x: 120, y: 340 },
+  },
+  {
+    id: 'ko05', type: 'pattern', boardId: 'b06',
+    title: 'First K.O. II test pattern',
+    notes: 'Kick — Snare — Chop — Reverse tail',
+    bpm: '92',
+    scale: 'minor fragments',
+    description: 'Use one longer sample, slice it, reverse the tail, then test how fast the idea becomes a loop.',
+    tags: ['test-pattern', 'sampler'],
+    position: { x: 500, y: 330 },
+  },
+  {
+    id: 'ko06', type: 'note', boardId: 'b06',
+    title: 'What to test',
+    description: '— Can USB audio simplify capture?\n— Do longer samples change the instrument from drum box to sketch recorder?\n— Is autochop useful for found sounds?\n— Does reverse playback feel musical or just decorative?\n— Does the arpeggiator invite melodic work?',
+    tint: 'paper',
+    tags: ['session-plan', 'questions'],
+    position: { x: 820, y: 330 },
+  },
+  {
+    id: 'ko07', type: 'link', boardId: 'b06',
+    title: 'Official EP-133 K.O. II product page',
+    description: 'Hardware overview, visual reference and official context for the instrument.',
+    url: 'https://teenage.engineering/products/ep-133',
+    tags: ['official', 'product'],
+    position: { x: 90, y: 620 },
+  },
+  {
+    id: 'ko08', type: 'image', boardId: 'b06',
+    title: 'Sampler desk reference',
+    description: 'A visual placeholder for the research mood: compact box, fast hands, short loops, messy ideas.',
+    imageUrl: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=600&q=75',
+    tags: ['visual-reference', 'studio'],
+    position: { x: 430, y: 590 },
+  },
+  {
+    id: 'ko09', type: 'link', boardId: 'b06',
+    title: 'YouTube research: EP-133 K.O. II OS 2.0',
+    description: 'Search starting point for update walkthroughs, sound demos and workflow reactions.',
+    url: 'https://www.youtube.com/results?search_query=Teenage+Engineering+EP-133+K.O.+II+OS+2.0',
+    tags: ['youtube', 'video-research'],
+    position: { x: 780, y: 640 },
+  },
+  {
+    id: 'ko10', type: 'note', boardId: 'b06',
+    title: 'Staticfield takeaway',
+    description: 'This is the pattern: capture a current article, pin official sources, add video research, turn features into test questions, then connect everything back to a real patch idea.',
+    tint: 'slate',
+    tags: ['staticfield', 'use-case'],
+    position: { x: 460, y: 850 },
+  },
 ]
 
 export const DEMO_CONNECTIONS = [
@@ -176,9 +270,19 @@ export const DEMO_CONNECTIONS = [
   { id: 'cn16', from: 'k07', to: 'k08' },
   { id: 'cn17', from: 'k04', to: 'k10' },
   { id: 'cn18', from: 'k10', to: 'k11' },
+  { id: 'cn20', from: 'ko01', to: 'ko02' },
+  { id: 'cn21', from: 'ko02', to: 'ko03' },
+  { id: 'cn22', from: 'ko01', to: 'ko04' },
+  { id: 'cn23', from: 'ko04', to: 'ko05' },
+  { id: 'cn24', from: 'ko05', to: 'ko06' },
+  { id: 'cn25', from: 'ko03', to: 'ko07' },
+  { id: 'cn26', from: 'ko07', to: 'ko08' },
+  { id: 'cn27', from: 'ko09', to: 'ko10' },
+  { id: 'cn28', from: 'ko06', to: 'ko10' },
 ]
 
 export const curatedStrips = [
+  { id: 'b06', label: 'EP-133 K.O. II',      count: 10, imageUrl: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400&q=75' },
   { id: 'b05', label: 'Bastl Kalimba',       count: 11, imageUrl: 'https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?w=400&q=75' },
   { id: 'b03', label: 'Forest Signals',      count: 23, imageUrl: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&q=75' },
   { id: 'b02', label: 'Tape Decay',          count: 31, imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=75' },

@@ -124,4 +124,13 @@ export const boardCollages = {
     notes: ['TX81Z', '4-op FM', 'cold'],
     hasAudio: true, audioType: 'drone',
   },
+  b06: {
+    images: [
+      'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400&q=70',
+      'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=300&q=70',
+      'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&q=70',
+    ],
+    notes: ['OS 2.0', 'USB audio', 'autochop'],
+    hasAudio: true, audioType: 'tape',
+  },
 }

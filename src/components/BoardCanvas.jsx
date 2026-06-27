@@ -1239,13 +1239,6 @@ export default function BoardCanvas({ boardId, cards, connections, sections, add
           {cards.length === 0 && sections.length === 0 && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
               <p className="text-ss-ghost/60 text-sm">Empty field.</p>
-              <div className="relative">
-                <button onClick={() => setSignalMenuAnchor(anchor => anchor === 'empty' ? null : 'empty')}
-                  className="px-4 py-2 border border-ss-border rounded-lg text-sm text-ss-dim hover:border-ss-muted hover:text-ss-ink transition-all">
-                  Patch first signal
-                </button>
-                {signalMenuAnchor === 'empty' && <SignalMenu align="center" onSelect={patchSignal} />}
-              </div>
             </div>
           )}
         </div>
